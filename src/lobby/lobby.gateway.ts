@@ -70,8 +70,22 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         this.logger.log('CREATE_ROOM' + ' username:' + username + ' name:' + name + ' password:' + password);
 
-        const room = await this.roomService.create(name, password);
+        const room = await this.roomService.create(username, name, password);
 
         return { event: 'create_room_response', data: { room } };
+    }
+
+    @SubscribeMessage('join_room')
+    @UseInterceptors(AuthInterceptor)
+    async joinRoom(
+        @ConnectedSocket() socket: Socket,
+        @MessageBody('username') username: string,
+        @MessageBody('name') name: string,
+        @MessageBody('password') password: string
+    ): Promise<any>
+    {
+        this.logger.log('JOIN_ROOM' + ' username:' + username + ' name:' + name + ' password:' + password);
+
+        return { event: 'join_room_response', data: { } };
     }
 }

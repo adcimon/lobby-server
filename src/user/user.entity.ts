@@ -12,6 +12,6 @@ export class User
     @Column({ unique: true, nullable: false })
     username: string;
 
-    @ManyToOne(() => Room, room => room.id)
+    @ManyToOne(type => Room, room => room.users)
     room: Room;
 }
