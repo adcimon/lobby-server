@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { Room } from './room.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Room } from './room.entity';
+import { UserService } from '../user/user.service';
 import { RoomAlreadyExistsException } from '../exception/room-already-exists.exception';
 import { RoomNotFoundException } from '../exception/room-not-found.exception';
 
 @Injectable()
 export class RoomService
 {
-    constructor( @InjectRepository(Room) private roomsRepository: Repository<Room> )
-    {
-    }
+    constructor(
+        @InjectRepository(Room) private roomsRepository: Repository<Room>,
+        private readonly userService: UserService
+    ) { }
 
     /**
      * Get all the rooms.
@@ -19,24 +21,6 @@ export class RoomService
     async getAll(): Promise<Room[]>
     {
         return await this.roomsRepository.find();
-    }
-
-    /**
-     * Get a room by id.
-     * @param id
-     * @returns Room
-     */
-    async getById(
-        id: number
-    ): Promise<Room>
-    {
-        const room = await this.roomsRepository.findOne(id);
-        if( !room )
-        {
-            throw new RoomNotFoundException(id.toString());
-        }
-
-        return room;
     }
 
     /**
