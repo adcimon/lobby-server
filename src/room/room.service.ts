@@ -88,4 +88,22 @@ export class RoomService
 
         return this.roomsRepository.save(room);
     }
+
+    /**
+     * Join a room
+     * @param username
+     * @param name
+     * @param password
+     * @return Room
+     */
+    async join(
+        username: string,
+        name: string,
+        password: string
+    ): Promise<Room>
+    {
+        // TODO
+
+        return null;
+    }
 }
