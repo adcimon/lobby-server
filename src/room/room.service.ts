@@ -3,8 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Room } from './room.entity';
 import { UserService } from '../user/user.service';
+import { UserAlreadyInRoomException } from '../exception/user-already-in-room.exception';
 import { RoomAlreadyExistsException } from '../exception/room-already-exists.exception';
 import { RoomNotFoundException } from '../exception/room-not-found.exception';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class RoomService
@@ -43,11 +45,13 @@ export class RoomService
 
     /**
      * Create a room.
+     * @param username
      * @param name
      * @param password
      * @return Room
      */
     async create(
+        username: string,
         name: string,
         password: string
     ): Promise<Room>
@@ -58,9 +62,28 @@ export class RoomService
             throw new RoomAlreadyExistsException(name);
         }
 
+        // Check whether the user is in a room.
+        let user;
+        try
+        {
+            user = await this.userService.getByUsername(username);
+        }
+        catch( exception )
+        {
+            // User not found catched.
+        }
+        if( user )
+        {
+            throw new UserAlreadyInRoomException(username, user.room.name);
+        }
+
+        user = new User();
+        user.username = username;
+
         room = this.roomsRepository.create({
             name: name,
-            password: password
+            password: password,
+            users: [user]
         });
 
         return this.roomsRepository.save(room);

@@ -15,6 +15,6 @@ export class Room
     @Exclude() // Used with class serializer interceptor to exclude from responses.
     password: string;
 
-    @OneToMany(() => User, user => user.id)
+    @OneToMany(type => User, user => user.room, { cascade: ['insert', 'update'] })
     users: User[];
 }
