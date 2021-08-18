@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class Room
@@ -13,4 +14,7 @@ export class Room
     @Column({ default: '' })
     @Exclude() // Used with class serializer interceptor to exclude from responses.
     password: string;
+
+    @OneToMany(() => User, user => user.id)
+    users: User[];
 }

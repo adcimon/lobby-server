@@ -3,6 +3,7 @@ import { ConfigModule } from './config/config.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { LobbyModule } from './lobby/lobby.module';
+import { UserModule } from './user/user.module';
 import { RoomModule } from './room/room.module';
 import { ConfigService } from './config/config.service';
 
@@ -28,6 +29,7 @@ import { ConfigService } from './config/config.service';
             }),
         AuthModule,
         LobbyModule,
+        UserModule,
         RoomModule
     ],
     controllers: [],
