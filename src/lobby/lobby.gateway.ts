@@ -7,6 +7,7 @@ import { AuthService } from '../auth/auth.service';
 import { RoomService } from 'src/room/room.service';
 import { WsExceptionFilter } from '../exception/ws-exception.filter';
 import { InvalidTokenException } from '../exception/invalid-token.exception';
+import { GenericResponse } from '../response/generic.response';
   
 @WebSocketGateway()
 @UseInterceptors(ClassSerializerInterceptor)
@@ -72,7 +73,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         const room = await this.roomService.create(username, name, password);
 
-        return { event: 'create_room_response', data: { room } };
+        return new GenericResponse('create_room_response', { room });
     }
 
     @SubscribeMessage('join_room')
@@ -86,6 +87,8 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         this.logger.log('JOIN_ROOM' + ' username:' + username + ' name:' + name + ' password:' + password);
 
-        return { event: 'join_room_response', data: { } };
+        const room = await this.roomService.join(username, name, password);
+
+        return new GenericResponse('join_room_response', { room });
     }
 }
