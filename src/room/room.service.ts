@@ -3,10 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Room } from './room.entity';
 import { UserService } from '../user/user.service';
+import { User } from '../user/user.entity';
 import { UserAlreadyInRoomException } from '../exception/user-already-in-room.exception';
 import { RoomAlreadyExistsException } from '../exception/room-already-exists.exception';
 import { RoomNotFoundException } from '../exception/room-not-found.exception';
-import { User } from 'src/user/user.entity';
+import { InvalidRoomPasswordException } from '../exception/invalid-room-password.exception';
 
 @Injectable()
 export class RoomService
@@ -22,7 +23,7 @@ export class RoomService
      */
     async getAll(): Promise<Room[]>
     {
-        return await this.roomsRepository.find();
+        return await this.roomsRepository.find({ relations: ['users'] });
     }
 
     /**
@@ -34,7 +35,7 @@ export class RoomService
         name: string
     ): Promise<Room>
     {
-        const room = this.roomsRepository.findOne({ where: { name } });
+        const room = this.roomsRepository.findOne({ where: { name }, relations: ['users'] });
         if( !room )
         {
             throw new RoomNotFoundException(name);
@@ -56,7 +57,16 @@ export class RoomService
         password: string
     ): Promise<Room>
     {
-        let room = await this.roomsRepository.findOne({ where: { name } });
+        // Check whether the room already exists.
+        let room;
+        try
+        {
+            room = await this.getByName(name);
+        }
+        catch( exception )
+        {
+            // Room not found catched.
+        }
         if( room )
         {
             throw new RoomAlreadyExistsException(name);
@@ -83,6 +93,7 @@ export class RoomService
         room = this.roomsRepository.create({
             name: name,
             password: password,
+            // owner: user,
             users: [user]
         });
 
@@ -90,7 +101,7 @@ export class RoomService
     }
 
     /**
-     * Join a room
+     * Join a room.
      * @param username
      * @param name
      * @param password
@@ -102,8 +113,52 @@ export class RoomService
         password: string
     ): Promise<Room>
     {
-        // TODO
+        const room = await this.getByName(name);
+        if( room.password != password )
+        {
+            throw new InvalidRoomPasswordException(name);
+        }
 
-        return null;
+        // Check whether the user is in a room.
+        let user;
+        try
+        {
+            user = await this.userService.getByUsername(username);
+        }
+        catch( exception )
+        {
+            // User not found catched.
+        }
+        if( user )
+        {
+            throw new UserAlreadyInRoomException(username, user.room.name);
+        }
+
+        user = new User();
+        user.username = username;
+
+        room.users.push(user);
+
+        return this.roomsRepository.save(room);
+    }
+
+    /**
+     * Leave a room.
+     * @param username
+     * @return Room
+     */
+    async leave(
+        username: string
+    ): Promise<Room>
+    {
+        const user = await this.userService.getByUsername(username);
+        const roomName = user.room.name;
+        const room = await this.getByName(roomName);
+
+        // TODO: Check whether the user is master.
+
+        await this.userService.delete(user.username);
+
+        return await this.getByName(roomName);
     }
 }

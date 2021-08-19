@@ -60,6 +60,18 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         //console.log(this.sessions);
     }
 
+    @SubscribeMessage('ping')
+    @UseInterceptors(AuthInterceptor)
+    ping(
+        @ConnectedSocket() socket: Socket,
+        @MessageBody('username') username: string
+    ): any
+    {
+        //this.logger.log('PING' + ' username:' + username);
+
+        return new GenericResponse('pong', { });
+    }
+
     @SubscribeMessage('create_room')
     @UseInterceptors(AuthInterceptor)
     async createRoom(
@@ -90,5 +102,19 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         const room = await this.roomService.join(username, name, password);
 
         return new GenericResponse('join_room_response', { room });
+    }
+
+    @SubscribeMessage('leave_room')
+    @UseInterceptors(AuthInterceptor)
+    async leaveRoom(
+        @ConnectedSocket() socket: Socket,
+        @MessageBody('username') username: string
+    ): Promise<any>
+    {
+        this.logger.log('LEAVE_ROOM' + ' username:' + username);
+
+        const room = await this.roomService.leave(username);
+
+        return new GenericResponse('leave_room_response', { room });
     }
 }
