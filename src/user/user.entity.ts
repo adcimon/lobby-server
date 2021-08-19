@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToOne } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Room } from '../room/room.entity';
 
@@ -12,6 +12,9 @@ export class User
     @Column({ unique: true, nullable: false })
     username: string;
 
-    @ManyToOne(type => Room, room => room.users)
+    // @OneToOne(() => Room, room => room.owner)
+    // owned: Room;
+
+    @ManyToOne(() => Room, room => room.users)
     room: Room;
 }

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { User } from '../user/user.entity';
 
@@ -15,6 +15,10 @@ export class Room
     @Exclude() // Used with class serializer interceptor to exclude from responses.
     password: string;
 
-    @OneToMany(type => User, user => user.room, { cascade: ['insert', 'update'] })
+    // @OneToOne(() => User, user => user.owned)
+    // @JoinColumn()
+    // owner: User;
+
+    @OneToMany(() => User, user => user.room, { cascade: ['insert', 'update'] })
     users: User[];
 }

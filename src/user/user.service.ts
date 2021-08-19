@@ -18,7 +18,7 @@ export class UserService
      */
     async getAll(): Promise<User[]>
     {
-        return await this.usersRepository.find();
+        return await this.usersRepository.find({ relations: ['room'] });
     }
 
     /**
@@ -30,7 +30,7 @@ export class UserService
         username: string
     ): Promise<User>
     {
-        const user = this.usersRepository.findOne({ where: { username } });
+        const user = this.usersRepository.findOne({ where: { username }, relations: ['room'] });
         if( !user )
         {
             throw new UserNotFoundException(username);
@@ -59,5 +59,19 @@ export class UserService
         });
 
         return this.usersRepository.save(user);
+    }
+
+    /**
+     * Delete the user.
+     * @param username
+     * @return User
+     */
+    async delete(
+        username: string
+    ): Promise<User>
+    {
+        const user = await this.getByUsername(username);
+
+        return this.usersRepository.remove(user);
     }
 }
