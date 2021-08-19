@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Room } from './room.entity';
 import { UserService } from '../user/user.service';
-import { User } from '../user/user.entity';
 import { UserAlreadyInRoomException } from '../exception/user-already-in-room.exception';
 import { RoomAlreadyExistsException } from '../exception/room-already-exists.exception';
 import { RoomNotFoundException } from '../exception/room-not-found.exception';
@@ -23,7 +22,7 @@ export class RoomService
      */
     async getAll(): Promise<Room[]>
     {
-        return await this.roomsRepository.find({ relations: ['users'] });
+        return await this.roomsRepository.find({ relations: ['master', 'users'] });
     }
 
     /**
@@ -35,7 +34,7 @@ export class RoomService
         name: string
     ): Promise<Room>
     {
-        const room = this.roomsRepository.findOne({ where: { name }, relations: ['users'] });
+        const room = this.roomsRepository.findOne({ where: { name }, relations: ['master', 'users'] });
         if( !room )
         {
             throw new RoomNotFoundException(name);
@@ -54,7 +53,7 @@ export class RoomService
     async create(
         username: string,
         name: string,
-        password: string
+        password: string = ''
     ): Promise<Room>
     {
         // Check whether the room already exists.
@@ -87,13 +86,14 @@ export class RoomService
             throw new UserAlreadyInRoomException(username, user.room.name);
         }
 
-        user = new User();
-        user.username = username;
+        // Create the user.
+        user = await this.userService.create(username);
 
+        // Create the room.
         room = this.roomsRepository.create({
             name: name,
             password: password,
-            // owner: user,
+            master: user,
             users: [user]
         });
 
@@ -110,7 +110,7 @@ export class RoomService
     async join(
         username: string,
         name: string,
-        password: string
+        password: string = ''
     ): Promise<Room>
     {
         const room = await this.getByName(name);
@@ -134,9 +134,10 @@ export class RoomService
             throw new UserAlreadyInRoomException(username, user.room.name);
         }
 
-        user = new User();
-        user.username = username;
+        // Create the user.
+        user = await this.userService.create(username);
 
+        // Add the user to the room.
         room.users.push(user);
 
         return this.roomsRepository.save(room);
@@ -152,13 +153,33 @@ export class RoomService
     ): Promise<Room>
     {
         const user = await this.userService.getByUsername(username);
-        const roomName = user.room.name;
-        const room = await this.getByName(roomName);
+        const room = await this.getByName(user.room.name);
 
-        // TODO: Check whether the user is master.
+        // Check whether the user is the master of the room.
+        if( room.master === user )
+        {
+            // Delete the room.
+            return await this.delete(room.name);
+        }
+        else
+        {
+            // Delete the user.
+            await this.userService.delete(user.username);
 
-        await this.userService.delete(user.username);
+            return await this.getByName(room.name);
+        }
+    }
 
-        return await this.getByName(roomName);
+    /**
+     * Delete the room.
+     * @param name
+     * @return Room
+     */
+    async delete(
+        name: string
+    ): Promise<Room>
+    {
+        const room = await this.getByName(name);
+        return this.roomsRepository.remove(room);
     }
 }
