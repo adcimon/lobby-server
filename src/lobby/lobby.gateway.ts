@@ -86,10 +86,17 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         this.logger.log('GET_ROOM' + ' username:' + username);
 
-        let user = await this.userService.getByUsername(username);
-        const room = await this.roomService.getByName(user.room.name);
+        try
+        {
+            const user = await this.userService.getByUsername(username);
+            const room = await this.roomService.getByName(user.room.name);
 
-        return new GenericResponse('get_room_response', { room });
+            return new GenericResponse('get_room_response', { room });
+        }
+        catch( exception )
+        {
+            return new GenericResponse('get_room_response', { });
+        }
     }
 
     @SubscribeMessage('create_room')
