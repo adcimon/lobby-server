@@ -1,5 +1,5 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
-import { map, Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 @Injectable()
 export class UuidInterceptor implements NestInterceptor
