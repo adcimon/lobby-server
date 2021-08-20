@@ -17,10 +17,10 @@ export class WsExceptionFilter extends BaseWsExceptionFilter
             exception = new GenericErrorException((exception as Error)?.message);
         }
 
-        // Add the UUID to the error.
-        let e = exception.getError() as object;
-        e['data']['uuid'] = data.uuid;
+        // Add the uuid to the error.
+        let error = exception.getError() as object;
+        error['data']['uuid'] = data.uuid;
 
-        socket.send(JSON.stringify(e));
+        socket.send(JSON.stringify(error));
     }
 }

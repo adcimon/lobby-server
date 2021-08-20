@@ -21,7 +21,7 @@ export class AuthInterceptor implements NestInterceptor
         {
             // Verify the token.
             const payload = this.authService.verify(token);
-            if( !('username' in payload) )
+            if( !payload || !('username' in payload) )
             {
                 throw new Error();
             }
@@ -38,11 +38,11 @@ export class AuthInterceptor implements NestInterceptor
         {
             exception = new InvalidTokenException();
 
-            // Add the UUID to the error.
-            let e = exception.getError() as object;
-            e['data']['uuid'] = data.uuid;
+            // Add the uuid to the error.
+            let error = exception.getError() as object;
+            error['data']['uuid'] = data.uuid;
 
-            socket.send(JSON.stringify(e));
+            socket.send(JSON.stringify(error));
             socket.close();
 
             return;
