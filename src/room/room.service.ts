@@ -34,7 +34,7 @@ export class RoomService
         name: string
     ): Promise<Room>
     {
-        const room = this.roomsRepository.findOne({ where: { name }, relations: ['master', 'users'] });
+        const room = await this.roomsRepository.findOne({ where: { name }, relations: ['master', 'users'] });
         if( !room )
         {
             throw new RoomNotFoundException(name);
@@ -156,7 +156,7 @@ export class RoomService
         const room = await this.getByName(user.room.name);
 
         // Check whether the user is the master of the room.
-        if( room.master === user )
+        if( room.master.id === user.id )
         {
             // Delete the room.
             return await this.delete(room.name);

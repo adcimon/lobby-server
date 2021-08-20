@@ -9,15 +9,18 @@ export class WsExceptionFilter extends BaseWsExceptionFilter
     catch( exception: WsException, host: ArgumentsHost )
     {
         const socket = host.switchToWs().getClient() as Socket;
+        const data = host.switchToWs().getData();
 
+        // Check whether the exception is generic.
         if( !(exception instanceof WsException) )
         {
-            let e = new GenericErrorException((exception as Error)?.message);
-            socket.send(JSON.stringify(e.getError()));
+            exception = new GenericErrorException((exception as Error)?.message);
         }
-        else
-        {
-            socket.send(JSON.stringify(exception.getError()));
-        }
+
+        // Add the UUID to the error.
+        let e = exception.getError() as object;
+        e['data']['uuid'] = data.uuid;
+
+        socket.send(JSON.stringify(e));
     }
 }

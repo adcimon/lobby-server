@@ -4,7 +4,8 @@ import { Server } from 'ws';
 import { UseFilters, Logger, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { AuthService } from '../auth/auth.service';
-import { RoomService } from 'src/room/room.service';
+import { UserService } from '../user/user.service';
+import { RoomService } from '../room/room.service';
 import { WsExceptionFilter } from '../exception/ws-exception.filter';
 import { InvalidTokenException } from '../exception/invalid-token.exception';
 import { GenericResponse } from '../response/generic.response';
@@ -23,59 +24,80 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     constructor(
         private readonly authService: AuthService,
+        private readonly userService: UserService,
         private readonly roomService: RoomService
     ) { }
 
     handleConnection( socket: Socket, ...args: any[] )
     {
+        // Authenticate the connection using the token URL parameter.
         const params = new URLSearchParams(args[0].url.replace('/','').replace('?', ''));
         const token = params.get('token');
 
+        // Verify the token.
         try
         {
             const payload = this.authService.verify(token);
-            if( !('username' in payload) )
+            if( !payload || !('username' in payload) )
             {
                 throw new Error();
             }
 
-            this.sessions.set(payload.username, socket);
-            //console.log(this.sessions);
-
             this.logger.log('CONNECTION SUCCESS payload:' + JSON.stringify(payload));
+
+            this.sessions.set(payload.username, socket);
         }
         catch( exception )
         {
             this.logger.log('CONNECTION FAILURE token:' + token);
 
-            let e = new InvalidTokenException();
-            socket.send(JSON.stringify(e.getError()));
+            exception = new InvalidTokenException();
+            socket.send(JSON.stringify(exception.getError()));
             socket.close();
+
+            return;
         }
     }
 
     handleDisconnect( socket: Socket )
     {
         this.logger.log('DISCONNECTION');
-        //console.log(this.sessions);
     }
 
     @SubscribeMessage('ping')
     @UseInterceptors(AuthInterceptor)
     ping(
         @ConnectedSocket() socket: Socket,
+        @MessageBody('uuid') uuid: string,
         @MessageBody('username') username: string
     ): any
     {
         //this.logger.log('PING' + ' username:' + username);
 
-        return new GenericResponse('pong', { });
+        return new GenericResponse('pong', uuid, { });
+    }
+
+    @SubscribeMessage('get_room')
+    @UseInterceptors(AuthInterceptor)
+    async getRoom(
+        @ConnectedSocket() socket: Socket,
+        @MessageBody('uuid') uuid: string,
+        @MessageBody('username') username: string
+    ): Promise<any>
+    {
+        this.logger.log('GET_ROOM' + ' username:' + username);
+
+        let user = await this.userService.getByUsername(username);
+        const room = await this.roomService.getByName(user.room.name);
+
+        return new GenericResponse('get_room_response', uuid, { room });
     }
 
     @SubscribeMessage('create_room')
     @UseInterceptors(AuthInterceptor)
     async createRoom(
         @ConnectedSocket() socket: Socket,
+        @MessageBody('uuid') uuid: string,
         @MessageBody('username') username: string,
         @MessageBody('name') name: string,
         @MessageBody('password') password: string
@@ -85,13 +107,14 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         const room = await this.roomService.create(username, name, password);
 
-        return new GenericResponse('create_room_response', { room });
+        return new GenericResponse('create_room_response', uuid, { room });
     }
 
     @SubscribeMessage('join_room')
     @UseInterceptors(AuthInterceptor)
     async joinRoom(
         @ConnectedSocket() socket: Socket,
+        @MessageBody('uuid') uuid: string,
         @MessageBody('username') username: string,
         @MessageBody('name') name: string,
         @MessageBody('password') password: string
@@ -101,13 +124,14 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         const room = await this.roomService.join(username, name, password);
 
-        return new GenericResponse('join_room_response', { room });
+        return new GenericResponse('join_room_response', uuid, { room });
     }
 
     @SubscribeMessage('leave_room')
     @UseInterceptors(AuthInterceptor)
     async leaveRoom(
         @ConnectedSocket() socket: Socket,
+        @MessageBody('uuid') uuid: string,
         @MessageBody('username') username: string
     ): Promise<any>
     {
@@ -115,6 +139,6 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         const room = await this.roomService.leave(username);
 
-        return new GenericResponse('leave_room_response', { room });
+        return new GenericResponse('leave_room_response', uuid, { room });
     }
 }

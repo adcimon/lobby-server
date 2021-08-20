@@ -30,7 +30,7 @@ export class UserService
         username: string
     ): Promise<User>
     {
-        const user = this.usersRepository.findOne({ where: { username }, relations: ['room'] });
+        const user = await this.usersRepository.findOne({ where: { username }, relations: ['room'] });
         if( !user )
         {
             throw new UserNotFoundException(username);

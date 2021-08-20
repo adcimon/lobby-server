@@ -14,29 +14,38 @@ export class AuthInterceptor implements NestInterceptor
     intercept( context: ExecutionContext, next: CallHandler ): any
     {
         const socket = context.switchToWs().getClient() as Socket;
-
         const data = context.switchToWs().getData();
-        const token = data['token'];
+        const token = data.token;
 
         try
         {
-            // Verify the token, remove the token from the message and add the username to the message.
+            // Verify the token.
             const payload = this.authService.verify(token);
             if( !('username' in payload) )
             {
                 throw new Error();
             }
 
-            delete data['token'];
-            data['username'] = payload.username;
+            // Remove the token from the message.
+            delete data.token;
+
+            // Add the username to the message.
+            data.username = payload.username;
 
             return next.handle().pipe(map(data => (data)));
         }
         catch( exception )
         {
-            let e = new InvalidTokenException();
-            socket.send(JSON.stringify(e.getError()));
+            exception = new InvalidTokenException();
+
+            // Add the UUID to the error.
+            let e = exception.getError() as object;
+            e['data']['uuid'] = data.uuid;
+
+            socket.send(JSON.stringify(e));
             socket.close();
+
+            return;
         }
     }
 }
