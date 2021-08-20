@@ -3,6 +3,7 @@ import { Socket } from 'dgram';
 import { Server } from 'ws';
 import { UseFilters, Logger, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { AuthInterceptor } from '../auth/auth.interceptor';
+import { UuidInterceptor } from './uuid.interceptor';
 import { AuthService } from '../auth/auth.service';
 import { UserService } from '../user/user.service';
 import { RoomService } from '../room/room.service';
@@ -65,23 +66,21 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     }
 
     @SubscribeMessage('ping')
-    @UseInterceptors(AuthInterceptor)
+    @UseInterceptors(AuthInterceptor, UuidInterceptor)
     ping(
         @ConnectedSocket() socket: Socket,
-        @MessageBody('uuid') uuid: string,
         @MessageBody('username') username: string
     ): any
     {
         //this.logger.log('PING' + ' username:' + username);
 
-        return new GenericResponse('pong', uuid, { });
+        return new GenericResponse('pong', { });
     }
 
     @SubscribeMessage('get_room')
-    @UseInterceptors(AuthInterceptor)
+    @UseInterceptors(AuthInterceptor, UuidInterceptor)
     async getRoom(
         @ConnectedSocket() socket: Socket,
-        @MessageBody('uuid') uuid: string,
         @MessageBody('username') username: string
     ): Promise<any>
     {
@@ -90,14 +89,13 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         let user = await this.userService.getByUsername(username);
         const room = await this.roomService.getByName(user.room.name);
 
-        return new GenericResponse('get_room_response', uuid, { room });
+        return new GenericResponse('get_room_response', { room });
     }
 
     @SubscribeMessage('create_room')
-    @UseInterceptors(AuthInterceptor)
+    @UseInterceptors(AuthInterceptor, UuidInterceptor)
     async createRoom(
         @ConnectedSocket() socket: Socket,
-        @MessageBody('uuid') uuid: string,
         @MessageBody('username') username: string,
         @MessageBody('name') name: string,
         @MessageBody('password') password: string
@@ -107,14 +105,13 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         const room = await this.roomService.create(username, name, password);
 
-        return new GenericResponse('create_room_response', uuid, { room });
+        return new GenericResponse('create_room_response', { room });
     }
 
     @SubscribeMessage('join_room')
-    @UseInterceptors(AuthInterceptor)
+    @UseInterceptors(AuthInterceptor, UuidInterceptor)
     async joinRoom(
         @ConnectedSocket() socket: Socket,
-        @MessageBody('uuid') uuid: string,
         @MessageBody('username') username: string,
         @MessageBody('name') name: string,
         @MessageBody('password') password: string
@@ -124,14 +121,13 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         const room = await this.roomService.join(username, name, password);
 
-        return new GenericResponse('join_room_response', uuid, { room });
+        return new GenericResponse('join_room_response', { room });
     }
 
     @SubscribeMessage('leave_room')
-    @UseInterceptors(AuthInterceptor)
+    @UseInterceptors(AuthInterceptor, UuidInterceptor)
     async leaveRoom(
         @ConnectedSocket() socket: Socket,
-        @MessageBody('uuid') uuid: string,
         @MessageBody('username') username: string
     ): Promise<any>
     {
@@ -139,6 +135,6 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         const room = await this.roomService.leave(username);
 
-        return new GenericResponse('leave_room_response', uuid, { room });
+        return new GenericResponse('leave_room_response', { });
     }
 }
