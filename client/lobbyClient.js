@@ -17,7 +17,7 @@ export function LobbyClient( settings )
     };
 
     settings = (typeof settings !== "object") ? { } : settings;
-    settings = Object.assign({}, defaultSettings, settings);
+    settings = Object.assign({ }, defaultSettings, settings);
 
     let console = (settings.debug) ? window.console : null;
 
