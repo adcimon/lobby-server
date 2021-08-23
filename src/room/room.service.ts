@@ -3,9 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Room } from './room.entity';
 import { UserService } from '../user/user.service';
+import { UserNotInRoomException } from '../exception/user-not-in-room.exception';
 import { UserAlreadyInRoomException } from '../exception/user-already-in-room.exception';
-import { RoomAlreadyExistsException } from '../exception/room-already-exists.exception';
 import { RoomNotFoundException } from '../exception/room-not-found.exception';
+import { RoomAlreadyExistsException } from '../exception/room-already-exists.exception';
 import { InvalidRoomPasswordException } from '../exception/invalid-room-password.exception';
 
 @Injectable()
@@ -152,7 +153,18 @@ export class RoomService
         username: string
     ): Promise<Room>
     {
-        const user = await this.userService.getByUsername(username);
+        let user;
+        try
+        {
+            user = await this.userService.getByUsername(username);
+        }
+        catch( exception )
+        {
+            // User not found catched.
+
+            throw new UserNotInRoomException(username);
+        }
+
         const room = await this.getByName(user.room.name);
 
         // Check whether the user is the master of the room.
@@ -180,6 +192,7 @@ export class RoomService
     ): Promise<Room>
     {
         const room = await this.getByName(name);
+
         return this.roomsRepository.remove(room);
     }
 }

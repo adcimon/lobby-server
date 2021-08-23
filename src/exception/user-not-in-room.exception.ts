@@ -1,6 +1,6 @@
 import { WsException } from '@nestjs/websockets';
 
-export class UserAlreadyExistsException extends WsException
+export class UserNotInRoomException extends WsException
 {
     constructor( username: string )
     {
@@ -9,8 +9,8 @@ export class UserAlreadyExistsException extends WsException
             event: 'error',
             data:
             {
-                error: 104,
-                message: 'User ' + username + ' already exists',
+                error: 105,
+                message: 'User ' + username + ' not in room',
                 username: username
             }
         });

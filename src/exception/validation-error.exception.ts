@@ -1,16 +1,16 @@
 import { WsException } from '@nestjs/websockets';
 
-export class InvalidTokenException extends WsException
+export class ValidationErrorException extends WsException
 {
-    constructor()
+    constructor( message?: string )
     {
         super(
         {
             event: 'error',
             data:
             {
-                error: 102,
-                message: 'Invalid token'
+                error: 101,
+                message: message || 'Validation error'
             }
         });
     }
