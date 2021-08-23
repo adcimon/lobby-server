@@ -17,7 +17,7 @@ export function LobbyClient( settings )
     };
 
     settings = (typeof settings !== "object") ? { } : settings;
-    settings = Object.assign(defaultSettings, settings);
+    settings = Object.assign({}, defaultSettings, settings);
 
     let console = (settings.debug) ? window.console : null;
 
@@ -96,7 +96,7 @@ export function LobbyClient( settings )
     {
         console?.log("%c" + "connected" + "%o", settings.debugStyle, socket.url);
 
-        // startKeepAlive();
+        startKeepAlive();
         if( onconnect )
         {
             onconnect({ url: socket.url });
