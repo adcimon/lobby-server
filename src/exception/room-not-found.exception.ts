@@ -9,7 +9,7 @@ export class RoomNotFoundException extends WsException
             event: 'error',
             data:
             {
-                error: 106,
+                error: 107,
                 message: 'Room ' + name + ' not found',
                 name: name
             }

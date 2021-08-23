@@ -1,0 +1,38 @@
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { Socket } from 'dgram';
+import { Observable, map } from 'rxjs';
+import { ValidationErrorException } from '../exception/validation-error.exception';
+
+@Injectable()
+export class ValidationInterceptor implements NestInterceptor
+{
+    constructor( private readonly schema: any )
+    {
+    }
+
+    async intercept( context: ExecutionContext, next: CallHandler ): Promise<Observable<any>>
+    {
+        const socket = context.switchToWs().getClient() as Socket;
+        const data = context.switchToWs().getData();
+
+        try
+        {
+            await this.schema.validate(data, { abortEarly: false });
+
+            return next.handle().pipe(map(data => (data)));
+        }
+        catch( exception )
+        {
+            exception = new ValidationErrorException(exception.message);
+
+            // Add the uuid to the error.
+            let error = exception.getError() as object;
+            error['data']['uuid'] = data.uuid;
+
+            socket.send(JSON.stringify(error));
+            socket.close();
+
+            return;
+        }
+    }
+}

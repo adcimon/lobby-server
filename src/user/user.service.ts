@@ -71,6 +71,7 @@ export class UserService
     ): Promise<User>
     {
         const user = await this.getByUsername(username);
+
         return this.usersRepository.remove(user);
     }
 }
