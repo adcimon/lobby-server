@@ -2,8 +2,6 @@
 
 export function LobbyClient( settings )
 {
-//#region PRIVATE
-
     let defaultSettings =
     {
         // Debug messages to console?
@@ -273,10 +271,6 @@ export function LobbyClient( settings )
         );
     }
 
-//#endregion
-
-//#region PUBLIC
-
     return {
         onConnect,
         onDisconnect,
@@ -288,6 +282,4 @@ export function LobbyClient( settings )
         joinRoom,
         leaveRoom
     };
-
-//#endregion
 }
