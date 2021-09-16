@@ -1,5 +1,5 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
-import { Socket } from 'dgram';
+import { WebSocket } from 'ws';
 import { Observable, map } from 'rxjs';
 import { ValidationErrorException } from '../exception/validation-error.exception';
 
@@ -12,7 +12,7 @@ export class ValidationInterceptor implements NestInterceptor
 
     async intercept( context: ExecutionContext, next: CallHandler ): Promise<Observable<any>>
     {
-        const socket = context.switchToWs().getClient() as Socket;
+        const socket = context.switchToWs().getClient() as WebSocket;
         const data = context.switchToWs().getData();
 
         try

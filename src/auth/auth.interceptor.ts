@@ -1,6 +1,6 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Socket } from 'dgram';
+import { WebSocket } from 'ws';
 import { map } from 'rxjs';
 import { InvalidTokenException } from '../exception/invalid-token.exception';
 
@@ -13,7 +13,7 @@ export class AuthInterceptor implements NestInterceptor
 
     intercept( context: ExecutionContext, next: CallHandler ): any
     {
-        const socket = context.switchToWs().getClient() as Socket;
+        const socket = context.switchToWs().getClient() as WebSocket;
         const data = context.switchToWs().getData();
         const token = data.token;
 
