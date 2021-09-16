@@ -1,5 +1,5 @@
 import { WebSocketGateway, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, ConnectedSocket, MessageBody } from '@nestjs/websockets';
-import { Socket } from 'dgram';
+import { WebSocket } from 'ws';
 import { Logger, UseFilters, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { UserService } from '../user/user.service';
@@ -12,7 +12,7 @@ import { PingSchema, GetRoomSchema, CreateRoomSchema, JoinRoomSchema, LeaveRoomS
 import { WsExceptionFilter } from '../exception/ws-exception.filter';
 import { InvalidTokenException } from '../exception/invalid-token.exception';
 import { GenericResponse } from '../response/generic.response';
-  
+
 @WebSocketGateway()
 @UseInterceptors(ClassSerializerInterceptor)
 @UseFilters(new WsExceptionFilter())
@@ -27,7 +27,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         private readonly sessionService: SessionService
     ) { }
 
-    handleConnection( socket: Socket, ...args: any[] )
+    handleConnection( socket: WebSocket, ...args: any[] )
     {
         // Authenticate the connection using the token URL parameter.
         const params = new URLSearchParams(args[0].url.replace('/','').replace('?', ''));
@@ -42,7 +42,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
                 throw new Error();
             }
 
-            this.logger.log('CONNECTION SUCCESS payload:' + JSON.stringify(payload));
+            this.logger.log('CONNECTED ' + payload.username + ' payload:' + JSON.stringify(payload));
 
             // Create the session.
             this.sessionService.create(payload.username, socket);
@@ -59,15 +59,18 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
     }
 
-    handleDisconnect( socket: Socket )
+    handleDisconnect( socket: WebSocket )
     {
-        this.logger.log('DISCONNECTION');
+        this.logger.log('DISCONNECTED ' + socket.username);
+
+        // Delete the session.
+        this.sessionService.deleteBySocket(socket);
     }
 
     @SubscribeMessage('ping')
     @UseInterceptors(new ValidationInterceptor(PingSchema), AuthInterceptor, new UuidInterceptor())
     ping(
-        @ConnectedSocket() socket: Socket,
+        @ConnectedSocket() socket: WebSocket,
         @MessageBody('username') username: string
     ): any
     {
@@ -79,7 +82,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     @SubscribeMessage('get_room')
     @UseInterceptors(new ValidationInterceptor(GetRoomSchema), AuthInterceptor, new UuidInterceptor())
     async getRoom(
-        @ConnectedSocket() socket: Socket,
+        @ConnectedSocket() socket: WebSocket,
         @MessageBody('username') username: string
     ): Promise<any>
     {
@@ -101,7 +104,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     @SubscribeMessage('create_room')
     @UseInterceptors(new ValidationInterceptor(CreateRoomSchema), AuthInterceptor, new UuidInterceptor())
     async createRoom(
-        @ConnectedSocket() socket: Socket,
+        @ConnectedSocket() socket: WebSocket,
         @MessageBody('username') username: string,
         @MessageBody('name') name: string,
         @MessageBody('password') password: string
@@ -117,7 +120,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     @SubscribeMessage('join_room')
     @UseInterceptors(new ValidationInterceptor(JoinRoomSchema), AuthInterceptor, new UuidInterceptor())
     async joinRoom(
-        @ConnectedSocket() socket: Socket,
+        @ConnectedSocket() socket: WebSocket,
         @MessageBody('username') username: string,
         @MessageBody('name') name: string,
         @MessageBody('password') password: string
@@ -133,7 +136,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     @SubscribeMessage('leave_room')
     @UseInterceptors(new ValidationInterceptor(LeaveRoomSchema), AuthInterceptor, new UuidInterceptor())
     async leaveRoom(
-        @ConnectedSocket() socket: Socket,
+        @ConnectedSocket() socket: WebSocket,
         @MessageBody('username') username: string
     ): Promise<any>
     {

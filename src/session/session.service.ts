@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Socket } from 'dgram';
+import { WebSocket } from 'ws';
 
 @Injectable()
 export class SessionService
 {
-    private userSessions: Map<string, Socket> = new Map;
+    private sessions: Map<string, WebSocket> = new Map;
 
     constructor()
     {
@@ -18,25 +18,50 @@ export class SessionService
      */
     create(
         username: string,
-        socket: Socket
+        socket: WebSocket
     ): any
     {
-        this.userSessions.set(username, socket);
+        socket.username = username;
+        this.sessions.set(username, socket);
 
         return;
     }
 
     /**
-     * Delete the session.
+     * Delete the session by username.
      * @param username
      * @return
      */
-    delete(
+    deleteByUsername(
         username: string
-    ): any
+    ): boolean
     {
-        this.userSessions.delete(username);
+        if( !(username in this.sessions) )
+        {
+            return false;
+        }
 
-        return;
+        this.sessions.delete(username);
+
+        return true;
+    }
+
+    /**
+     * Delete the session by socket.
+     * @param socket
+     * @return
+     */
+    deleteBySocket(
+        socket: WebSocket
+    ): boolean
+    {
+        if( !(socket.username in this.sessions) )
+        {
+            return false;
+        }
+
+        this.sessions.delete(socket.username);
+
+        return true;
     }
 }
