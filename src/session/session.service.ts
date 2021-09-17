@@ -14,54 +14,49 @@ export class SessionService
      * Create a session.
      * @param username
      * @param socket
-     * @return
      */
-    create(
-        username: string,
-        socket: WebSocket
-    ): any
+    create( username: string, socket: WebSocket )
     {
         socket.username = username;
         this.sessions.set(username, socket);
-
-        return;
     }
 
     /**
-     * Delete the session by username.
+     * Get the session's socket.
      * @param username
-     * @return
+     * @return WebSocket
      */
-    deleteByUsername(
-        username: string
-    ): boolean
+    get( username: string ): WebSocket
     {
-        if( !(username in this.sessions) )
+        if( this.sessions.has(username) )
         {
-            return false;
+            return this.sessions.get(username);
         }
 
-        this.sessions.delete(username);
-
-        return true;
+        return null;
     }
 
     /**
-     * Delete the session by socket.
-     * @param socket
-     * @return
+     * Get the sessions' usernames.
+     * @return string[]
      */
-    deleteBySocket(
-        socket: WebSocket
-    ): boolean
+    getUsernames(): string[]
     {
-        if( !(socket.username in this.sessions) )
+        return Array.from(this.sessions.keys());
+    }
+
+    /**
+     * Delete the session.
+     * @param username
+     * @return boolean
+     */
+    delete( username: string ): boolean
+    {
+        if( !this.sessions.has(username) )
         {
             return false;
         }
 
-        this.sessions.delete(socket.username);
-
-        return true;
+        return this.sessions.delete(username);
     }
 }

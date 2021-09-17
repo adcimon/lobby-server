@@ -16,7 +16,7 @@ async function bootstrap()
     app.enableCors();
     app.useWebSocketAdapter(new WsAdapter(app));
 
-    await app.listen(process.env.PORT || 3000);
+    await app.listen(process.env.PORT || 9000);
 
     console.log(`Application running on: ${await app.getUrl()}`);
 }
