@@ -26,9 +26,7 @@ export class UserService
      * @param username
      * @return User
      */
-    async getByUsername(
-        username: string
-    ): Promise<User>
+    async getByUsername( username: string ): Promise<User>
     {
         const user = await this.usersRepository.findOne({ where: { username }, relations: ['room'] });
         if( !user )
@@ -44,9 +42,7 @@ export class UserService
      * @param username
      * @return User
      */
-    async create(
-        username: string
-    ): Promise<User>
+    async create( username: string ): Promise<User>
     {
         let user = await this.usersRepository.findOne({ where: { username } });
         if( user )
@@ -66,9 +62,7 @@ export class UserService
      * @param username
      * @return User
      */
-    async delete(
-        username: string
-    ): Promise<User>
+    async delete( username: string ): Promise<User>
     {
         const user = await this.getByUsername(username);
 

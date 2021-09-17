@@ -31,9 +31,7 @@ export class RoomService
      * @param name
      * @return Room
      */
-    async getByName(
-        name: string
-    ): Promise<Room>
+    async getByName( name: string ): Promise<Room>
     {
         const room = await this.roomsRepository.findOne({ where: { name }, relations: ['master', 'users'] });
         if( !room )

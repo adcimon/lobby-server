@@ -5,6 +5,7 @@ import { AuthService } from '../auth/auth.service';
 import { UserService } from '../user/user.service';
 import { RoomService } from '../room/room.service';
 import { SessionService } from '../session/session.service';
+import { NotificationService } from './notification.service';
 import { ValidationInterceptor } from '../validation/validation.interceptor';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { UuidInterceptor } from '../validation/uuid.interceptor';
@@ -24,10 +25,11 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         private readonly authService: AuthService,
         private readonly userService: UserService,
         private readonly roomService: RoomService,
-        private readonly sessionService: SessionService
+        private readonly sessionService: SessionService,
+        private readonly notificationService: NotificationService
     ) { }
 
-    handleConnection( socket: WebSocket, ...args: any[] )
+    async handleConnection( socket: WebSocket, ...args: any[] )
     {
         // Authenticate the connection using the token URL parameter.
         const params = new URLSearchParams(args[0].url.replace('/','').replace('?', ''));
@@ -46,6 +48,18 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
             // Create the session.
             this.sessionService.create(payload.username, socket);
+
+            // User online.
+            this.notificationService.userOnline(payload.username);
+
+            // User rejoining.
+            try
+            {
+                let user = await this.userService.getByUsername(payload.username);
+                let room = await this.roomService.getByName(user.room.name);
+                this.notificationService.userRejoined(user, room);
+            }
+            catch( exception ) { }
         }
         catch( exception )
         {
@@ -59,12 +73,15 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
     }
 
-    handleDisconnect( socket: WebSocket )
+    async handleDisconnect( socket: WebSocket )
     {
         this.logger.log('DISCONNECTED ' + socket.username);
 
         // Delete the session.
-        this.sessionService.deleteBySocket(socket);
+        this.sessionService.delete(socket.username);
+
+        // User offline.
+        this.notificationService.userOffline(socket.username);
     }
 
     @SubscribeMessage('ping')
@@ -114,6 +131,8 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         const room = await this.roomService.create(username, name, password);
 
+        this.notificationService.roomCreated(room);
+
         return new GenericResponse('create_room_response', { room });
     }
 
@@ -129,6 +148,9 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         this.logger.log('JOIN_ROOM' + ' username:' + username + ' name:' + name + ' password:' + password);
 
         const room = await this.roomService.join(username, name, password);
+        const user = await this.userService.getByUsername(username);
+
+        this.notificationService.guestJoinedRoom(user, room);
 
         return new GenericResponse('join_room_response', { room });
     }
@@ -142,7 +164,28 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         this.logger.log('LEAVE_ROOM' + ' username:' + username);
 
-        await this.roomService.leave(username);
+        let user;
+        let isMaster = false;
+        try
+        {
+            user = await this.userService.getByUsername(username);
+            let room = await this.roomService.getByName(user.room.name);
+            isMaster = (room.master.id == user.id);
+        }
+        catch( exception )
+        {
+        }
+
+        const room = await this.roomService.leave(username);
+
+        if( isMaster )
+        {
+            this.notificationService.roomDeleted(room);
+        }
+        else
+        {
+            this.notificationService.guestLeftRoom(user, room);
+        }
 
         return new GenericResponse('leave_room_response', { });
     }
