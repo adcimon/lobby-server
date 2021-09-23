@@ -1,18 +1,26 @@
 import { WebSocketGateway, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, ConnectedSocket, MessageBody } from '@nestjs/websockets';
 import { WebSocket } from 'ws';
 import { Logger, UseFilters, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+
 import { AuthService } from '../auth/auth.service';
 import { UserService } from '../user/user.service';
 import { RoomService } from '../room/room.service';
 import { SessionService } from '../session/session.service';
 import { NotificationService } from './notification.service';
+
 import { ValidationInterceptor } from '../validation/validation.interceptor';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { UuidInterceptor } from '../validation/uuid.interceptor';
-import { PingSchema, GetRoomSchema, CreateRoomSchema, JoinRoomSchema, LeaveRoomSchema } from '../validation/validation.schema';
+import { PingSchema, GetRoomSchema, GetRoomsSchema, CreateRoomSchema, JoinRoomSchema, LeaveRoomSchema } from '../validation/validation.schema';
 import { WsExceptionFilter } from '../exception/ws-exception.filter';
 import { InvalidTokenException } from '../exception/invalid-token.exception';
-import { GenericResponse } from '../response/generic.response';
+
+import { PongMessage } from '../message/pong.message';
+import { GetRoomResponse } from '../message/get-room.response';
+import { GetRoomsResponse } from '../message/get-rooms.response';
+import { CreateRoomResponse } from '../message/create-room.response';
+import { JoinRoomResponse } from '../message/join-room.response';
+import { LeaveRoomResponse } from '../message/leave-room.response';
 
 @WebSocketGateway()
 @UseInterceptors(ClassSerializerInterceptor)
@@ -93,7 +101,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         //this.logger.log('PING' + ' username:' + username);
 
-        return new GenericResponse('pong', { });
+        return new PongMessage();
     }
 
     @SubscribeMessage('get_room')
@@ -110,11 +118,31 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
             const user = await this.userService.getByUsername(username);
             const room = await this.roomService.getByName(user.room.name);
 
-            return new GenericResponse('get_room_response', { room });
+            return new GetRoomResponse({ room });
         }
         catch( exception )
         {
-            return new GenericResponse('get_room_response', { });
+            return new GetRoomResponse();
+        }
+    }
+
+    @SubscribeMessage('get_rooms')
+    @UseInterceptors(new ValidationInterceptor(GetRoomsSchema), AuthInterceptor, new UuidInterceptor())
+    async getRooms(
+        @ConnectedSocket() socket: WebSocket
+    ): Promise<any>
+    {
+        this.logger.log('GET_ROOMS');
+
+        try
+        {
+            const rooms = await this.roomService.getAll();
+
+            return new GetRoomsResponse({ rooms });
+        }
+        catch( exception )
+        {
+            return new GetRoomsResponse();
         }
     }
 
@@ -133,7 +161,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         this.notificationService.roomCreated(room);
 
-        return new GenericResponse('create_room_response', { room });
+        return new CreateRoomResponse({ room });
     }
 
     @SubscribeMessage('join_room')
@@ -152,7 +180,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         this.notificationService.guestJoinedRoom(user, room);
 
-        return new GenericResponse('join_room_response', { room });
+        return new JoinRoomResponse({ room });
     }
 
     @SubscribeMessage('leave_room')
@@ -187,6 +215,6 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
             this.notificationService.guestLeftRoom(user, room);
         }
 
-        return new GenericResponse('leave_room_response', { });
+        return new LeaveRoomResponse();
     }
 }

@@ -12,6 +12,12 @@ export const GetRoomSchema = yup.object().shape(
     uuid: yup.string().required().typeError('Invalid uuid')
 });
 
+export const GetRoomsSchema = yup.object().shape(
+{
+    token: yup.string().required().typeError('Invalid token'),
+    uuid: yup.string().required().typeError('Invalid uuid')
+});
+
 export const CreateRoomSchema = yup.object().shape(
 {
     token: yup.string().required().typeError('Invalid token'),

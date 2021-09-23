@@ -1,0 +1,48 @@
+html
+{
+    /* Layout */
+    overflow-x: hidden;
+
+	/* Size */
+    height: 100%;
+    width: 100%;
+
+	/* Space */
+    margin: 0;
+}
+
+body
+{
+	/* Size */
+    height: 100%;
+    width: 100%;
+
+	/* Space */
+	margin: 0;
+}
+
+#content *
+{
+    /* Space */
+    margin: 5px;
+}
+
+.menu
+{
+    /* Space */
+    margin-bottom: 15px !important;
+
+    /* Style */
+    border: 1px solid rgba(80, 80, 80, 0.75);
+}
+
+.title
+{
+    /* Space */
+    margin: 0px !important;
+    padding: 5px;
+
+    /* Style */
+    background-color: rgba(33, 34, 38, 1);
+    color: white;
+}
