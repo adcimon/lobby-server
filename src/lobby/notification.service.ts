@@ -3,6 +3,14 @@ import { SessionService } from '../session/session.service';
 import { User } from '../user/user.entity';
 import { Room } from '../room/room.entity';
 
+import { UserOnlineMessage } from '../message/user-online.message';
+import { UserOfflineMessage } from '../message/user-offline.message';
+import { RoomCreatedMessage } from '../message/room-created.message';
+import { RoomDeletedMessage } from '../message/room-deleted.message';
+import { GuestJoinedRoomMessage } from '../message/guest-joined-room.message';
+import { GuestLeftRoomMessage } from '../message/guest-left-room.message';
+import { UserRejoinedMessage } from '../message/user-rejoined.message';
+
 @Injectable()
 export class NotificationService
 {
@@ -82,12 +90,7 @@ export class NotificationService
      */
     userOnline( username: string )
     {
-        let message =
-        {
-            event: "user_online",
-            data: { username }
-        };
-
+        let message = new UserOnlineMessage({ username });
         this.broadcastAll(message);
     }
 
@@ -97,12 +100,7 @@ export class NotificationService
      */
     userOffline( username: string )
     {
-        let message =
-        {
-            event: "user_offline",
-            data: { username }
-        };
-
+        let message = new UserOfflineMessage({ username });
         this.broadcastAll(message);
     }
 
@@ -112,12 +110,19 @@ export class NotificationService
      */
     roomCreated( room: Room )
     {
-        let message =
-        {
-            event: "room_created",
-            data: { room }
-        };
+        delete room.password;
+        let message = new RoomCreatedMessage({ room });
+        this.broadcastAll(message);
+    }
 
+    /**
+     * Send a room deleted message.
+     * @param room
+     */
+    roomDeleted( room: Room )
+    {
+        delete room.password;
+        let message = new RoomDeletedMessage({ room });
         this.broadcastAll(message);
     }
 
@@ -128,12 +133,9 @@ export class NotificationService
      */
     guestJoinedRoom( user: User, room: Room )
     {
-        let message =
-        {
-            event: "guest_joined_room",
-            data: { user, room }
-        };
-
+        delete user.room.password;
+        delete room.password;
+        let message = new GuestJoinedRoomMessage({ user, room });
         this.broadcastAll(message);
     }
 
@@ -144,27 +146,9 @@ export class NotificationService
      */
     guestLeftRoom( user: User, room: Room )
     {
-        let message =
-        {
-            event: "guest_left_room",
-            data: { user, room }
-        };
-
-        this.broadcastAll(message);
-    }
-
-    /**
-     * Send a room deleted message.
-     * @param room
-     */
-    roomDeleted( room: Room )
-    {
-        let message =
-        {
-            event: "room_deleted",
-            data: { room }
-        };
-
+        delete user.room.password;
+        delete room.password;
+        let message = new GuestLeftRoomMessage({ user, room });
         this.broadcastAll(message);
     }
 
@@ -175,12 +159,9 @@ export class NotificationService
      */
     userRejoined( user: User, room: Room )
     {
-        let message =
-        {
-            event: "user_rejoined",
-            data: { user, room }
-        };
-
+        delete user.room.password;
+        delete room.password;
+        let message = new UserRejoinedMessage({ user, room });
         this.broadcastRoom(message, room);
     }
 }

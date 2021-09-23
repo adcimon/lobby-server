@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <title>Lobby Client</title>
+
+    <meta charset="utf-8">
+
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="language" content="en">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS -->
+    <link type="text/css" rel="stylesheet" href="css/style.css">
+
+    <!-- JS -->
+    <script type="text/javascript" src="js/utils.js"></script>
+    <script type="module" src="index.js"></script>
+
+</head>
+
+<body hidden>
+
+    <div id="content">
+
+        <div class="menu">
+            <div class="title">Login</div>
+            <select id="tokenSelect">
+                <option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjAsInVzZXJuYW1lIjoiR2FuZGFsZiJ9.qk_Ass_y4D9jnQR-fbwQIwbtJlK4eXo9DzVrMx88YJc">Gandalf</option>
+                <option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjAsInVzZXJuYW1lIjoiRnJvZG8ifQ.-diFZ4finBODXeFwAuyiUgUx1uqZ-ekTLcoqhfIdAzc">Frodo</option>
+                <option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjAsInVzZXJuYW1lIjoiU2FtIn0.-5UlfOJvSpakZxYmbXxOTnK4yVdZ7RXs-hlPQdv-ggQ">Sam</option>
+                <option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjAsInVzZXJuYW1lIjoiTWVycnkifQ.uCIusMakRxXxIz_Brl3vsnCoEryV__mZcZyXl3Z1ASM">Merry</option>
+                <option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjAsInVzZXJuYW1lIjoiUGlwcGluIn0.9c7IZtPKy1gf8BEFzxVJvdQlILwicaVb15JzmP6dnuM">Pippin</option>
+                <option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjAsInVzZXJuYW1lIjoiQXJhZ29ybiJ9.228JIUxVUd4_JthUqtj4-2Ybc4QGrq3WXRKXSa4kyq4">Aragorn</option>
+                <option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjAsInVzZXJuYW1lIjoiTGVnb2xhcyJ9.yaFcCMg7SLLcDXx39WE4DUb5FZAGUxVW0LJprA8ZCvA">Legolas</option>
+                <option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjAsInVzZXJuYW1lIjoiR2ltbGkifQ.zxrJwstDt9dVrOwscF-rQ-dpJ1zE4ip-DQ8kz9zzUPs">Gimli</option>
+                <option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjAsInVzZXJuYW1lIjoiQm9yb21pciJ9.KFYV444OoP_pqHni23Sc0kMXUYbp2HLDLxxTNl2RudY">Boromir</option>
+            </select>
+            <button id="connectButton" type="button">Connect</button>
+            <button id="disconnectButton" type="button">Disconnect</button>
+        </div>
+
+        <div id="lobby" class="menu">
+            <div class="title">Lobby</div>
+            <div>
+                <input id="roomInput" type="text" placeholder="Room">
+                <input id="passwordInput" type="text" placeholder="Password">
+                <button id="createRoomButton" type="button">Create</button>
+                <button id="joinRoomButton" type="button">Join</button>
+                <button id="leaveRoomButton" type="button">Leave</button>
+            </div>
+            <div>
+                <div>
+                    <div>
+                        <div>Responses</div>
+                        <textarea id="responseLog" rows="20" cols="50" readonly></textarea>
+                    </div>
+                    <div>
+                        <div>Events</div>
+                        <textarea id="eventLog" rows="20" cols="50" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
