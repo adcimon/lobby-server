@@ -37,8 +37,6 @@ export function LobbyClient( settings )
 
     /**
      * Add a function that will be called whenever the specified event is emitted.
-     * @param {String} event - The event name.
-     * @param {Function} listener - The function to add.
      */
     let on = function( event, listener )
     {
@@ -64,8 +62,6 @@ export function LobbyClient( settings )
  
     /**
      * Remove the function previously added to be called whenever the specified event is emitted.
-     * @param {String} event - The event name.
-     * @param {Function} listener - The previously added function.
      */
     let off = function( event, listener )
     {
@@ -94,7 +90,6 @@ export function LobbyClient( settings )
  
     /**
      * Emit the specified event.
-     * @param {String} event - The event name.
      */
     let emit = function( event )
     {
@@ -119,7 +114,6 @@ export function LobbyClient( settings )
 
     /**
      * Connect to the server.
-     * @param {String} url - The URL of the server.
      */
     let connect = function( url, accessToken )
     {
@@ -141,7 +135,6 @@ export function LobbyClient( settings )
 
     /**
      * Event handler called when the connection is opened.
-     * @param {Object} event - The dispatched event.
      */
     let onOpen = function( event )
     {
@@ -154,7 +147,6 @@ export function LobbyClient( settings )
 
     /**
      * Event handler called when the connection is closed.
-     * @param {Object} event - The dispatched event.
      */
     let onClose = function( event )
     {
@@ -167,7 +159,6 @@ export function LobbyClient( settings )
 
     /**
      * Event handler called when a message is received from the server.
-     * @param {Object} msg - The message received.
      */
     let onMessage = function( msg )
     {
@@ -195,9 +186,6 @@ export function LobbyClient( settings )
 
     /**
      * Send a message to the server.
-     * @param {Object} message - The message to send.
-     * @param {Function} response - The response listener.
-     * @return {Boolean} Whether the message has been sent.
      */
     let sendMessage = function( message, response )
     {
@@ -254,7 +242,6 @@ export function LobbyClient( settings )
 
     /**
      * Send a ping to the server.
-     * @return {Boolean} Whether the message has been sent.
      */
     let ping = function()
     {
@@ -268,8 +255,6 @@ export function LobbyClient( settings )
 
     /**
      * Get the user's room.
-     * @param {Function} response - The response listener.
-     * @return {Boolean} Whether the message has been sent.
      */
     let getRoom = function( response )
     {
@@ -283,8 +268,6 @@ export function LobbyClient( settings )
 
     /**
      * Get the lobby rooms.
-     * @param {Function} response - The response listener.
-     * @return {Boolean} Whether the message has been sent.
      */
     let getRooms = function( response )
     {
@@ -298,10 +281,6 @@ export function LobbyClient( settings )
 
     /**
      * Create a room.
-     * @param {String} name - The room name.
-     * @param {String} password - The room password.
-     * @param {Function} response - The response listener.
-     * @return {Boolean} Whether the message has been sent.
      */
     let createRoom = function( name, password, response )
     {
@@ -319,10 +298,6 @@ export function LobbyClient( settings )
 
     /**
      * Join a room.
-     * @param {String} name - The room name.
-     * @param {String} password - The room password.
-     * @param {Function} response - The response listener.
-     * @return {Boolean} Whether the message has been sent.
      */
     let joinRoom = function( name, password, response )
     {
@@ -340,8 +315,6 @@ export function LobbyClient( settings )
 
     /**
      * Leave a room.
-     * @param {Function} response - The response listener.
-     * @return {Boolean} Whether the message has been sent.
      */
     let leaveRoom = function( response )
     {
@@ -356,7 +329,6 @@ export function LobbyClient( settings )
     /**
      * Generate a universally unique identifier.
      * Reference: RFC 4122 https://www.ietf.org/rfc/rfc4122.txt
-     * @return {String} The universally unique identifier.
      */
     let uuid = function()
     {
@@ -366,7 +338,6 @@ export function LobbyClient( settings )
     /**
      * Generate a universally unique identifier v4.
      * Reference: https://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid
-     * @return {String} The universally unique identifier v4.
      */
     let uuidv4 = function()
     {
