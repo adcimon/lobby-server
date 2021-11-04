@@ -19,7 +19,6 @@ export class RoomService
 
     /**
      * Get all the rooms.
-     * @returns Room[]
      */
     async getAll(): Promise<Room[]>
     {
@@ -28,8 +27,6 @@ export class RoomService
 
     /**
      * Get a room by name.
-     * @param name
-     * @return Room
      */
     async getByName( name: string ): Promise<Room>
     {
@@ -44,10 +41,6 @@ export class RoomService
 
     /**
      * Create a room.
-     * @param username
-     * @param name
-     * @param password
-     * @return Room
      */
     async create(
         username: string,
@@ -101,10 +94,6 @@ export class RoomService
 
     /**
      * Join a room.
-     * @param username
-     * @param name
-     * @param password
-     * @return Room
      */
     async join(
         username: string,
@@ -144,8 +133,6 @@ export class RoomService
 
     /**
      * Leave a room.
-     * @param username
-     * @return Room
      */
     async leave(
         username: string
@@ -182,8 +169,6 @@ export class RoomService
 
     /**
      * Delete the room.
-     * @param name
-     * @return Room
      */
     async delete(
         name: string

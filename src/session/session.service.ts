@@ -12,8 +12,6 @@ export class SessionService
 
     /**
      * Create a session.
-     * @param username
-     * @param socket
      */
     create( username: string, socket: WebSocket )
     {
@@ -23,8 +21,6 @@ export class SessionService
 
     /**
      * Get the session's socket.
-     * @param username
-     * @return WebSocket
      */
     get( username: string ): WebSocket
     {
@@ -38,7 +34,6 @@ export class SessionService
 
     /**
      * Get the sessions' usernames.
-     * @return string[]
      */
     getUsernames(): string[]
     {
@@ -47,8 +42,6 @@ export class SessionService
 
     /**
      * Delete the session.
-     * @param username
-     * @return boolean
      */
     delete( username: string ): boolean
     {
