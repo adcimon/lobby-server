@@ -14,7 +14,6 @@ export class UserService
 
     /**
      * Get all the users.
-     * @returns User[]
      */
     async getAll(): Promise<User[]>
     {
@@ -23,8 +22,6 @@ export class UserService
 
     /**
      * Get a user by username.
-     * @param username
-     * @return User
      */
     async getByUsername( username: string ): Promise<User>
     {
@@ -39,8 +36,6 @@ export class UserService
 
     /**
      * Create a user.
-     * @param username
-     * @return User
      */
     async create( username: string ): Promise<User>
     {
@@ -59,8 +54,6 @@ export class UserService
 
     /**
      * Delete the user.
-     * @param username
-     * @return User
      */
     async delete( username: string ): Promise<User>
     {

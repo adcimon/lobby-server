@@ -22,7 +22,6 @@ export class NotificationService
 
     /**
      * Broadcast a message to all the sessions.
-     * @param message
      */
     private broadcastAll( message: any )
     {
@@ -54,7 +53,6 @@ export class NotificationService
 
     /**
      * Broadcast a message to the room sessions.
-     * @param message
      */
     private broadcastRoom( message: any, room: Room )
     {
@@ -86,7 +84,6 @@ export class NotificationService
 
     /**
      * Send the user online message.
-     * @param username
      */
     userOnline( username: string )
     {
@@ -96,7 +93,6 @@ export class NotificationService
 
     /**
      * Send the user offline message.
-     * @param username
      */
     userOffline( username: string )
     {
@@ -106,7 +102,6 @@ export class NotificationService
 
     /**
      * Send the room created message.
-     * @param room
      */
     roomCreated( room: Room )
     {
@@ -117,7 +112,6 @@ export class NotificationService
 
     /**
      * Send a room deleted message.
-     * @param room
      */
     roomDeleted( room: Room )
     {
@@ -128,8 +122,6 @@ export class NotificationService
 
     /**
      * Send the guest joined room message.
-     * @param user
-     * @param room
      */
     guestJoinedRoom( user: User, room: Room )
     {
@@ -141,8 +133,6 @@ export class NotificationService
 
     /**
      * Send a guest left room message.
-     * @param user
-     * @param room
      */
     guestLeftRoom( user: User, room: Room )
     {
@@ -154,8 +144,6 @@ export class NotificationService
 
     /**
      * Send the user rejoined message.
-     * @param user
-     * @param room
      */
     userRejoined( user: User, room: Room )
     {
