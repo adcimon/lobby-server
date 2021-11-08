@@ -1,6 +1,6 @@
 import { WebSocketGateway, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, ConnectedSocket, MessageBody } from '@nestjs/websockets';
 import { WebSocket } from 'ws';
-import { Body, Logger, UseFilters, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Logger, UseFilters, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 
 import { AuthService } from '../auth/auth.service';
 import { UserService } from '../user/user.service';

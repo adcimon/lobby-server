@@ -1,6 +1,6 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { WebSocket } from 'ws';
-import { Observable, map } from 'rxjs';
+import { Observable, map, EMPTY } from 'rxjs';
 import { ValidationErrorException } from '../exception/validation-error.exception';
 
 @Injectable()
@@ -30,9 +30,9 @@ export class ValidationInterceptor implements NestInterceptor
             error['data']['uuid'] = data.uuid;
 
             socket.send(JSON.stringify(error));
-            socket.close();
+            //socket.close();
 
-            return;
+            return EMPTY;
         }
     }
 }
