@@ -152,12 +152,13 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @ConnectedSocket() socket: WebSocket,
         @MessageBody('username') username: string,
         @MessageBody('name') name: string,
-        @MessageBody('password') password: string
+        @MessageBody('password') password: string,
+        @MessageBody('icon') icon: string
     ): Promise<any>
     {
-        this.logger.log('CREATE_ROOM' + ' username:' + username + ' name:' + name + ' password:' + password);
+        this.logger.log('CREATE_ROOM' + ' username:' + username + ' name:' + name + ' password:' + password + ' icon:' + icon);
 
-        const room = await this.roomService.create(username, name, password);
+        const room = await this.roomService.create(username, name, password, icon);
 
         this.notificationService.roomCreated(room);
 
