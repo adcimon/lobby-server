@@ -7,7 +7,7 @@ var lobbyUrl = "ws://localhost:9010";
 var lobbyClient;
 
 var tokenSelect, connectButton, disconnectButton;
-var lobby, roomInput, passwordInput, createRoomButton, joinRoomButton, leaveRoomButton;
+var lobby, roomInput, passwordInput, iconInput, createRoomButton, joinRoomButton, leaveRoomButton;
 var responseLog, eventLog;
 
 window.addEventListener("load", main);
@@ -41,6 +41,7 @@ function initUI()
     // Room.
     roomInput = document.body.query("#roomInput");
     passwordInput = document.body.query("#passwordInput");
+    iconInput = document.body.query("#iconInput");
     createRoomButton = document.body.query("#createRoomButton");
     createRoomButton.on("click", onClickCreateRoomButton);
     joinRoomButton = document.body.query("#joinRoomButton");
@@ -95,7 +96,8 @@ function onClickCreateRoomButton()
 {
     let name = roomInput.value;
     let password = passwordInput.value;
-    lobbyClient.createRoom(name, password, function( event )
+    let icon = iconInput.value;
+    lobbyClient.createRoom(name, password, icon, function( event )
     {
         responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
     });

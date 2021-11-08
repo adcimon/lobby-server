@@ -45,7 +45,8 @@ export class RoomService
     async create(
         username: string,
         name: string,
-        password: string = ''
+        password: string,
+        icon: string
     ): Promise<Room>
     {
         // Check whether the room already exists.
@@ -85,6 +86,7 @@ export class RoomService
         room = this.roomsRepository.create({
             name: name,
             password: password,
+            icon: icon,
             master: user,
             users: [user]
         });
@@ -98,7 +100,7 @@ export class RoomService
     async join(
         username: string,
         name: string,
-        password: string = ''
+        password: string
     ): Promise<Room>
     {
         const room = await this.getByName(name);

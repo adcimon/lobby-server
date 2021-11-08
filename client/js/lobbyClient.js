@@ -2,8 +2,8 @@
 
 export const LobbyEvent =
 {
-    ClientConnected:        "client_connected",
-    ClientDisconnected:     "client_disconnected",
+	ClientConnected:        "client_connected",
+	ClientDisconnected:     "client_disconnected",
     Error:                  "error",
     UserOnline:             "user_online",
     UserOffline:            "user_offline",
@@ -282,7 +282,7 @@ export function LobbyClient( settings )
     /**
      * Create a room.
      */
-    let createRoom = function( name, password, response )
+    let createRoom = function( name, password, icon, response )
     {
         let message =
         {
@@ -290,7 +290,8 @@ export function LobbyClient( settings )
             data:
             {
                 name: name,
-                password: password
+                password: password,
+                icon: icon
             }
         };
         return sendMessage(message, response);
