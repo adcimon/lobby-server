@@ -3,7 +3,7 @@
 import { LobbyEvent, LobbyClient } from "./js/lobbyClient.js";
 
 //var lobbyUrl = "wss://" + window.location.host;
-var lobbyUrl = "ws://localhost:9010";
+var lobbyUrl = "ws://localhost:9000";
 var lobbyClient;
 
 var tokenSelect, connectButton, disconnectButton;

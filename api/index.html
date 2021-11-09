@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <title>API Documentation</title>
+
+	<meta charset="utf-8">
+
+	<meta name="author" content="">
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<meta name="language" content="en">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link type="text/css" rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+    <div class="menu">
+        <div class="logo">
+            <img src="img/logo.png" height="32"/>
+            <span>API Documentation</span>
+        </div>
+        <div class="navbar">
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#ping">Ping</a></li>
+                <li><a href="#getRoom">Get Room</a></li>
+                <li><a href="#getRooms">Get Rooms</a></li>
+                <li><a href="#createRoom">Create Room</a></li>
+                <li><a href="#joinRoom">Join Room</a></li>
+                <li><a href="#leaveRoom">Leave Room</a></li>
+                <li><a href="#userOnline">User Online</a></li>
+                <li><a href="#userOffline">User Offline</a></li>
+                <li><a href="#roomCreated">Room Created</a></li>
+                <li><a href="#roomDeleted">Room Deleted</a></li>
+                <li><a href="#guestJoinedRoom">Guest Joined Room</a></li>
+                <li><a href="#guestLeftRoom">Guest Left Room</a></li>
+                <li><a href="#userRejoined">User Rejoined</a></li>
+                <li><a href="#errors">Errors</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="content-page">
+        <div class="content">
+
+            <!-- Introduction -->
+            <div id="introduction" class="content-section">
+                <h1>Introduction</h1>
+                <p>Lobby Server is a general-purpose WebSocket-based lobby server.</p>
+                <p>The authentication method used is <a href="https://jwt.io/" target="_blank">JSON Web Token</a>. The client must send the token in the connection URL and messages.</p>
+                <p><code>wss://localhost:9000/token</code></p>
+            </div>
+
+            <!-- API -->
+            <div class="content-section">
+                <h2>API</h2>
+            </div>
+
+            <!-- Ping -->
+            <div id="ping" class="content-section">
+                <div class="websocket">Ping</div>
+                <p>Ping the server.<br></p>
+                <br>
+
+                <h3 class="protected">Message</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td class="required">ping</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+
+                <h3 class="json">Response</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>pong</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td>The message universally unique identifier.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- Get Room -->
+            <div id="getRoom" class="content-section">
+                <div class="websocket">Get Room</div>
+                <p>Get the user's room.<br></p>
+                <br>
+
+                <h3 class="protected">Message</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td class="required">get_room</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+
+                <h3 class="json">Response</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>get_room_response</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The user's room.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td>The message universally unique identifier.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- Get Rooms -->
+            <div id="getRooms" class="content-section">
+                <div class="websocket">Get Rooms</div>
+                <p>Get the rooms.<br></p>
+                <br>
+
+                <h3 class="protected">Message</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td class="required">get_rooms</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+
+                <h3 class="json">Response</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>get_rooms_response</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>rooms</td>
+                                            <td>json[]</td>
+                                            <td>The lobby's rooms.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td>The message universally unique identifier.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- Create Room -->
+            <div id="createRoom" class="content-section">
+                <div class="websocket">Create Room</div>
+                <p>Create a new room.<br></p>
+                <br>
+
+                <h3 class="protected">Message</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td class="required">create_room</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>name</td>
+                                            <td>string</td>
+                                            <td class="required">The room's name.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>password</td>
+                                            <td>string</td>
+                                            <td>The room's password.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>icon</td>
+                                            <td>string</td>
+                                            <td>The room's icon.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+
+                <h3 class="json">Response</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>create_room_response</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The created room.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td>The message universally unique identifier.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- Join Room -->
+            <div id="joinRoom" class="content-section">
+                <div class="websocket">Join Room</div>
+                <p>Join a room.<br></p>
+                <br>
+
+                <h3 class="protected">Message</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td class="required">join_room</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>name</td>
+                                            <td>string</td>
+                                            <td class="required">The room's name.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>password</td>
+                                            <td>string</td>
+                                            <td>The room's password.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+
+                <h3 class="json">Response</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>join_room_response</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The joined room.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td>The message universally unique identifier.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- Leave Room -->
+            <div id="leaveRoom" class="content-section">
+                <div class="websocket">Leave Room</div>
+                <p>Leave a room.<br></p>
+                <br>
+
+                <h3 class="protected">Message</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td class="required">leave_room</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+
+                <h3 class="json">Response</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>leave_room_response</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The left room.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td>The message universally unique identifier.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- User Online -->
+            <div id="userOnline" class="content-section">
+                <div class="websocket">User Online</div>
+                <p>A user came online.<br></p>
+                <br>
+
+                <h3 class="json">Event</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>user_online</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>username</td>
+                                            <td>string</td>
+                                            <td>The user's username.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- User Offline -->
+            <div id="userOffline" class="content-section">
+                <div class="websocket">User Offline</div>
+                <p>A user went offline.<br></p>
+                <br>
+
+                <h3 class="json">Event</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>user_offline</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>username</td>
+                                            <td>string</td>
+                                            <td>The user's username.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- Room Created -->
+            <div id="roomCreated" class="content-section">
+                <div class="websocket">Room Created</div>
+                <p>A room was created.<br></p>
+                <br>
+
+                <h3 class="json">Event</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>room_created</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The created room.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- Room Deleted -->
+            <div id="roomDeleted" class="content-section">
+                <div class="websocket">Room Deleted</div>
+                <p>A room was deleted.<br></p>
+                <br>
+
+                <h3 class="json">Event</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>room_deleted</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The deleted room.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- Guest Joined Room -->
+            <div id="guestJoinedRoom" class="content-section">
+                <div class="websocket">Guest Joined Room</div>
+                <p>A guest joined a room.<br></p>
+                <br>
+
+                <h3 class="json">Event</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>guest_joined_room</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>user</td>
+                                            <td>json</td>
+                                            <td>The joined user.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The joined room.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- Guest Left Room -->
+            <div id="guestLeftRoom" class="content-section">
+                <div class="websocket">Guest Left Room</div>
+                <p>A guest left a room.<br></p>
+                <br>
+
+                <h3 class="json">Event</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>guest_left_room</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>user</td>
+                                            <td>json</td>
+                                            <td>The left user.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The left room.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- User Rejoined -->
+            <div id="userRejoined" class="content-section">
+                <div class="websocket">User Rejoined</div>
+                <p>A user rejoined a room.<br></p>
+                <br>
+
+                <h3 class="json">Event</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>user_rejoined</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>user</td>
+                                            <td>json</td>
+                                            <td>The rejoined user.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The rejoined room.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- Errors -->
+            <div id="errors" class="content-section">
+                <h2>Errors</h2>
+                <p>The server uses the following error schema:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>error</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>error</td>
+                                            <td>number</td>
+                                            <td>The error code.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>message</td>
+                                            <td>string</td>
+                                            <td>The error message.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td>The message universally unique identifier.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Error</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>100</td>
+                            <td>Generic error.</td>
+                        </tr>
+                        <tr>
+                            <td>101</td>
+                            <td>Validation error.</td>
+                        </tr>
+                        <tr>
+                            <td>102</td>
+                            <td>Invalid token.</td>
+                        </tr>
+                        <tr>
+                            <td>103</td>
+                            <td>User not found.</td>
+                        </tr>
+                        <tr>
+                            <td>104</td>
+                            <td>User already exists.</td>
+                        </tr>
+                        <tr>
+                            <td>105</td>
+                            <td>User not in room.</td>
+                        </tr>
+                        <tr>
+                            <td>106</td>
+                            <td>User already in room.</td>
+                        </tr>
+                        <tr>
+                            <td>107</td>
+                            <td>Room not found.</td>
+                        </tr>
+                        <tr>
+                            <td>108</td>
+                            <td>Room already exists.</td>
+                        </tr>
+                        <tr>
+                            <td>109</td>
+                            <td>Invalid room password.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>
