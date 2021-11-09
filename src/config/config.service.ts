@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { join } from 'path';
 
 @Injectable()
 export class ConfigService
@@ -27,6 +28,14 @@ export class ConfigService
                 return null;
             }
         }
+    }
+
+    /**
+     * Get the static path.
+     */
+    getStaticPath(): string
+    {
+        return join(__dirname, process.env.STATIC_PATH);
     }
 
     /**

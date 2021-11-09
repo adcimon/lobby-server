@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from './config/config.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
@@ -11,6 +12,14 @@ import { ConfigService } from './config/config.service';
 @Module({
     imports: [
         ConfigModule,
+        ServeStaticModule.forRootAsync(
+        {
+            inject: [ConfigService],
+            useFactory: ( configService: ConfigService ) =>
+            {
+                return [{ rootPath: configService.getStaticPath() }];
+            }
+        }),
         TypeOrmModule.forRootAsync(
             {
                 inject: [ConfigService],
