@@ -36,6 +36,7 @@ export const CreateRoomSchema = yup.object().shape(
     uuid:       yup.string().required('UUID is required').typeError('Invalid UUID'),
     name:       yup.string().required('Name is required').typeError('Invalid name'),
     password:   yup.string().matches(PASSWORD_REGEXP, { message: PASSWORD_MESSAGE, excludeEmptyString: true }).typeError('Invalid password'),
+    hidden:     yup.boolean().typeError('Invalid hidden'),
     icon:       yup.string().typeError('Invalid icon')
 });
 

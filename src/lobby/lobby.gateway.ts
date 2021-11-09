@@ -136,7 +136,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         try
         {
-            const rooms = await this.roomService.getAll();
+            const rooms = await this.roomService.getAll(true);
 
             return new GetRoomsResponse({ rooms });
         }
@@ -153,12 +153,13 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('username') username: string,
         @MessageBody('name') name: string,
         @MessageBody('password') password: string,
+        @MessageBody('hidden') hidden: boolean,
         @MessageBody('icon') icon: string
     ): Promise<any>
     {
         this.logger.log('CREATE_ROOM' + ' username:' + username + ' name:' + name + ' password:' + password + ' icon:' + icon);
 
-        const room = await this.roomService.create(username, name, password, icon);
+        const room = await this.roomService.create(username, name, password, hidden, icon);
 
         this.notificationService.roomCreated(room);
 
