@@ -15,6 +15,9 @@ export class Room
     @Exclude() // Used with class serializer interceptor to exclude from responses.
     password: string;
 
+    @Column({ default: false })
+    hidden: boolean;
+
     @Column({ default: '' })
     icon: string;
 

@@ -20,9 +20,16 @@ export class RoomService
     /**
      * Get all the rooms.
      */
-    async getAll(): Promise<Room[]>
+    async getAll( excludeHidden: boolean = false ): Promise<Room[]>
     {
-        return await this.roomsRepository.find({ relations: ['master', 'users'] });
+        if( excludeHidden )
+        {
+            return await this.roomsRepository.find({ where: { hidden: false }, relations: ['master', 'users'] });
+        }
+        else
+        {
+            return await this.roomsRepository.find({ relations: ['master', 'users'] });
+        }
     }
 
     /**
@@ -46,6 +53,7 @@ export class RoomService
         username: string,
         name: string,
         password: string,
+        hidden: boolean,
         icon: string
     ): Promise<Room>
     {
@@ -86,6 +94,7 @@ export class RoomService
         room = this.roomsRepository.create({
             name: name,
             password: password,
+            hidden: hidden,
             icon: icon,
             master: user,
             users: [user]
