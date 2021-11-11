@@ -16,6 +16,9 @@ export class Room
     password: string;
 
     @Column({ default: false })
+    secured: boolean;
+
+    @Column({ default: false })
     hidden: boolean;
 
     @Column({ default: '' })
