@@ -94,6 +94,7 @@ export class RoomService
         room = this.roomsRepository.create({
             name: name,
             password: password,
+            secured: !(password === "" || password === null || password == undefined),
             hidden: hidden,
             icon: icon,
             master: user,
