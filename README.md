@@ -2,6 +2,8 @@
 
 General-purpose WebSocket-based lobby server. The project is built with [Node.js](https://nodejs.org/) and [Nest.js](https://nestjs.com/).
 
+The [API documentation](https://adcimon.github.io/lobby-server/api/) can be found inside the `api` folder.
+
 The `.env` files have the environment variables used by the server.
 
 | Variables |
