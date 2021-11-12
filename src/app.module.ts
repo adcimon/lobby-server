@@ -21,22 +21,22 @@ import { ConfigService } from './config/config.service';
             }
         }),
         TypeOrmModule.forRootAsync(
+        {
+            inject: [ConfigService],
+            useFactory: ( configService: ConfigService ) =>
             {
-                inject: [ConfigService],
-                useFactory: ( configService: ConfigService ) =>
-                {
-                    return {
-                        type: configService.get('DATABASE_TYPE'),
-                        host: configService.get('DATABASE_HOST'),
-                        port: configService.get('DATABASE_PORT'),
-                        username: configService.get('DATABASE_USERNAME'),
-                        password: configService.get('DATABASE_PASSWORD'),
-                        database: configService.get('DATABASE_NAME'),
-                        entities: [configService.get('DATABASE_ENTITIES')],
-                        synchronize: !configService.isProduction()
-                    };
-                },
-            }),
+                return {
+                    type: configService.get('DATABASE_TYPE'),
+                    host: configService.get('DATABASE_HOST'),
+                    port: configService.get('DATABASE_PORT'),
+                    username: configService.get('DATABASE_USERNAME'),
+                    password: configService.get('DATABASE_PASSWORD'),
+                    database: configService.get('DATABASE_NAME'),
+                    entities: [configService.get('DATABASE_ENTITIES')],
+                    synchronize: !configService.isProduction()
+                };
+            },
+        }),
         AuthModule,
         UserModule,
         RoomModule,
