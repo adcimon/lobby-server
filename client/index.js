@@ -2,8 +2,8 @@
 
 import { LobbyEvent, LobbyClient } from "./js/lobbyClient.js";
 
-//var lobbyUrl = "wss://" + window.location.host;
-var lobbyUrl = "ws://localhost:9000";
+//var url = "wss://" + window.location.host;
+var url = "ws://localhost:9010";
 var lobbyClient;
 
 var tokenSelect, connectButton, disconnectButton;
@@ -80,7 +80,7 @@ function onClickConnectButton()
     connectButton.disable();
 
     let token = tokenSelect.options[tokenSelect.selectedIndex].value;
-    lobbyClient.connect(lobbyUrl, token);
+    lobbyClient.connect(url, token);
 }
 
 function onClickDisconnectButton()
