@@ -16,7 +16,7 @@ window.addEventListener("beforeunload", exit);
 function main()
 {
     initUI();
-    initLobbyClient();
+    initClient();
 }
 
 function exit()
@@ -58,7 +58,7 @@ function initUI()
     document.body.show();
 }
 
-function initLobbyClient()
+function initClient()
 {
     lobbyClient = new LobbyClient({ debug: true });
     lobbyClient.on(LobbyEvent.ClientConnected, onClientConnected);
