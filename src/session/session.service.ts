@@ -13,10 +13,17 @@ export class SessionService
     /**
      * Create a session.
      */
-    create( username: string, socket: WebSocket )
+    create( username: string, socket: WebSocket ): boolean
     {
+        if( this.sessions.has(username) )
+        {
+            return false;
+        }
+
         socket.username = username;
         this.sessions.set(username, socket);
+
+        return true;
     }
 
     /**

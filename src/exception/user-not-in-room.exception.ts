@@ -9,7 +9,7 @@ export class UserNotInRoomException extends WsException
             event: 'error',
             data:
             {
-                error: 105,
+                error: 106,
                 message: 'User ' + username + ' not in room',
                 username: username
             }

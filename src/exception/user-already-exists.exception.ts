@@ -9,7 +9,7 @@ export class UserAlreadyExistsException extends WsException
             event: 'error',
             data:
             {
-                error: 104,
+                error: 105,
                 message: 'User ' + username + ' already exists',
                 username: username
             }

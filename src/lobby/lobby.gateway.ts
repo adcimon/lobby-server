@@ -13,6 +13,7 @@ import { AuthInterceptor } from '../auth/auth.interceptor';
 import { UuidInterceptor } from '../validation/uuid.interceptor';
 import { PingSchema, GetRoomSchema, GetRoomsSchema, CreateRoomSchema, JoinRoomSchema, LeaveRoomSchema } from '../validation/validation.schema';
 import { WsExceptionFilter } from '../exception/ws-exception.filter';
+import { ConnectionErrorException } from '../exception/connection-error.exception';
 import { InvalidTokenException } from '../exception/invalid-token.exception';
 
 import { PongMessage } from '../message/pong.message';
@@ -49,13 +50,28 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
             const payload = this.authService.verify(token);
             if( !payload || !('username' in payload) )
             {
-                throw new Error();
+                this.logger.log('CONNECTION FAILURE token:' + token);
+
+                let exception = new InvalidTokenException();
+                socket.send(JSON.stringify(exception.getError()));
+                socket.close();
+    
+                return;
             }
 
             this.logger.log('CONNECTED ' + payload.username + ' payload:' + JSON.stringify(payload));
 
             // Create the session.
-            this.sessionService.create(payload.username, socket);
+            if( !this.sessionService.create(payload.username, socket) )
+            {
+                this.logger.log('CONNECTION FAILURE token:' + token);
+
+                let exception = new ConnectionErrorException("User already connected");
+                socket.send(JSON.stringify(exception.getError()));
+                socket.close();
+
+                return;
+            }
 
             // User online.
             this.notificationService.userOnline(payload.username);
@@ -73,7 +89,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         {
             this.logger.log('CONNECTION FAILURE token:' + token);
 
-            exception = new InvalidTokenException();
+            exception = new ConnectionErrorException(exception.message);
             socket.send(JSON.stringify(exception.getError()));
             socket.close();
 
