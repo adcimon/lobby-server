@@ -9,7 +9,7 @@ export class ValidationErrorException extends WsException
             event: 'error',
             data:
             {
-                error: 101,
+                error: 102,
                 message: message || 'Validation error'
             }
         });

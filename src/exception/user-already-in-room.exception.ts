@@ -9,7 +9,7 @@ export class UserAlreadyInRoomException extends WsException
             event: 'error',
             data:
             {
-                error: 106,
+                error: 107,
                 message: 'User ' + username + ' already in room ' + name,
                 username: username,
                 name: name
