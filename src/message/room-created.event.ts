@@ -1,13 +1,13 @@
 import { WsResponse } from "@nestjs/websockets";
 
-export class UserRejoinedMessage implements WsResponse
+export class RoomCreatedEvent implements WsResponse
 {
     event: string;
     data: any;
 
     constructor( data?: any )
     {
-        this.event = "user_rejoined";
+        this.event = "room_created";
         this.data = data || { };
     }
 }
