@@ -59,8 +59,6 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
                 return;
             }
 
-            this.logger.log('CONNECTED ' + payload.username + ' payload:' + JSON.stringify(payload));
-
             // Create the session.
             if( !this.sessionService.create(payload.username, socket) )
             {
@@ -72,6 +70,8 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
                 return;
             }
+
+            this.logger.log('CONNECTED ' + payload.username + ' payload:' + JSON.stringify(payload));
 
             // User online.
             this.notificationService.userOnline(payload.username);
