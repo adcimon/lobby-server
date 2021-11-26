@@ -2,8 +2,8 @@
 
 export const LobbyEvent =
 {
-	ClientConnected:        "client_connected",
-	ClientDisconnected:     "client_disconnected",
+    ClientConnected:        "client_connected",
+    ClientDisconnected:     "client_disconnected",
     Error:                  "error",
     UserOnline:             "user_online",
     UserOffline:            "user_offline",

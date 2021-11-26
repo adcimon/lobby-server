@@ -17,17 +17,24 @@
 
 :root
 {
+    --background-color: hsla(210, 24.1%, 11.4%, 1);
+    --code-color: hsla(185, 100%, 98%, 0.07);
     --font-color: hsla(180, 46%, 89%, 1);
+    --highlight-color: hsla(0, 0%, 0%, 0.2);
+    --logo-filters: sepia(100%) saturate(300%) brightness(70%) hue-rotate(120deg) contrast(300%);
+    --nav-hover-color: hsla(210, 15.4%, 15.3%, 1);
+    --title-color: hsla(180, 47%, 56%, 1);
+    --table-header-color: hsla(189, 30%, 36%, 1);
 }
 
 *
 {
     /* Style */
-    transition: all 0.3s ease;
-        -moz-transition: all 0.3s ease;
-        -ms-transition: all 0.3s ease;
-        -o-transition: all 0.3s ease;
-        -webkit-transition: all 0.3s ease;
+    transition: all 0.25s ease;
+        -moz-transition: all 0.25s ease;
+        -ms-transition: all 0.25s ease;
+        -o-transition: all 0.25s ease;
+        -webkit-transition: all 0.25s ease;
 }
 
 html,
@@ -48,6 +55,7 @@ body
     font-family: 'Roboto', sans-serif;
 
     /* Style */
+    background-color: var(--background-color);
     color: var(--font-color);
     scroll-behavior: smooth;
 }
@@ -86,7 +94,7 @@ pre
     font-family: 'Source Code Pro', monospace;
 
     /* Style */
-    background-color: hsla(185, 100%, 98%, 0.07);
+    background-color: var(--code-color);
     border-radius: 3px;
 }
 
@@ -99,7 +107,7 @@ pre
     font-family: 'Source Code Pro', monospace;
 
     /* Style */
-    background-color: hsla(0, 0%, 0%, 0.2);
+    background-color: var(--highlight-color);
     border-radius: 4px;
 }
 
@@ -122,7 +130,7 @@ pre
     font-size: 18px;
 
     /* Style */
-    background-color: hsla(225, 22%, 96%, 1);
+    background-color: var(--background-color);
     overflow-x: hidden;
 }
 
@@ -153,6 +161,9 @@ pre
 
     /* Size */
     max-width: 70%;
+
+    /* Style */
+    filter: var(--logo-filters);
 }
 
 .logo span
@@ -171,7 +182,7 @@ pre
     font-size: 1em;
 
     /* Style */
-    color: hsla(210, 21%, 25%, 1);
+    color: var(--title-color);
 }
 
 .navbar ul
@@ -200,13 +211,14 @@ pre
 .navbar ul li:hover
 {
     /* Style */
-    background-color:hsla(231, 23%, 89%, 1);
+    background-color: var(--nav-hover-color);
+    border-radius: 0px 10px 10px 0px;
 }
 
 .navbar ul li:hover a
 {
     /* Style */
-    color: hsla(196, 100%, 45%, 1);
+    color: var(--title-color);
 }
 
 .navbar ul li a
@@ -240,7 +252,7 @@ pre
     padding-bottom: 1px;
 
     /* Style */
-    background-color: hsla(210, 21%, 25%, 1);
+    background-color: var(--background-color);
 }
 
 .content h1,
@@ -274,7 +286,7 @@ pre
 .content h6
 {
     /* Style */
-    color: hsla(180, 47%, 56%, 1);
+    color: var(--title-color);
 }
 
 .content h1:first-child
@@ -289,7 +301,7 @@ pre
     font-size: 1.333em;
 
     /* Style */
-    color: hsla(180, 47%, 56%, 1);
+    color: var(--title-color);
 
     /* Misc */
     clear: both;
@@ -324,7 +336,7 @@ pre
 .content thead
 {
     /* Style */
-    color: hsla(189, 30%, 36%, 1);
+    color: var(--table-header-color);
 }
 
 .content table tr:last-child
