@@ -23,7 +23,8 @@ export class ValidationInterceptor implements NestInterceptor
         }
         catch( exception )
         {
-            exception = new ValidationErrorException(exception.message);
+            let message = (exception.errors.length == 1) ? exception.errors[0] : exception.errors;
+            exception = new ValidationErrorException(message);
 
             // Add the uuid to the error.
             let error = exception.getError() as object;
