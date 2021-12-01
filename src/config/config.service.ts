@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { config } from 'dotenv';
 import { join } from 'path';
 
 @Injectable()
@@ -8,10 +9,21 @@ export class ConfigService
     {
     }
 
+    static config(): any
+    {
+        config();
+
+        console.log("Environment variables:");
+        Object.keys(process.env).forEach(function( key )
+        {
+            console.log(key + '=' + process.env[key]);
+        });
+    }
+
     /**
      * Get a configuration value.
      */
-    get( key: string, defaultValue: any = null ): any
+    static get( key: string, defaultValue: any = null ): any
     {
         if( key in process.env )
         {
@@ -28,6 +40,14 @@ export class ConfigService
                 return null;
             }
         }
+    }
+
+    /**
+     * Get a configuration value.
+     */
+    get( key: string, defaultValue: any = null ): any
+    {
+        return ConfigService.get(key, defaultValue);
     }
 
     /**
