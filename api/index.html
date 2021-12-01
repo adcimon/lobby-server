@@ -34,6 +34,7 @@
                 <li><a href="#createRoom">Create Room</a></li>
                 <li><a href="#joinRoom">Join Room</a></li>
                 <li><a href="#leaveRoom">Leave Room</a></li>
+                <li><a href="#sendText">Send Text</a></li>
                 <li><a href="#userOnline">User Online</a></li>
                 <li><a href="#userOffline">User Offline</a></li>
                 <li><a href="#roomCreated">Room Created</a></li>
@@ -41,6 +42,7 @@
                 <li><a href="#guestJoinedRoom">Guest Joined Room</a></li>
                 <li><a href="#guestLeftRoom">Guest Left Room</a></li>
                 <li><a href="#userRejoined">User Rejoined</a></li>
+                <li><a href="#chatText">Chat Text</a></li>
                 <li><a href="#errors">Errors</a></li>
             </ul>
         </div>
@@ -681,6 +683,105 @@
                 <br>
             </div>
 
+            <!-- Send Text -->
+            <div id="sendText" class="content-section">
+                <div class="websocket">Send Text</div>
+                <p>Send a chat text message.<br></p>
+                <br>
+
+                <h3 class="protected">Message</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td class="required">send_text</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>text</td>
+                                            <td>string</td>
+                                            <td class="required">The text to send.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+
+                <h3 class="json">Response</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>send_text_response</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td>The message universally unique identifier.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
             <!-- User Online -->
             <div id="userOnline" class="content-section">
                 <div class="websocket">User Online</div>
@@ -1022,6 +1123,64 @@
                                             <td>room</td>
                                             <td>json</td>
                                             <td>The rejoined room.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- Chat Text -->
+            <div id="chatText" class="content-section">
+                <div class="websocket">Chat Text</div>
+                <p>A chat text has been received.<br></p>
+                <br>
+
+                <h3 class="json">Event</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>chat_text</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>username</td>
+                                            <td>string</td>
+                                            <td>The user's username.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>timestamp</td>
+                                            <td>string</td>
+                                            <td>The server timestamp.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>text</td>
+                                            <td>string</td>
+                                            <td>The text received.</td>
                                         </tr>
                                     </tbody>
                                 </table>
