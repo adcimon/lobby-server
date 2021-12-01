@@ -1,9 +1,12 @@
 "use strict";
 
+const PING_PERIOD = 5 * 1000;
+const DEBUG_STYLE = "background: hsla(0, 0%, 13%, 1); color: hsla(180, 89%, 45%, 1)";
+
 export const LobbyEvent =
 {
-    ClientConnected:        "client_connected",
-    ClientDisconnected:     "client_disconnected",
+	ClientConnected:        "client_connected",
+	ClientDisconnected:     "client_disconnected",
     Error:                  "error",
     UserOnline:             "user_online",
     UserOffline:            "user_offline",
@@ -11,23 +14,12 @@ export const LobbyEvent =
     RoomDeleted:            "room_deleted",
     GuestJoinedRoom:        "guest_joined_room",
     GuestLeftRoom:          "guest_left_room",
-    UserRejoined:           "user_rejoined"
+    UserRejoined:           "user_rejoined",
+    ChatText:               "chat_text"
 };
 
-export function LobbyClient( settings )
+export function LobbyClient()
 {
-    let defaultSettings =
-    {
-        debug: false,
-        debugStyle: "background: hsla(0, 0%, 13%, 1); color: hsla(180, 89%, 45%, 1)",
-        pingPeriod: 5 * 1000
-    };
-
-    settings = (typeof settings !== "object") ? { } : settings;
-    settings = Object.assign({ }, defaultSettings, settings);
-
-    let console = (settings.debug) ? window.console : null;
-
     let responses = { };
     let events = { };
 
@@ -138,10 +130,8 @@ export function LobbyClient( settings )
      */
     let onOpen = function( event )
     {
-        console?.log("%c" + "connected" + "%o", settings.debugStyle, socket.url);
-
+        console.log("%c" + "connected" + "%o", DEBUG_STYLE, socket.url);
         startKeepAlive();
-
         emit(LobbyEvent.ClientConnected, { url: socket.url });
     };
 
@@ -150,10 +140,8 @@ export function LobbyClient( settings )
      */
     let onClose = function( event )
     {
-        console?.log("%c" + "disconnected" + "%o", settings.debugStyle, socket.url);
-
+        console.log("%c" + "disconnected" + "%o", DEBUG_STYLE, socket.url);
         stopKeepAlive();
-
         emit(LobbyEvent.ClientDisconnected, { url: socket.url });
     };
 
@@ -168,7 +156,7 @@ export function LobbyClient( settings )
             return;
         }
 
-        console?.log(" %c%s" + "%o", settings.debugStyle, message.event, message.data);
+        console.log(" %c%s" + "%o", DEBUG_STYLE, message.event, message.data);
 
         // Check whether the message has a response listener.
         if( message.data.uuid in responses )
@@ -211,7 +199,7 @@ export function LobbyClient( settings )
         socket.send(msg);
         if( message.event !== "ping" )
         {
-            console?.log(" %c%s" + "%o", settings.debugStyle, message.event, msg);
+            console.log(" %c%s" + "%o", DEBUG_STYLE, message.event, msg);
         }
 
         return true;
@@ -229,7 +217,7 @@ export function LobbyClient( settings )
 
         ping();
 
-        keepAliveTimeout = window.setTimeout(startKeepAlive, settings.pingPeriod);
+        keepAliveTimeout = window.setTimeout(startKeepAlive, PING_PERIOD);
     };
 
     /**
@@ -245,12 +233,12 @@ export function LobbyClient( settings )
      */
     let ping = function()
     {
-        let message =
+        let msg =
         {
             event: "ping",
             data: { }
         };
-        return sendMessage(message);
+        return sendMessage(msg);
     };
 
     /**
@@ -258,12 +246,12 @@ export function LobbyClient( settings )
      */
     let getRoom = function( response )
     {
-        let message =
+        let msg =
         {
             event: "get_room",
             data: { }
         };
-        return sendMessage(message, response);
+        return sendMessage(msg, response);
     };
 
     /**
@@ -271,12 +259,12 @@ export function LobbyClient( settings )
      */
     let getRooms = function( response )
     {
-        let message =
+        let msg =
         {
             event: "get_rooms",
             data: { }
         };
-        return sendMessage(message, response);
+        return sendMessage(msg, response);
     };
 
     /**
@@ -284,7 +272,7 @@ export function LobbyClient( settings )
      */
     let createRoom = function( name, password, hidden, icon, response )
     {
-        let message =
+        let msg =
         {
             event: "create_room",
             data:
@@ -295,7 +283,7 @@ export function LobbyClient( settings )
                 icon: icon
             }
         };
-        return sendMessage(message, response);
+        return sendMessage(msg, response);
     };
 
     /**
@@ -303,7 +291,7 @@ export function LobbyClient( settings )
      */
     let joinRoom = function( name, password, response )
     {
-        let message =
+        let msg =
         {
             event: "join_room",
             data:
@@ -312,7 +300,7 @@ export function LobbyClient( settings )
                 password: password
             }
         };
-        return sendMessage(message, response);
+        return sendMessage(msg, response);
     };
 
     /**
@@ -320,13 +308,29 @@ export function LobbyClient( settings )
      */
     let leaveRoom = function( response )
     {
-        let message =
+        let msg =
         {
             event: "leave_room",
             data: { }
         };
-        return sendMessage(message, response);
+        return sendMessage(msg, response);
     };
+
+    /**
+     * Send a text message to the room.
+     */
+    let sendText = function( text, response )
+    {
+        let msg =
+        {
+            event: "send_text",
+            data:
+            {
+                text: text
+            }
+        };
+        return sendMessage(msg, response);
+    }
 
     /**
      * Generate a universally unique identifier.
@@ -357,6 +361,7 @@ export function LobbyClient( settings )
         getRooms,
         createRoom,
         joinRoom,
-        leaveRoom
+        leaveRoom,
+        sendText
     };
 }

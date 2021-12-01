@@ -8,7 +8,7 @@ var lobbyClient;
 
 var tokenSelect, connectButton, disconnectButton;
 var lobby, roomInput, passwordInput, hiddenInput, iconInput, createRoomButton, joinRoomButton, leaveRoomButton;
-var responseLog, eventLog;
+var chat, chatInput, responseLog, eventLog;
 
 window.addEventListener("load", main);
 window.addEventListener("beforeunload", exit);
@@ -50,6 +50,9 @@ function initUI()
     leaveRoomButton = document.body.query("#leaveRoomButton");
     leaveRoomButton.on("click", onClickLeaveRoomButton);
 
+    chat = document.body.query("#chat");
+    chatInput = document.body.query("#chatInput");
+    chatInput.on("keyup", onClickChat);
     responseLog = document.body.query("#responseLog");
     responseLog.value = "";
     eventLog = document.body.query("#eventLog");
@@ -71,6 +74,7 @@ function initClient()
     lobbyClient.on(LobbyEvent.GuestJoinedRoom, onLobbyEvent);
     lobbyClient.on(LobbyEvent.GuestLeftRoom, onLobbyEvent);
     lobbyClient.on(LobbyEvent.UserRejoined, onLobbyEvent);
+    lobbyClient.on(LobbyEvent.ChatText, onChatText);
 }
 
 //#region UIEventHandlers
@@ -119,8 +123,19 @@ function onClickLeaveRoomButton()
 {
     lobbyClient.leaveRoom(function( event )
     {
+        chat.value = "";
         responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
     });
+}
+
+function onClickChat( event )
+{
+    if( event.keyCode === 13 )
+    {
+        event.preventDefault();
+        lobbyClient.sendText(chatInput.value);
+        chatInput.value = "";
+    }
 }
 //#endregion
 
@@ -142,6 +157,12 @@ function onClientDisconnected()
     connectButton.enable();
     disconnectButton.disable();
     lobby.disable(true);
+    chat.value = "";
+}
+
+function onChatText( event )
+{
+    chat.value += event.data.username + ": " + event.data.text + "\n";
 }
 
 function onLobbyEvent( event )

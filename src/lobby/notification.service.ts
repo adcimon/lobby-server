@@ -10,6 +10,7 @@ import { RoomDeletedEvent } from '../message/room-deleted.event';
 import { GuestJoinedRoomEvent } from '../message/guest-joined-room.event';
 import { GuestLeftRoomEvent } from '../message/guest-left-room.event';
 import { UserRejoinedEvent } from '../message/user-rejoined.event';
+import { ChatTextEvent } from '../message/chat-text.event';
 
 @Injectable()
 export class NotificationService
@@ -21,9 +22,9 @@ export class NotificationService
     }
 
     /**
-     * Broadcast a message to all the sessions.
+     * Broadcast an event to all the sessions.
      */
-    private broadcastAll( message: any )
+    private broadcastAll( event: any )
     {
         const self = this;
 
@@ -34,7 +35,7 @@ export class NotificationService
             {
                 let username = usernames[i];
                 let socket = self.sessionService.get(username);
-                socket?.send(JSON.stringify(message));
+                socket?.send(JSON.stringify(event));
             }
         }
 
@@ -52,9 +53,9 @@ export class NotificationService
     }
 
     /**
-     * Broadcast a message to the room sessions.
+     * Broadcast an event to the room sessions.
      */
-    private broadcastRoom( message: any, room: Room )
+    private broadcastRoom( event: any, room: Room )
     {
         const self = this;
 
@@ -65,7 +66,7 @@ export class NotificationService
             {
                 let username = usernames[i];
                 let socket = self.sessionService.get(username);
-                socket?.send(JSON.stringify(message));
+                socket?.send(JSON.stringify(event));
             }
         }
 
@@ -83,73 +84,87 @@ export class NotificationService
     }
 
     /**
-     * Send the user online event.
+     * Send a user online event.
      */
-    userOnline( username: string )
+    sendUserOnline( username: string )
     {
-        let message = new UserOnlineEvent({ username });
-        this.broadcastAll(message);
+        let event = new UserOnlineEvent({ username });
+        this.broadcastAll(event);
     }
 
     /**
-     * Send the user offline event.
+     * Send a user offline event.
      */
-    userOffline( username: string )
+    sendUserOffline( username: string )
     {
-        let message = new UserOfflineEvent({ username });
-        this.broadcastAll(message);
+        let event = new UserOfflineEvent({ username });
+        this.broadcastAll(event);
     }
 
     /**
-     * Send the room created event.
+     * Send a room created event.
      */
-    roomCreated( room: Room )
+    sendRoomCreated( room: Room )
     {
         delete room.password;
-        let message = new RoomCreatedEvent({ room });
-        this.broadcastAll(message);
+        let event = new RoomCreatedEvent({ room });
+        this.broadcastAll(event);
     }
 
     /**
      * Send a room deleted event.
      */
-    roomDeleted( room: Room )
+    sendRoomDeleted( room: Room )
     {
         delete room.password;
-        let message = new RoomDeletedEvent({ room });
-        this.broadcastAll(message);
+        let event = new RoomDeletedEvent({ room });
+        this.broadcastAll(event);
     }
 
     /**
-     * Send the guest joined room event.
+     * Send a guest joined room event.
      */
-    guestJoinedRoom( user: User, room: Room )
+    sendGuestJoinedRoom( user: User, room: Room )
     {
         delete user.room.password;
         delete room.password;
-        let message = new GuestJoinedRoomEvent({ user, room });
-        this.broadcastAll(message);
+        let event = new GuestJoinedRoomEvent({ user, room });
+        this.broadcastAll(event);
     }
 
     /**
      * Send a guest left room event.
      */
-    guestLeftRoom( user: User, room: Room )
+    sendGuestLeftRoom( user: User, room: Room )
     {
         delete user.room.password;
         delete room.password;
-        let message = new GuestLeftRoomEvent({ user, room });
-        this.broadcastAll(message);
+        let event = new GuestLeftRoomEvent({ user, room });
+        this.broadcastAll(event);
     }
 
     /**
-     * Send the user rejoined event.
+     * Send a user rejoined event.
      */
-    userRejoined( user: User, room: Room )
+    sendUserRejoined( user: User, room: Room )
     {
         delete user.room.password;
         delete room.password;
-        let message = new UserRejoinedEvent({ user, room });
-        this.broadcastRoom(message, room);
+        let event = new UserRejoinedEvent({ user, room });
+        this.broadcastRoom(event, room);
+    }
+
+    /**
+     * Send a chat text event.
+     */
+    sendChatText( user: User, room: Room, text: string )
+    {
+        let event = new ChatTextEvent(
+        {
+            username: user.username,
+            timestamp: new Date(),
+            text: text
+        });
+        this.broadcastRoom(event, room);
     }
 }
