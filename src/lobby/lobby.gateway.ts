@@ -11,10 +11,11 @@ import { NotificationService } from './notification.service';
 import { ValidationInterceptor } from '../validation/validation.interceptor';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { UuidInterceptor } from '../validation/uuid.interceptor';
-import { PingSchema, GetRoomSchema, GetRoomsSchema, CreateRoomSchema, JoinRoomSchema, LeaveRoomSchema } from '../validation/validation.schema';
+import { PingSchema, GetRoomSchema, GetRoomsSchema, CreateRoomSchema, JoinRoomSchema, LeaveRoomSchema, SendTextSchema } from '../validation/validation.schema';
 import { WsExceptionFilter } from '../exception/ws-exception.filter';
 import { ConnectionErrorException } from '../exception/connection-error.exception';
 import { InvalidTokenException } from '../exception/invalid-token.exception';
+import { UserNotInRoomException } from '../exception/user-not-in-room.exception';
 
 import { PongMessage } from '../message/pong.message';
 import { GetRoomResponse } from '../message/get-room.response';
@@ -22,6 +23,7 @@ import { GetRoomsResponse } from '../message/get-rooms.response';
 import { CreateRoomResponse } from '../message/create-room.response';
 import { JoinRoomResponse } from '../message/join-room.response';
 import { LeaveRoomResponse } from '../message/leave-room.response';
+import { SendTextResponse } from '../message/send-text.response';
 
 @WebSocketGateway()
 @UseInterceptors(ClassSerializerInterceptor)
@@ -74,14 +76,14 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
             this.logger.log('CONNECTED ' + payload.username + ' payload:' + JSON.stringify(payload));
 
             // User online.
-            this.notificationService.userOnline(payload.username);
+            this.notificationService.sendUserOnline(payload.username);
 
             // User rejoining.
             try
             {
                 let user = await this.userService.getByUsername(payload.username);
                 let room = await this.roomService.getByName(user.room.name);
-                this.notificationService.userRejoined(user, room);
+                this.notificationService.sendUserRejoined(user, room);
             }
             catch( exception ) { }
         }
@@ -105,7 +107,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         this.sessionService.delete(socket.username);
 
         // User offline.
-        this.notificationService.userOffline(socket.username);
+        this.notificationService.sendUserOffline(socket.username);
     }
 
     @SubscribeMessage('ping')
@@ -177,7 +179,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         const room = await this.roomService.create(username, name, password, hidden, icon);
 
-        this.notificationService.roomCreated(room);
+        this.notificationService.sendRoomCreated(room);
 
         return new CreateRoomResponse({ room });
     }
@@ -196,7 +198,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         const room = await this.roomService.join(username, name, password);
         const user = await this.userService.getByUsername(username);
 
-        this.notificationService.guestJoinedRoom(user, room);
+        this.notificationService.sendGuestJoinedRoom(user, room);
 
         return new JoinRoomResponse({ room });
     }
@@ -223,16 +225,46 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
 
         const room = await this.roomService.leave(username);
-
         if( isMaster )
         {
-            this.notificationService.roomDeleted(room);
+            this.notificationService.sendRoomDeleted(room);
         }
         else
         {
-            this.notificationService.guestLeftRoom(user, room);
+            this.notificationService.sendGuestLeftRoom(user, room);
         }
 
         return new LeaveRoomResponse();
+    }
+
+    @SubscribeMessage('send_text')
+    @UseInterceptors(new ValidationInterceptor(SendTextSchema), AuthInterceptor, new UuidInterceptor())
+    async sendText(
+        @ConnectedSocket() socket: WebSocket,
+        @MessageBody('username') username: string,
+        @MessageBody('text') text: string
+    ): Promise<any>
+    {
+        this.logger.log('SEND_TEXT' + ' username:' + username);
+
+        let user;
+        try
+        {
+            user = await this.userService.getByUsername(username);
+        }
+        catch( exception )
+        {
+            // User not found catched.
+
+            throw new UserNotInRoomException(username);
+        }
+
+        let room = await this.roomService.getByName(user.room.name);
+        if( room )
+        {
+            this.notificationService.sendChatText(user, room, text);
+        }
+
+        return new SendTextResponse();
     }
 }

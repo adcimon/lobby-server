@@ -47,3 +47,10 @@ export const LeaveRoomSchema = yup.object().shape(
     token:      yup.string().required('Token is required'),
     uuid:       yup.string().required('UUID is required')
 });
+
+export const SendTextSchema = yup.object().shape(
+{
+    token:      yup.string().required('Token is required'),
+    uuid:       yup.string().required('UUID is required'),
+    text:       yup.string().required('Text is required')
+});
