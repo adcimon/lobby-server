@@ -8,26 +8,26 @@ const PASSWORD_MESSAGE = "Password must start with an alpha character and contai
 
 export const PingSchema = yup.object().shape(
 {
-    token:      yup.string().required('Token is required'),
-    uuid:       yup.string().required('UUID is required')
+    uuid:       yup.string().required('UUID is required'),
+    token:      yup.string().required('Token is required')
 });
 
 export const GetRoomSchema = yup.object().shape(
 {
-    token:      yup.string().required('Token is required'),
-    uuid:       yup.string().required('UUID is required')
+    uuid:       yup.string().required('UUID is required'),
+    token:      yup.string().required('Token is required')
 });
 
 export const GetRoomsSchema = yup.object().shape(
 {
-    token:      yup.string().required('Token is required'),
-    uuid:       yup.string().required('UUID is required')
+    uuid:       yup.string().required('UUID is required'),
+    token:      yup.string().required('Token is required')
 });
 
 export const CreateRoomSchema = yup.object().shape(
 {
-    token:      yup.string().required('Token is required'),
     uuid:       yup.string().required('UUID is required'),
+    token:      yup.string().required('Token is required'),
     name:       yup.string().required('Name is required').matches(ROOMNAME_REGEXP, ROOMNAME_MESSAGE),
     password:   yup.string().matches(PASSWORD_REGEXP, { message: PASSWORD_MESSAGE, excludeEmptyString: true }),
     hidden:     yup.boolean(),
@@ -36,21 +36,28 @@ export const CreateRoomSchema = yup.object().shape(
 
 export const JoinRoomSchema = yup.object().shape(
 {
-    token:      yup.string().required('Token is required'),
     uuid:       yup.string().required('UUID is required'),
+    token:      yup.string().required('Token is required'),
     name:       yup.string().required('Name is required').matches(ROOMNAME_REGEXP, ROOMNAME_MESSAGE),
     password:   yup.string().matches(PASSWORD_REGEXP, { message: PASSWORD_MESSAGE, excludeEmptyString: true })
 });
 
 export const LeaveRoomSchema = yup.object().shape(
 {
+    uuid:       yup.string().required('UUID is required'),
+    token:      yup.string().required('Token is required')
+});
+
+export const KickUserSchema = yup.object().shape(
+{
+    uuid:       yup.string().required('UUID is required'),
     token:      yup.string().required('Token is required'),
-    uuid:       yup.string().required('UUID is required')
+    target:     yup.string().required('Target is required')
 });
 
 export const SendTextSchema = yup.object().shape(
 {
-    token:      yup.string().required('Token is required'),
     uuid:       yup.string().required('UUID is required'),
+    token:      yup.string().required('Token is required'),
     text:       yup.string().required('Text is required')
 });

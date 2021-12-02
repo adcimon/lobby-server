@@ -10,6 +10,7 @@ import { RoomDeletedEvent } from '../message/room-deleted.event';
 import { GuestJoinedRoomEvent } from '../message/guest-joined-room.event';
 import { GuestLeftRoomEvent } from '../message/guest-left-room.event';
 import { UserRejoinedEvent } from '../message/user-rejoined.event';
+import { UserKickedEvent } from '../message/user-kicked.event';
 import { ChatTextEvent } from '../message/chat-text.event';
 
 @Injectable()
@@ -152,6 +153,17 @@ export class NotificationService
         delete room.password;
         let event = new UserRejoinedEvent({ user, room });
         this.broadcastRoom(event, room);
+    }
+
+    /**
+     * Send a user kicked event.
+     */
+    sendUserKicked( user: User, room: Room )
+    {
+        delete user.room.password;
+        delete room.password;
+        let event = new UserKickedEvent({ user, room });
+        this.broadcastAll(event);
     }
 
     /**

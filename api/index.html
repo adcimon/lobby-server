@@ -34,6 +34,7 @@
                 <li><a href="#createRoom">Create Room</a></li>
                 <li><a href="#joinRoom">Join Room</a></li>
                 <li><a href="#leaveRoom">Leave Room</a></li>
+                <li><a href="#kickUser">Kick User</a></li>
                 <li><a href="#sendText">Send Text</a></li>
                 <li><a href="#userOnline">User Online</a></li>
                 <li><a href="#userOffline">User Offline</a></li>
@@ -42,6 +43,7 @@
                 <li><a href="#guestJoinedRoom">Guest Joined Room</a></li>
                 <li><a href="#guestLeftRoom">Guest Left Room</a></li>
                 <li><a href="#userRejoined">User Rejoined</a></li>
+                <li><a href="#userKicked">User Kicked</a></li>
                 <li><a href="#chatText">Chat Text</a></li>
                 <li><a href="#errors">Errors</a></li>
             </ul>
@@ -99,14 +101,14 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>token</td>
-                                            <td>string</td>
-                                            <td class="required">The access token.</td>
-                                        </tr>
-                                        <tr>
                                             <td>uuid</td>
                                             <td>string</td>
                                             <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -193,14 +195,14 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>token</td>
-                                            <td>string</td>
-                                            <td class="required">The access token.</td>
-                                        </tr>
-                                        <tr>
                                             <td>uuid</td>
                                             <td>string</td>
                                             <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -239,14 +241,14 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>room</td>
-                                            <td>json</td>
-                                            <td>The user's room.</td>
-                                        </tr>
-                                        <tr>
                                             <td>uuid</td>
                                             <td>string</td>
                                             <td>The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The user's room.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -292,14 +294,14 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>token</td>
-                                            <td>string</td>
-                                            <td class="required">The access token.</td>
-                                        </tr>
-                                        <tr>
                                             <td>uuid</td>
                                             <td>string</td>
                                             <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -338,14 +340,14 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>rooms</td>
-                                            <td>json[]</td>
-                                            <td>The lobby's rooms.</td>
-                                        </tr>
-                                        <tr>
                                             <td>uuid</td>
                                             <td>string</td>
                                             <td>The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>rooms</td>
+                                            <td>json[]</td>
+                                            <td>The lobby's rooms.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -391,14 +393,14 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>token</td>
-                                            <td>string</td>
-                                            <td class="required">The access token.</td>
-                                        </tr>
-                                        <tr>
                                             <td>uuid</td>
                                             <td>string</td>
                                             <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
                                         </tr>
                                         <tr>
                                             <td>name</td>
@@ -457,14 +459,14 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>room</td>
-                                            <td>json</td>
-                                            <td>The created room.</td>
-                                        </tr>
-                                        <tr>
                                             <td>uuid</td>
                                             <td>string</td>
                                             <td>The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The created room.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -510,14 +512,14 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>token</td>
-                                            <td>string</td>
-                                            <td class="required">The access token.</td>
-                                        </tr>
-                                        <tr>
                                             <td>uuid</td>
                                             <td>string</td>
                                             <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
                                         </tr>
                                         <tr>
                                             <td>name</td>
@@ -566,14 +568,14 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>room</td>
-                                            <td>json</td>
-                                            <td>The joined room.</td>
-                                        </tr>
-                                        <tr>
                                             <td>uuid</td>
                                             <td>string</td>
                                             <td>The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The joined room.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -619,14 +621,14 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>token</td>
-                                            <td>string</td>
-                                            <td class="required">The access token.</td>
-                                        </tr>
-                                        <tr>
                                             <td>uuid</td>
                                             <td>string</td>
                                             <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -665,14 +667,123 @@
                                     </thead>
                                     <tbody>
                                         <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td>The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
                                             <td>room</td>
                                             <td>json</td>
                                             <td>The left room.</td>
                                         </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- Kick User -->
+            <div id="kickUser" class="content-section">
+                <div class="websocket">Kick User</div>
+                <p>Kick a user from the room<br></p>
+                <br>
+
+                <h3 class="protected">Message</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td class="required">kick_user</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>target</td>
+                                            <td>string</td>
+                                            <td class="required">The user to kick.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+
+                <h3 class="json">Response</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>kick_user_response</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                                         <tr>
                                             <td>uuid</td>
                                             <td>string</td>
                                             <td>The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>user</td>
+                                            <td>json</td>
+                                            <td>The kicked user.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The kicked room.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -718,14 +829,14 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>token</td>
-                                            <td>string</td>
-                                            <td class="required">The access token.</td>
-                                        </tr>
-                                        <tr>
                                             <td>uuid</td>
                                             <td>string</td>
                                             <td class="required">The message universally unique identifier.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>token</td>
+                                            <td>string</td>
+                                            <td class="required">The access token.</td>
                                         </tr>
                                         <tr>
                                             <td>text</td>
@@ -1133,6 +1244,59 @@
                 <br>
             </div>
 
+            <!-- User Kicked -->
+            <div id="userKicked" class="content-section">
+                <div class="websocket">User Kicked</div>
+                <p>A user was kicked from a room.<br></p>
+                <br>
+
+                <h3 class="json">Event</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>user_kicked</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>user</td>
+                                            <td>json</td>
+                                            <td>The kicked user.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>room</td>
+                                            <td>json</td>
+                                            <td>The kicked room.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
             <!-- Chat Text -->
             <div id="chatText" class="content-section">
                 <div class="websocket">Chat Text</div>
@@ -1286,14 +1450,18 @@
                         </tr>
                         <tr>
                             <td>108</td>
-                            <td>Room not found.</td>
+                            <td>User is not master.</td>
                         </tr>
                         <tr>
                             <td>109</td>
-                            <td>Room already exists.</td>
+                            <td>Room not found.</td>
                         </tr>
                         <tr>
                             <td>110</td>
+                            <td>Room already exists.</td>
+                        </tr>
+                        <tr>
+                            <td>111</td>
                             <td>Invalid room password.</td>
                         </tr>
                     </tbody>

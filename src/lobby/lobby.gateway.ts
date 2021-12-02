@@ -11,11 +11,14 @@ import { NotificationService } from './notification.service';
 import { ValidationInterceptor } from '../validation/validation.interceptor';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { UuidInterceptor } from '../validation/uuid.interceptor';
-import { PingSchema, GetRoomSchema, GetRoomsSchema, CreateRoomSchema, JoinRoomSchema, LeaveRoomSchema, SendTextSchema } from '../validation/validation.schema';
+import { PingSchema, GetRoomSchema, GetRoomsSchema, CreateRoomSchema, JoinRoomSchema, LeaveRoomSchema, KickUserSchema, SendTextSchema } from '../validation/validation.schema';
+
 import { WsExceptionFilter } from '../exception/ws-exception.filter';
+import { GenericErrorException } from '../exception/generic-error.exception';
 import { ConnectionErrorException } from '../exception/connection-error.exception';
 import { InvalidTokenException } from '../exception/invalid-token.exception';
 import { UserNotInRoomException } from '../exception/user-not-in-room.exception';
+import { UserNotMasterException } from '../exception/user-not-master.exception';
 
 import { PongMessage } from '../message/pong.message';
 import { GetRoomResponse } from '../message/get-room.response';
@@ -23,6 +26,7 @@ import { GetRoomsResponse } from '../message/get-rooms.response';
 import { CreateRoomResponse } from '../message/create-room.response';
 import { JoinRoomResponse } from '../message/join-room.response';
 import { LeaveRoomResponse } from '../message/leave-room.response';
+import { KickUserResponse } from '../message/kick-user.response';
 import { SendTextResponse } from '../message/send-text.response';
 
 @WebSocketGateway()
@@ -234,7 +238,60 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
             this.notificationService.sendGuestLeftRoom(user, room);
         }
 
-        return new LeaveRoomResponse();
+        return new LeaveRoomResponse({ room });
+    }
+
+    @SubscribeMessage('kick_user')
+    @UseInterceptors(new ValidationInterceptor(KickUserSchema), AuthInterceptor, new UuidInterceptor())
+    async kickUser(
+        @ConnectedSocket() socket: WebSocket,
+        @MessageBody('username') username: string,
+        @MessageBody('target') target: string
+    ): Promise<any>
+    {
+        this.logger.log('KICK_USER' + ' username:' + username + ' target:' + target);
+
+        let user;
+        let room;
+        let isMaster = false;
+        try
+        {
+            user = await this.userService.getByUsername(username);
+            room = await this.roomService.getByName(user.room.name);
+            isMaster = (room.master.id == user.id);
+        }
+        catch( exception )
+        {
+            // User not found catched.
+            throw new UserNotInRoomException(username);
+        }
+        if( !isMaster )
+        {
+            throw new UserNotMasterException(username);
+        }
+        if( username == target )
+        {
+            throw new GenericErrorException('Master cannot kick itself');
+        }
+
+        let userToKick;
+        try
+        {
+            userToKick = await this.userService.getByUsername(target);
+            await this.roomService.getByName(userToKick.room.name);
+        }
+        catch( exception )
+        {
+            // User not found catched.
+            throw new UserNotInRoomException(target);
+        }
+
+        userToKick = await this.userService.delete(target);
+        room = await this.roomService.getByName(user.room.name);
+
+        this.notificationService.sendUserKicked(userToKick, room);
+
+        return new KickUserResponse({ room });
     }
 
     @SubscribeMessage('send_text')
@@ -255,7 +312,6 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         catch( exception )
         {
             // User not found catched.
-
             throw new UserNotInRoomException(username);
         }
 
