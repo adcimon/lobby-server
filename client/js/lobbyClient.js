@@ -15,6 +15,7 @@ export const LobbyEvent =
     GuestJoinedRoom:        "guest_joined_room",
     GuestLeftRoom:          "guest_left_room",
     UserRejoined:           "user_rejoined",
+    UserKicked:             "user_kicked",
     ChatText:               "chat_text"
 };
 
@@ -317,6 +318,22 @@ export function LobbyClient()
     };
 
     /**
+     * Kick a user from the room.
+     */
+    let kickUser = function( target, response )
+    {
+        let msg =
+        {
+            event: "kick_user",
+            data:
+            {
+                target: target
+            }
+        };
+        return sendMessage(msg, response);
+    };
+
+    /**
      * Send a text message to the room.
      */
     let sendText = function( text, response )
@@ -362,6 +379,7 @@ export function LobbyClient()
         createRoom,
         joinRoom,
         leaveRoom,
+        kickUser,
         sendText
     };
 }

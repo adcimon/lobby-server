@@ -158,7 +158,6 @@ export class RoomService
         catch( exception )
         {
             // User not found catched.
-
             throw new UserNotInRoomException(username);
         }
 
@@ -187,7 +186,6 @@ export class RoomService
     ): Promise<Room>
     {
         const room = await this.getByName(name);
-
         return this.roomsRepository.remove(room);
     }
 }

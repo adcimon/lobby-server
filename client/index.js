@@ -8,6 +8,7 @@ var lobbyClient;
 
 var tokenSelect, connectButton, disconnectButton;
 var lobby, roomInput, passwordInput, hiddenInput, iconInput, createRoomButton, joinRoomButton, leaveRoomButton;
+var kickInput, kickButton;
 var chat, chatInput, responseLog, eventLog;
 
 window.addEventListener("load", main);
@@ -29,30 +30,33 @@ function initUI()
     // Connection.
     tokenSelect = document.body.query("#tokenSelect");
     connectButton = document.body.query("#connectButton");
-    connectButton.on("click", onClickConnectButton);
+    connectButton.on("click", handleClickConnectButton);
     disconnectButton = document.body.query("#disconnectButton");
     disconnectButton.disable();
-    disconnectButton.on("click", onClickDisconnectButton);
+    disconnectButton.on("click", handleClickDisconnectButton);
 
     // Lobby.
     lobby = document.body.query("#lobby");
     lobby.disable(true);
 
-    // Room.
     roomInput = document.body.query("#roomInput");
     passwordInput = document.body.query("#passwordInput");
     hiddenInput = document.body.query("#hiddenInput");
     iconInput = document.body.query("#iconInput");
     createRoomButton = document.body.query("#createRoomButton");
-    createRoomButton.on("click", onClickCreateRoomButton);
+    createRoomButton.on("click", handleClickCreateRoomButton);
     joinRoomButton = document.body.query("#joinRoomButton");
-    joinRoomButton.on("click", onClickJoinRoomButton);
+    joinRoomButton.on("click", handleClickJoinRoomButton);
     leaveRoomButton = document.body.query("#leaveRoomButton");
-    leaveRoomButton.on("click", onClickLeaveRoomButton);
+    leaveRoomButton.on("click", handleClickLeaveRoomButton);
+
+    kickInput = document.body.query("#kickInput");
+    kickButton = document.body.query("#kickButton");
+    kickButton.on("click", handleClickKickButton);
 
     chat = document.body.query("#chat");
     chatInput = document.body.query("#chatInput");
-    chatInput.on("keyup", onClickChat);
+    chatInput.on("keyup", handleClickChat);
     responseLog = document.body.query("#responseLog");
     responseLog.value = "";
     eventLog = document.body.query("#eventLog");
@@ -64,21 +68,22 @@ function initUI()
 function initClient()
 {
     lobbyClient = new LobbyClient({ debug: true });
-    lobbyClient.on(LobbyEvent.ClientConnected, onClientConnected);
-    lobbyClient.on(LobbyEvent.ClientDisconnected, onClientDisconnected);
-    lobbyClient.on(LobbyEvent.Error, onLobbyEvent);
-    lobbyClient.on(LobbyEvent.UserOnline, onLobbyEvent);
-    lobbyClient.on(LobbyEvent.UserOffline, onLobbyEvent);
-    lobbyClient.on(LobbyEvent.RoomCreated, onLobbyEvent);
-    lobbyClient.on(LobbyEvent.RoomDeleted, onLobbyEvent);
-    lobbyClient.on(LobbyEvent.GuestJoinedRoom, onLobbyEvent);
-    lobbyClient.on(LobbyEvent.GuestLeftRoom, onLobbyEvent);
-    lobbyClient.on(LobbyEvent.UserRejoined, onLobbyEvent);
-    lobbyClient.on(LobbyEvent.ChatText, onChatText);
+    lobbyClient.on(LobbyEvent.ClientConnected, handleClientConnected);
+    lobbyClient.on(LobbyEvent.ClientDisconnected, handleClientDisconnected);
+    lobbyClient.on(LobbyEvent.Error, handleLobbyEvent);
+    lobbyClient.on(LobbyEvent.UserOnline, handleLobbyEvent);
+    lobbyClient.on(LobbyEvent.UserOffline, handleLobbyEvent);
+    lobbyClient.on(LobbyEvent.RoomCreated, handleLobbyEvent);
+    lobbyClient.on(LobbyEvent.RoomDeleted, handleLobbyEvent);
+    lobbyClient.on(LobbyEvent.GuestJoinedRoom, handleLobbyEvent);
+    lobbyClient.on(LobbyEvent.GuestLeftRoom, handleLobbyEvent);
+    lobbyClient.on(LobbyEvent.UserRejoined, handleLobbyEvent);
+    lobbyClient.on(LobbyEvent.UserKicked, handleLobbyEvent);
+    lobbyClient.on(LobbyEvent.ChatText, handleChatText);
 }
 
 //#region UIEventHandlers
-function onClickConnectButton()
+function handleClickConnectButton()
 {
     tokenSelect.disable();
     connectButton.disable();
@@ -87,7 +92,7 @@ function onClickConnectButton()
     lobbyClient.connect(url, token);
 }
 
-function onClickDisconnectButton()
+function handleClickDisconnectButton()
 {
     lobbyClient.disconnect();
 
@@ -97,7 +102,7 @@ function onClickDisconnectButton()
     lobby.disable(true);
 }
 
-function onClickCreateRoomButton()
+function handleClickCreateRoomButton()
 {
     let name = roomInput.value;
     let password = passwordInput.value;
@@ -109,7 +114,7 @@ function onClickCreateRoomButton()
     });
 }
 
-function onClickJoinRoomButton()
+function handleClickJoinRoomButton()
 {
     let name = roomInput.value;
     let password = passwordInput.value;
@@ -119,7 +124,7 @@ function onClickJoinRoomButton()
     });
 }
 
-function onClickLeaveRoomButton()
+function handleClickLeaveRoomButton()
 {
     lobbyClient.leaveRoom(function( event )
     {
@@ -128,19 +133,32 @@ function onClickLeaveRoomButton()
     });
 }
 
-function onClickChat( event )
+function handleClickKickButton()
+{
+    let user = kickInput.value;
+    lobbyClient.kickUser(user, function( event )
+    {
+        responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
+    });
+}
+
+function handleClickChat( event )
 {
     if( event.keyCode === 13 )
     {
         event.preventDefault();
-        lobbyClient.sendText(chatInput.value);
+        let value = chatInput.value;
+        lobbyClient.sendText(value, function( event )
+        {
+            responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
+        });
         chatInput.value = "";
     }
 }
 //#endregion
 
 //#region LobbyEventHandlers
-function onClientConnected()
+function handleClientConnected()
 {
     disconnectButton.enable();
     lobby.enable(true);
@@ -151,7 +169,7 @@ function onClientConnected()
     });
 }
 
-function onClientDisconnected()
+function handleClientDisconnected()
 {
     tokenSelect.enable();
     connectButton.enable();
@@ -160,12 +178,12 @@ function onClientDisconnected()
     chat.value = "";
 }
 
-function onChatText( event )
+function handleChatText( event )
 {
     chat.value += event.data.username + ": " + event.data.text + "\n";
 }
 
-function onLobbyEvent( event )
+function handleLobbyEvent( event )
 {
     eventLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
 }
