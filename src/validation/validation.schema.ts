@@ -31,7 +31,7 @@ export const CreateRoomSchema = yup.object().shape(
     name:       yup.string().required('Name is required').matches(ROOMNAME_REGEXP, ROOMNAME_MESSAGE),
     password:   yup.string().matches(PASSWORD_REGEXP, { message: PASSWORD_MESSAGE, excludeEmptyString: true }),
     hidden:     yup.boolean(),
-    icon:       yup.string().url().max(200)
+    icon:       yup.string().url().max(500)
 });
 
 export const JoinRoomSchema = yup.object().shape(
