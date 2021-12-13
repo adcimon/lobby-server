@@ -1,6 +1,6 @@
 import { WsException } from '@nestjs/websockets';
 
-export class InvalidRoomPasswordException extends WsException
+export class RoomFullException extends WsException
 {
     constructor( name: string )
     {
@@ -9,8 +9,8 @@ export class InvalidRoomPasswordException extends WsException
             event: 'error',
             data:
             {
-                error: 112,
-                message: 'Invalid room ' + name + ' password',
+                error: 111,
+                message: 'Room ' + name + ' is full',
                 name: name
             }
         });

@@ -6,6 +6,11 @@ const ROOMNAME_MESSAGE = "Room name must start with an alpha character and conta
 const PASSWORD_REGEXP = /^[a-zA-Z]+(.){7,20}$/;
 const PASSWORD_MESSAGE = "Password must start with an alpha character and contain from 8 to 20 characters";
 
+function emptyStringToNull( value, originalValue )
+{
+    return (originalValue === "") ? null : value;
+}
+
 export const PingSchema = yup.object().shape(
 {
     uuid:       yup.string().required('UUID is required'),
@@ -31,6 +36,7 @@ export const CreateRoomSchema = yup.object().shape(
     name:       yup.string().required('Name is required').matches(ROOMNAME_REGEXP, ROOMNAME_MESSAGE),
     password:   yup.string().matches(PASSWORD_REGEXP, { message: PASSWORD_MESSAGE, excludeEmptyString: true }),
     hidden:     yup.boolean(),
+    size:       yup.number().integer().positive().min(1).nullable(true).transform(emptyStringToNull),
     icon:       yup.string().url().max(500)
 });
 
