@@ -271,7 +271,7 @@ export function LobbyClient()
     /**
      * Create a room.
      */
-    let createRoom = function( name, password, hidden, icon, response )
+    let createRoom = function( name, password, hidden, size, icon, response )
     {
         let msg =
         {
@@ -281,6 +281,7 @@ export function LobbyClient()
                 name: name,
                 password: password,
                 hidden: hidden,
+                size: size,
                 icon: icon
             }
         };

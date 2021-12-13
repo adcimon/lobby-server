@@ -133,7 +133,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('username') username: string
     ): Promise<any>
     {
-        this.logger.log('GET_ROOM' + ' username:' + username);
+        this.logger.log('GET_ROOM' + ` username:${username}`);
 
         try
         {
@@ -176,12 +176,13 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('name') name: string,
         @MessageBody('password') password: string,
         @MessageBody('hidden') hidden: boolean,
+        @MessageBody('size') size: number,
         @MessageBody('icon') icon: string
     ): Promise<any>
     {
-        this.logger.log('CREATE_ROOM' + ' username:' + username + ' name:' + name + ' password:' + password + ' icon:' + icon);
+        this.logger.log('CREATE_ROOM' + ` username:${username} name:${name} password:${password} hidden:${hidden} size:${size} icon:${icon}`);
 
-        const room = await this.roomService.create(username, name, password, hidden, icon);
+        const room = await this.roomService.create(username, name, password, hidden, Number(size), icon);
 
         this.notificationService.sendRoomCreated(room);
 
@@ -197,7 +198,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('password') password: string
     ): Promise<any>
     {
-        this.logger.log('JOIN_ROOM' + ' username:' + username + ' name:' + name + ' password:' + password);
+        this.logger.log('JOIN_ROOM' + ` username:${username} name:${name} password:${password}`);
 
         const room = await this.roomService.join(username, name, password);
         const user = await this.userService.getByUsername(username);
@@ -214,7 +215,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('username') username: string
     ): Promise<any>
     {
-        this.logger.log('LEAVE_ROOM' + ' username:' + username);
+        this.logger.log('LEAVE_ROOM' + ` username:${username}`);
 
         let user;
         let isMaster = false;
@@ -249,7 +250,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('target') target: string
     ): Promise<any>
     {
-        this.logger.log('KICK_USER' + ' username:' + username + ' target:' + target);
+        this.logger.log('KICK_USER' + ` username:${username} target:${target}`);
 
         let user;
         let room;
@@ -302,7 +303,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('text') text: string
     ): Promise<any>
     {
-        this.logger.log('SEND_TEXT' + ' username:' + username);
+        this.logger.log('SEND_TEXT' + ` username:${username}`);
 
         let user;
         try

@@ -21,6 +21,9 @@ export class Room
     @Column({ default: false })
     hidden: boolean;
 
+    @Column({ type: "int" })
+    size: number;
+
     @Column({ default: '' })
     icon: string;
 
