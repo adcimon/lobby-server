@@ -3,22 +3,22 @@ html
     /* Layout */
     overflow-x: hidden;
 
-	/* Size */
+    /* Size */
     height: 100%;
     width: 100%;
 
-	/* Space */
+    /* Space */
     margin: 0;
 }
 
 body
 {
-	/* Size */
+    /* Size */
     height: 100%;
     width: 100%;
 
-	/* Space */
-	margin: 0;
+    /* Space */
+    margin: 0;
 }
 
 #content *
