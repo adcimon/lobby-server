@@ -5,8 +5,8 @@ const DEBUG_STYLE = "background: hsla(0, 0%, 13%, 1); color: hsla(180, 89%, 45%,
 
 export const LobbyEvent =
 {
-	ClientConnected:        "client_connected",
-	ClientDisconnected:     "client_disconnected",
+    ClientConnected:        "client_connected",
+    ClientDisconnected:     "client_disconnected",
     Error:                  "error",
     UserOnline:             "user_online",
     UserOffline:            "user_offline",
