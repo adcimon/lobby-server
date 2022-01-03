@@ -34,7 +34,7 @@ import { SendTextResponse } from '../message/send-text.response';
 @UseFilters(new WsExceptionFilter())
 export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 {
-    private readonly logger = new Logger("LOBBY");
+    private readonly logger = new Logger('LOBBY');
 
     constructor(
         private readonly authService: AuthService,
@@ -56,7 +56,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
             const payload = this.authService.verify(token);
             if( !payload || !('username' in payload) )
             {
-                this.logger.log('CONNECTION FAILURE token:' + token);
+                this.logger.log(`CONNECTION FAILURE token:${token}`);
 
                 let exception = new InvalidTokenException();
                 socket.send(JSON.stringify(exception.getError()));
@@ -68,7 +68,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
             // Create the session.
             if( !this.sessionService.create(payload.username, socket) )
             {
-                this.logger.log('CONNECTION FAILURE token:' + token);
+                this.logger.log(`CONNECTION FAILURE token:${token}`);
 
                 let exception = new ConnectionErrorException("User already connected");
                 socket.send(JSON.stringify(exception.getError()));
@@ -77,7 +77,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
                 return;
             }
 
-            this.logger.log('CONNECTED ' + payload.username + ' payload:' + JSON.stringify(payload));
+            this.logger.log(`CONNECTED ${payload.username} payload:${JSON.stringify(payload)}`);
 
             // User online.
             this.notificationService.sendUserOnline(payload.username);
@@ -93,7 +93,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
         catch( exception )
         {
-            this.logger.log('CONNECTION FAILURE token:' + token);
+            this.logger.log(`CONNECTION FAILURE token:${token}`);
 
             exception = new ConnectionErrorException(exception.message);
             socket.send(JSON.stringify(exception.getError()));
@@ -105,7 +105,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     async handleDisconnect( socket: WebSocket )
     {
-        this.logger.log('DISCONNECTED ' + socket.username);
+        this.logger.log(`DISCONNECTED ${socket.username}`);
 
         // Delete the session.
         this.sessionService.delete(socket.username);
@@ -121,7 +121,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('username') username: string
     ): any
     {
-        //this.logger.log('PING' + ' username:' + username);
+        //this.logger.log(`PING username:${username}`);
 
         return new PongMessage();
     }
@@ -133,7 +133,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('username') username: string
     ): Promise<any>
     {
-        this.logger.log('GET_ROOM' + ` username:${username}`);
+        this.logger.log(`GET_ROOM username:${username}`);
 
         try
         {
@@ -154,7 +154,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @ConnectedSocket() socket: WebSocket
     ): Promise<any>
     {
-        this.logger.log('GET_ROOMS');
+        this.logger.log(`GET_ROOMS`);
 
         try
         {
@@ -180,7 +180,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('icon') icon: string
     ): Promise<any>
     {
-        this.logger.log('CREATE_ROOM' + ` username:${username} name:${name} password:${password} hidden:${hidden} size:${size} icon:${icon}`);
+        this.logger.log(`CREATE_ROOM username:${username} name:${name} password:${password} hidden:${hidden} size:${size} icon:${icon}`);
 
         const room = await this.roomService.create(username, name, password, hidden, Number(size), icon);
 
@@ -198,7 +198,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('password') password: string
     ): Promise<any>
     {
-        this.logger.log('JOIN_ROOM' + ` username:${username} name:${name} password:${password}`);
+        this.logger.log(`JOIN_ROOM username:${username} name:${name} password:${password}`);
 
         const room = await this.roomService.join(username, name, password);
         const user = await this.userService.getByUsername(username);
@@ -215,7 +215,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('username') username: string
     ): Promise<any>
     {
-        this.logger.log('LEAVE_ROOM' + ` username:${username}`);
+        this.logger.log(`LEAVE_ROOM username:${username}`);
 
         let user;
         let isMaster = false;
@@ -250,7 +250,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('target') target: string
     ): Promise<any>
     {
-        this.logger.log('KICK_USER' + ` username:${username} target:${target}`);
+        this.logger.log(`KICK_USER username:${username} target:${target}`);
 
         let user;
         let room;
@@ -303,7 +303,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody('text') text: string
     ): Promise<any>
     {
-        this.logger.log('SEND_TEXT' + ` username:${username}`);
+        this.logger.log(`SEND_TEXT username:${username}`);
 
         let user;
         try
