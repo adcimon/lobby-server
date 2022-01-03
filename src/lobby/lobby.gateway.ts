@@ -3,9 +3,9 @@ import { WebSocket } from 'ws';
 import { Logger, UseFilters, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 
 import { AuthService } from '../auth/auth.service';
+import { SessionService } from '../session/session.service';
 import { UserService } from '../user/user.service';
 import { RoomService } from '../room/room.service';
-import { SessionService } from '../session/session.service';
 import { NotificationService } from './notification.service';
 
 import { ValidationInterceptor } from '../validation/validation.interceptor';
@@ -38,9 +38,9 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     constructor(
         private readonly authService: AuthService,
+        private readonly sessionService: SessionService,
         private readonly userService: UserService,
         private readonly roomService: RoomService,
-        private readonly sessionService: SessionService,
         private readonly notificationService: NotificationService
     ) { }
 
@@ -50,9 +50,9 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         const params = new URLSearchParams(args[0].url.replace('/','').replace('?', ''));
         const token = params.get('token');
 
-        // Verify the token.
         try
         {
+            // Verify the token.
             const payload = this.authService.verify(token);
             if( !payload || !('username' in payload) )
             {

@@ -3,10 +3,10 @@ import { ConfigModule } from './config/config.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { SessionModule } from './session/session.module';
 import { UserModule } from './user/user.module';
 import { RoomModule } from './room/room.module';
 import { LobbyModule } from './lobby/lobby.module';
-import { SessionModule } from './session/session.module';
 import { ConfigService } from './config/config.service';
 
 @Module({
@@ -38,10 +38,10 @@ import { ConfigService } from './config/config.service';
             },
         }),
         AuthModule,
+        SessionModule,
         UserModule,
         RoomModule,
-        LobbyModule,
-        SessionModule
+        LobbyModule
     ],
     controllers: [],
     providers: [],
