@@ -14,4 +14,9 @@ export class Session
     {
         this.socket?.close();
     }
+
+    terminate()
+    {
+        this.socket?.terminate();
+    }
 }

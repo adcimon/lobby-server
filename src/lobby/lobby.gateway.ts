@@ -64,7 +64,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
                 let exception = new InvalidTokenException();
                 socket.send(JSON.stringify(exception.getError()));
-                socket.close();
+                socket.terminate();
     
                 return;
             }
@@ -77,7 +77,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
                 let exception = new ConnectionErrorException("User already connected");
                 socket.send(JSON.stringify(exception.getError()));
-                socket.close();
+                socket.terminate();
 
                 return;
             }
@@ -102,7 +102,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
             exception = new ConnectionErrorException(exception.message);
             socket.send(JSON.stringify(exception.getError()));
-            socket.close();
+            socket.terminate();
 
             return;
         }
