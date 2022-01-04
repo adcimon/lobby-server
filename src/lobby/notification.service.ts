@@ -35,8 +35,8 @@ export class NotificationService
             for( let i = 0; i < usernames.length; i++ )
             {
                 let username = usernames[i];
-                let socket = self.sessionService.get(username);
-                socket?.send(JSON.stringify(event));
+                let session = self.sessionService.get(username);
+                session?.sendMessage(JSON.stringify(event));
             }
         }
 
@@ -66,8 +66,8 @@ export class NotificationService
             for( let i = 0; i < usernames.length; i++ )
             {
                 let username = usernames[i];
-                let socket = self.sessionService.get(username);
-                socket?.send(JSON.stringify(event));
+                let session = self.sessionService.get(username);
+                session?.sendMessage(JSON.stringify(event));
             }
         }
 

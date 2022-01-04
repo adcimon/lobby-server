@@ -2,17 +2,20 @@ import { WebSocketGateway, OnGatewayConnection, OnGatewayDisconnect, SubscribeMe
 import { WebSocket } from 'ws';
 import { Logger, UseFilters, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 
+// Providers.
 import { AuthService } from '../auth/auth.service';
 import { SessionService } from '../session/session.service';
 import { UserService } from '../user/user.service';
 import { RoomService } from '../room/room.service';
 import { NotificationService } from './notification.service';
 
+// Validation.
 import { ValidationInterceptor } from '../validation/validation.interceptor';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { UuidInterceptor } from '../validation/uuid.interceptor';
 import { PingSchema, GetRoomSchema, GetRoomsSchema, CreateRoomSchema, JoinRoomSchema, LeaveRoomSchema, KickUserSchema, SendTextSchema } from '../validation/validation.schema';
 
+// Exceptions.
 import { WsExceptionFilter } from '../exception/ws-exception.filter';
 import { GenericErrorException } from '../exception/generic-error.exception';
 import { ConnectionErrorException } from '../exception/connection-error.exception';
@@ -20,6 +23,7 @@ import { InvalidTokenException } from '../exception/invalid-token.exception';
 import { UserNotInRoomException } from '../exception/user-not-in-room.exception';
 import { UserNotMasterException } from '../exception/user-not-master.exception';
 
+// Messages.
 import { PongMessage } from '../message/pong.message';
 import { GetRoomResponse } from '../message/get-room.response';
 import { GetRoomsResponse } from '../message/get-rooms.response';
@@ -66,7 +70,8 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
             }
 
             // Create the session.
-            if( !this.sessionService.create(payload.username, socket) )
+            let session = this.sessionService.create(payload.username, socket);
+            if( !session )
             {
                 this.logger.log(`CONNECTION FAILURE token:${token}`);
 

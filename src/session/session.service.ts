@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { Session } from './session';
 import { WebSocket } from 'ws';
 
 @Injectable()
 export class SessionService
 {
-    private sessions: Map<string, WebSocket> = new Map;
+    private sessions: Map<string, Session> = new Map;
 
     constructor()
     {
@@ -13,23 +14,28 @@ export class SessionService
     /**
      * Create a session.
      */
-    create( username: string, socket: WebSocket ): boolean
+    create( username: string, socket: WebSocket ): Session
     {
         if( this.sessions.has(username) )
         {
-            return false;
+            return null;
         }
 
         socket.username = username;
+
+        let session = new Session();
+        session.username = username;
+        session.socket = socket;
+
         this.sessions.set(username, socket);
 
-        return true;
+        return session;
     }
 
     /**
-     * Get the session's socket.
+     * Get the user's session.
      */
-    get( username: string ): WebSocket
+    get( username: string ): Session
     {
         if( this.sessions.has(username) )
         {
