@@ -3,15 +3,15 @@ import { SessionService } from '../session/session.service';
 import { User } from '../user/user.entity';
 import { Room } from '../room/room.entity';
 
-import { UserOnlineEvent } from '../message/user-online.event';
-import { UserOfflineEvent } from '../message/user-offline.event';
-import { RoomCreatedEvent } from '../message/room-created.event';
-import { RoomDeletedEvent } from '../message/room-deleted.event';
-import { GuestJoinedRoomEvent } from '../message/guest-joined-room.event';
-import { GuestLeftRoomEvent } from '../message/guest-left-room.event';
-import { UserRejoinedEvent } from '../message/user-rejoined.event';
-import { UserKickedEvent } from '../message/user-kicked.event';
-import { ChatTextEvent } from '../message/chat-text.event';
+import { UserOnlineMessage } from '../message/user-online.message';
+import { UserOfflineMessage } from '../message/user-offline.message';
+import { RoomCreatedMessage } from '../message/room-created.message';
+import { RoomDeletedMessage } from '../message/room-deleted.message';
+import { GuestJoinedRoomMessage } from '../message/guest-joined-room.message';
+import { GuestLeftRoomMessage } from '../message/guest-left-room.message';
+import { UserRejoinedMessage } from '../message/user-rejoined.message';
+import { UserKickedMessage } from '../message/user-kicked.message';
+import { ChatTextMessage } from '../message/chat-text.message';
 
 @Injectable()
 export class NotificationService
@@ -36,7 +36,7 @@ export class NotificationService
             {
                 let username = usernames[i];
                 let session = self.sessionService.get(username);
-                session?.sendMessage(JSON.stringify(event));
+                session?.sendMessage(event);
             }
         }
 
@@ -67,7 +67,7 @@ export class NotificationService
             {
                 let username = usernames[i];
                 let session = self.sessionService.get(username);
-                session?.sendMessage(JSON.stringify(event));
+                session?.sendMessage(event);
             }
         }
 
@@ -85,98 +85,93 @@ export class NotificationService
     }
 
     /**
-     * Send a user online event.
+     * Send a user online message.
      */
     sendUserOnline( username: string )
     {
-        let event = new UserOnlineEvent({ username });
+        let event = new UserOnlineMessage(username);
         this.broadcastAll(event);
     }
 
     /**
-     * Send a user offline event.
+     * Send a user offline message.
      */
     sendUserOffline( username: string )
     {
-        let event = new UserOfflineEvent({ username });
+        let event = new UserOfflineMessage(username);
         this.broadcastAll(event);
     }
 
     /**
-     * Send a room created event.
+     * Send a room created message.
      */
     sendRoomCreated( room: Room )
     {
         delete room.password;
-        let event = new RoomCreatedEvent({ room });
+        let event = new RoomCreatedMessage(room);
         this.broadcastAll(event);
     }
 
     /**
-     * Send a room deleted event.
+     * Send a room deleted message.
      */
     sendRoomDeleted( room: Room )
     {
         delete room.password;
-        let event = new RoomDeletedEvent({ room });
+        let event = new RoomDeletedMessage(room);
         this.broadcastAll(event);
     }
 
     /**
-     * Send a guest joined room event.
+     * Send a guest joined room message.
      */
     sendGuestJoinedRoom( user: User, room: Room )
     {
         delete user.room.password;
         delete room.password;
-        let event = new GuestJoinedRoomEvent({ user, room });
+        let event = new GuestJoinedRoomMessage(user, room);
         this.broadcastAll(event);
     }
 
     /**
-     * Send a guest left room event.
+     * Send a guest left room message.
      */
     sendGuestLeftRoom( user: User, room: Room )
     {
         delete user.room.password;
         delete room.password;
-        let event = new GuestLeftRoomEvent({ user, room });
+        let event = new GuestLeftRoomMessage(user, room);
         this.broadcastAll(event);
     }
 
     /**
-     * Send a user rejoined event.
+     * Send a user rejoined message.
      */
     sendUserRejoined( user: User, room: Room )
     {
         delete user.room.password;
         delete room.password;
-        let event = new UserRejoinedEvent({ user, room });
+        let event = new UserRejoinedMessage(user, room);
         this.broadcastRoom(event, room);
     }
 
     /**
-     * Send a user kicked event.
+     * Send a user kicked message.
      */
     sendUserKicked( user: User, room: Room )
     {
         delete user.room.password;
         delete room.password;
-        let event = new UserKickedEvent({ user, room });
+        let event = new UserKickedMessage(user, room);
         this.broadcastAll(event);
     }
 
     /**
-     * Send a chat text event.
+     * Send a chat text message.
      */
     sendChatText( user: User, room: Room, text: string )
     {
-        let event = new ChatTextEvent(
-        {
-            username: user.username,
-            timestamp: new Date(),
-            text: text
-        });
+        let event = new ChatTextMessage(user.username, new Date(), text);
         this.broadcastRoom(event, room);
     }
 }

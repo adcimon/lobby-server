@@ -244,34 +244,37 @@ export function LobbyClient()
 
     /**
      * Get the user's room.
+     * @param {Object} options - Optional parameters: response.
      */
-    let getRoom = function( response )
+    let getRoom = function( options = {} )
     {
         let msg =
         {
             event: "get_room",
             data: { }
         };
-        return sendMessage(msg, response);
+        return sendMessage(msg, options?.response);
     };
 
     /**
      * Get the lobby rooms.
+     * @param {Object} options - Optional parameters: response.
      */
-    let getRooms = function( response )
+    let getRooms = function( options = {} )
     {
         let msg =
         {
             event: "get_rooms",
             data: { }
         };
-        return sendMessage(msg, response);
+        return sendMessage(msg, options?.response);
     };
 
     /**
      * Create a room.
+     * @param {Object} options - Optional parameters: password, hidden, size, icon, response.
      */
-    let createRoom = function( name, password, hidden, size, icon, response )
+    let createRoom = function( name, options = {} )
     {
         let msg =
         {
@@ -279,19 +282,20 @@ export function LobbyClient()
             data:
             {
                 name: name,
-                password: password,
-                hidden: hidden,
-                size: size,
-                icon: icon
+                password: options?.password,
+                hidden: options?.hidden,
+                size: options?.size,
+                icon: options?.icon
             }
         };
-        return sendMessage(msg, response);
+        return sendMessage(msg, options?.response);
     };
 
     /**
      * Join a room.
+     * @param {Object} options - Optional parameters: password, response.
      */
-    let joinRoom = function( name, password, response )
+    let joinRoom = function( name, options = {} )
     {
         let msg =
         {
@@ -299,29 +303,31 @@ export function LobbyClient()
             data:
             {
                 name: name,
-                password: password
+                password: options?.password
             }
         };
-        return sendMessage(msg, response);
+        return sendMessage(msg, options?.response);
     };
 
     /**
      * Leave a room.
+     * @param {Object} options - Optional parameters: response.
      */
-    let leaveRoom = function( response )
+    let leaveRoom = function( options = {} )
     {
         let msg =
         {
             event: "leave_room",
             data: { }
         };
-        return sendMessage(msg, response);
+        return sendMessage(msg, options?.response);
     };
 
     /**
      * Kick a user from the room.
+     * @param {Object} options - Optional parameters: response.
      */
-    let kickUser = function( target, response )
+    let kickUser = function( target, options = {} )
     {
         let msg =
         {
@@ -331,13 +337,14 @@ export function LobbyClient()
                 target: target
             }
         };
-        return sendMessage(msg, response);
+        return sendMessage(msg, options?.response);
     };
 
     /**
      * Send a text message to the room.
+     * @param {Object} options - Optional parameters: response.
      */
-    let sendText = function( text, response )
+    let sendText = function( text, options = {} )
     {
         let msg =
         {
@@ -347,7 +354,7 @@ export function LobbyClient()
                 text: text
             }
         };
-        return sendMessage(msg, response);
+        return sendMessage(msg, options?.response);
     }
 
     /**
