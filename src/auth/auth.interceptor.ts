@@ -21,7 +21,7 @@ export class AuthInterceptor implements NestInterceptor
         {
             // Verify the token.
             const payload = this.authService.verify(token);
-            if( !payload || !('username' in payload) )
+            if( !payload || !('sub' in payload) )
             {
                 throw new Error();
             }
@@ -30,7 +30,7 @@ export class AuthInterceptor implements NestInterceptor
             delete data.token;
 
             // Add the username to the message.
-            data.username = payload.username;
+            data.username = payload.sub;
 
             return next.handle().pipe(map(data => (data)));
         }

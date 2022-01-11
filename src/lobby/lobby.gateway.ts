@@ -58,7 +58,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         {
             // Verify the token.
             const payload = this.authService.verify(token);
-            if( !payload || !('username' in payload) )
+            if( !payload || !('sub' in payload) )
             {
                 this.logger.log(`CONNECTION FAILURE token:${token}`);
 
@@ -70,7 +70,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
             }
 
             // Create the session.
-            let session = this.sessionService.create(payload.username, socket);
+            let session = this.sessionService.create(payload.sub, socket);
             if( !session )
             {
                 this.logger.log(`CONNECTION FAILURE token:${token}`);
@@ -82,15 +82,15 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
                 return;
             }
 
-            this.logger.log(`CONNECTED ${payload.username} payload:${JSON.stringify(payload)}`);
+            this.logger.log(`CONNECTED ${payload.sub} payload:${JSON.stringify(payload)}`);
 
             // User online.
-            this.notificationService.sendUserOnline(payload.username);
+            this.notificationService.sendUserOnline(payload.sub);
 
             // User rejoining.
             try
             {
-                let user = await this.userService.getByUsername(payload.username);
+                let user = await this.userService.getByUsername(payload.sub);
                 let room = await this.roomService.getByName(user.room.name);
                 this.notificationService.sendUserRejoined(user, room);
             }

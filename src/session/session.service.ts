@@ -27,7 +27,7 @@ export class SessionService
         session.username = username;
         session.socket = socket;
 
-        this.sessions.set(username, socket);
+        this.sessions.set(username, session);
 
         return session;
     }

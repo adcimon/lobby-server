@@ -3,11 +3,11 @@
 import { LobbyEvent, LobbyClient } from "./js/lobbyClient.js";
 
 //var url = "wss://" + window.location.host;
-var url = "ws://localhost:9010";
+var url = "ws://localhost:9005";
 var lobbyClient;
 
 var tokenSelect, connectButton, disconnectButton;
-var lobby, roomInput, passwordInput, hiddenInput, sizeInput, iconInput, createRoomButton, joinRoomButton, leaveRoomButton;
+var roomInput, passwordInput, hiddenInput, sizeInput, iconInput, createRoomButton, joinRoomButton, leaveRoomButton;
 var kickInput, kickButton;
 var chat, chatInput, responseLog, eventLog;
 
@@ -16,8 +16,8 @@ window.addEventListener("beforeunload", exit);
 
 function main()
 {
-    initUI();
-    initClient();
+    initializeInterface();
+    initializeClient();
 }
 
 function exit()
@@ -25,48 +25,43 @@ function exit()
     lobbyClient?.disconnect();
 }
 
-function initUI()
+function initializeInterface()
 {
     // Connection.
-    tokenSelect = document.body.query("#tokenSelect");
-    connectButton = document.body.query("#connectButton");
-    connectButton.on("click", handleClickConnectButton);
-    disconnectButton = document.body.query("#disconnectButton");
-    disconnectButton.disable();
-    disconnectButton.on("click", handleClickDisconnectButton);
+    tokenSelect = document.querySelector("#tokenSelect");
+    connectButton = document.querySelector("#connectButton");
+    connectButton.addEventListener("click", handleClickConnectButton);
+    disconnectButton = document.querySelector("#disconnectButton");
+    disconnectButton.disabled = true;
+    disconnectButton.addEventListener("click", handleClickDisconnectButton);
 
     // Lobby.
-    lobby = document.body.query("#lobby");
-    lobby.disable(true);
+    roomInput = document.querySelector("#roomInput");
+    passwordInput = document.querySelector("#passwordInput");
+    hiddenInput = document.querySelector("#hiddenInput");
+    sizeInput = document.querySelector("#sizeInput");
+    iconInput = document.querySelector("#iconInput");
+    createRoomButton = document.querySelector("#createRoomButton");
+    createRoomButton.addEventListener("click", handleClickCreateRoomButton);
+    joinRoomButton = document.querySelector("#joinRoomButton");
+    joinRoomButton.addEventListener("click", handleClickJoinRoomButton);
+    leaveRoomButton = document.querySelector("#leaveRoomButton");
+    leaveRoomButton.addEventListener("click", handleClickLeaveRoomButton);
 
-    roomInput = document.body.query("#roomInput");
-    passwordInput = document.body.query("#passwordInput");
-    hiddenInput = document.body.query("#hiddenInput");
-    sizeInput = document.body.query("#sizeInput");
-    iconInput = document.body.query("#iconInput");
-    createRoomButton = document.body.query("#createRoomButton");
-    createRoomButton.on("click", handleClickCreateRoomButton);
-    joinRoomButton = document.body.query("#joinRoomButton");
-    joinRoomButton.on("click", handleClickJoinRoomButton);
-    leaveRoomButton = document.body.query("#leaveRoomButton");
-    leaveRoomButton.on("click", handleClickLeaveRoomButton);
+    kickInput = document.querySelector("#kickInput");
+    kickButton = document.querySelector("#kickButton");
+    kickButton.addEventListener("click", handleClickKickButton);
 
-    kickInput = document.body.query("#kickInput");
-    kickButton = document.body.query("#kickButton");
-    kickButton.on("click", handleClickKickButton);
-
-    chat = document.body.query("#chat");
-    chatInput = document.body.query("#chatInput");
-    chatInput.on("keyup", handleClickChat);
-    responseLog = document.body.query("#responseLog");
+    chat = document.querySelector("#chat");
+    chatInput = document.querySelector("#chatInput");
+    chatInput.addEventListener("keyup", handleClickChat);
+    responseLog = document.querySelector("#responseLog");
     responseLog.value = "";
-    eventLog = document.body.query("#eventLog");
+    eventLog = document.querySelector("#eventLog");
     eventLog.value = "";
-
-    document.body.show();
 }
 
-function initClient()
+function initializeClient()
 {
     lobbyClient = new LobbyClient({ debug: true });
     lobbyClient.on(LobbyEvent.ClientConnected, handleClientConnected);
@@ -83,11 +78,11 @@ function initClient()
     lobbyClient.on(LobbyEvent.ChatText, handleChatText);
 }
 
-//#region UIEventHandlers
+//#region InterfaceEventHandlers
 function handleClickConnectButton()
 {
-    tokenSelect.disable();
-    connectButton.disable();
+    tokenSelect.disabled = true;
+    connectButton.disabled = true;
 
     let token = tokenSelect.options[tokenSelect.selectedIndex].value;
     lobbyClient.connect(url, token);
@@ -97,10 +92,8 @@ function handleClickDisconnectButton()
 {
     lobbyClient.disconnect();
 
-    tokenSelect.enable();
-    connectButton.enable();
-
-    lobby.disable(true);
+    tokenSelect.disabled = false;
+    connectButton.disabled = false;
 }
 
 function handleClickCreateRoomButton()
@@ -110,9 +103,16 @@ function handleClickCreateRoomButton()
     let hidden = hiddenInput.checked;
     let size = sizeInput.value;
     let icon = iconInput.value;
-    lobbyClient.createRoom(name, password, hidden, size, icon, function( event )
+    lobbyClient.createRoom(name,
     {
-        responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
+        password: password,
+        hidden: hidden,
+        size: size,
+        icon: icon,
+        response: function( event )
+        {
+            responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
+        }
     });
 }
 
@@ -120,27 +120,37 @@ function handleClickJoinRoomButton()
 {
     let name = roomInput.value;
     let password = passwordInput.value;
-    lobbyClient.joinRoom(name, password, function( event )
+    lobbyClient.joinRoom(name,
     {
-        responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
+        password: password,
+        response: function( event )
+        {
+            responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
+        }
     });
 }
 
 function handleClickLeaveRoomButton()
 {
-    lobbyClient.leaveRoom(function( event )
+    lobbyClient.leaveRoom(
     {
-        chat.value = "";
-        responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
+        response: function( event )
+        {
+            chat.value = "";
+            responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
+        }
     });
 }
 
 function handleClickKickButton()
 {
     let user = kickInput.value;
-    lobbyClient.kickUser(user, function( event )
+    lobbyClient.kickUser(user,
     {
-        responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
+        response: function( event )
+        {
+            responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
+        }
     });
 }
 
@@ -150,9 +160,12 @@ function handleClickChat( event )
     {
         event.preventDefault();
         let value = chatInput.value;
-        lobbyClient.sendText(value, function( event )
+        lobbyClient.sendText(value,
         {
-            responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
+            response: function( event )
+            {
+                responseLog.value = event.event.toUpperCase() + "\n" + JSON.stringify(event, undefined, 4);
+            }
         });
         chatInput.value = "";
     }
@@ -162,8 +175,7 @@ function handleClickChat( event )
 //#region LobbyEventHandlers
 function handleClientConnected()
 {
-    disconnectButton.enable();
-    lobby.enable(true);
+    disconnectButton.disabled = false;
 
     lobbyClient.getRooms(function( event )
     {
@@ -173,10 +185,9 @@ function handleClientConnected()
 
 function handleClientDisconnected()
 {
-    tokenSelect.enable();
-    connectButton.enable();
-    disconnectButton.disable();
-    lobby.disable(true);
+    tokenSelect.disabled = false;
+    connectButton.disabled = false;
+    disconnectButton.disabled = true;
     chat.value = "";
 }
 
