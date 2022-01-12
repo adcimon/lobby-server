@@ -16,6 +16,9 @@ The `.env` files have the environment variables used by the server.
 | ----- |
 | NODE_ENV |
 | PORT |
+| ENABLE_HTTPS |
+| KEY_PATH |
+| CERT_PATH |
 | ENABLE_CORS |
 | TOKEN_SECRET_KEY |
 | DATABASE_TYPE |
