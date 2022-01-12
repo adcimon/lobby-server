@@ -7,9 +7,10 @@ import * as fs from 'fs';
 
 async function bootstrap()
 {
-    let httpsOptions = { };
+    let httpsOptions = null;
     if( ConfigService.get('ENABLE_HTTPS') )
     {
+        httpsOptions = { };
         httpsOptions['key'] = fs.readFileSync(ConfigService.get('KEY_PATH'));
         httpsOptions['cert'] = fs.readFileSync(ConfigService.get('CERT_PATH'))
     }
