@@ -1,9 +1,9 @@
 "use strict";
 
-import { LobbyEvent, LobbyClient } from "./js/lobbyClient.js";
+import { LobbyEvent, LobbyClient } from "./lobbyClient.js";
 
 //var url = "wss://" + window.location.host;
-var url = "ws://localhost:9005";
+var url = "ws://localhost:9003";
 var lobbyClient;
 
 var tokenSelect, connectButton, disconnectButton;
