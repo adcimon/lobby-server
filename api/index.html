@@ -36,6 +36,7 @@
                 <li><a href="#leaveRoom">Leave Room</a></li>
                 <li><a href="#kickUser">Kick User</a></li>
                 <li><a href="#sendText">Send Text</a></li>
+                <li><a href="#pong">Pong</a></li>
                 <li><a href="#userOnline">User Online</a></li>
                 <li><a href="#userOffline">User Offline</a></li>
                 <li><a href="#roomCreated">Room Created</a></li>
@@ -870,6 +871,54 @@
                             <td>event</td>
                             <td>string</td>
                             <td>send_text_response</td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>json</td>
+                            <td>
+                                <table class="subtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>uuid</td>
+                                            <td>string</td>
+                                            <td>The message universally unique identifier.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+
+            <!-- Pong -->
+            <div id="pong" class="content-section">
+                <div class="websocket">Pong</div>
+                <p>Pong the client.<br></p>
+                <br>
+
+                <h3 class="json">Message</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event</td>
+                            <td>string</td>
+                            <td>pong</td>
                         </tr>
                         <tr>
                             <td>data</td>
