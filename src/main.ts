@@ -20,6 +20,7 @@ async function bootstrap()
         httpsOptions: httpsOptions
     });
     app.useWebSocketAdapter(new WsAdapter(app));
+
     if( ConfigService.get('ENABLE_CORS') )
     {
         app.enableCors();
