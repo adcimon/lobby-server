@@ -11,25 +11,25 @@ function emptyStringToNull( value, originalValue )
     return (originalValue === "") ? null : value;
 }
 
-export const PingSchema = yup.object().shape(
+const PingSchema = yup.object().shape(
 {
     uuid:       yup.string().required('UUID is required'),
     token:      yup.string().required('Token is required')
 });
 
-export const GetRoomSchema = yup.object().shape(
+const GetRoomSchema = yup.object().shape(
 {
     uuid:       yup.string().required('UUID is required'),
     token:      yup.string().required('Token is required')
 });
 
-export const GetRoomsSchema = yup.object().shape(
+const GetRoomsSchema = yup.object().shape(
 {
     uuid:       yup.string().required('UUID is required'),
     token:      yup.string().required('Token is required')
 });
 
-export const CreateRoomSchema = yup.object().shape(
+const CreateRoomSchema = yup.object().shape(
 {
     uuid:       yup.string().required('UUID is required'),
     token:      yup.string().required('Token is required'),
@@ -40,7 +40,7 @@ export const CreateRoomSchema = yup.object().shape(
     icon:       yup.string().url().max(500)
 });
 
-export const JoinRoomSchema = yup.object().shape(
+const JoinRoomSchema = yup.object().shape(
 {
     uuid:       yup.string().required('UUID is required'),
     token:      yup.string().required('Token is required'),
@@ -48,22 +48,34 @@ export const JoinRoomSchema = yup.object().shape(
     password:   yup.string().matches(PASSWORD_REGEXP, { message: PASSWORD_MESSAGE, excludeEmptyString: true })
 });
 
-export const LeaveRoomSchema = yup.object().shape(
+const LeaveRoomSchema = yup.object().shape(
 {
     uuid:       yup.string().required('UUID is required'),
     token:      yup.string().required('Token is required')
 });
 
-export const KickUserSchema = yup.object().shape(
+const KickUserSchema = yup.object().shape(
 {
     uuid:       yup.string().required('UUID is required'),
     token:      yup.string().required('Token is required'),
     target:     yup.string().required('Target is required')
 });
 
-export const SendTextSchema = yup.object().shape(
+const SendTextSchema = yup.object().shape(
 {
     uuid:       yup.string().required('UUID is required'),
     token:      yup.string().required('Token is required'),
     text:       yup.string().required('Text is required')
 });
+
+export const ValidationSchema =
+{
+    PingSchema,
+    GetRoomSchema,
+    GetRoomsSchema,
+    CreateRoomSchema,
+    JoinRoomSchema,
+    LeaveRoomSchema,
+    KickUserSchema,
+    SendTextSchema
+};

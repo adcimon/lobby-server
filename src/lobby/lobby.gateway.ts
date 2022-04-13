@@ -13,7 +13,7 @@ import { NotificationService } from './notification.service';
 import { ValidationInterceptor } from '../validation/validation.interceptor';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { UuidInterceptor } from '../validation/uuid.interceptor';
-import { PingSchema, GetRoomSchema, GetRoomsSchema, CreateRoomSchema, JoinRoomSchema, LeaveRoomSchema, KickUserSchema, SendTextSchema } from '../validation/validation.schema';
+import { ValidationSchema } from '../validation/validation.schema';
 
 // Exceptions.
 import { WsExceptionFilter } from '../exception/ws-exception.filter';
@@ -120,7 +120,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     }
 
     @SubscribeMessage('ping')
-    @UseInterceptors(new ValidationInterceptor(PingSchema), AuthInterceptor, new UuidInterceptor())
+    @UseInterceptors(new ValidationInterceptor(ValidationSchema.PingSchema), AuthInterceptor, new UuidInterceptor())
     ping(
         @ConnectedSocket() socket: WebSocket,
         @MessageBody('username') username: string
@@ -132,7 +132,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     }
 
     @SubscribeMessage('get_room')
-    @UseInterceptors(new ValidationInterceptor(GetRoomSchema), AuthInterceptor, new UuidInterceptor())
+    @UseInterceptors(new ValidationInterceptor(ValidationSchema.GetRoomSchema), AuthInterceptor, new UuidInterceptor())
     async getRoom(
         @ConnectedSocket() socket: WebSocket,
         @MessageBody('username') username: string
@@ -154,7 +154,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     }
 
     @SubscribeMessage('get_rooms')
-    @UseInterceptors(new ValidationInterceptor(GetRoomsSchema), AuthInterceptor, new UuidInterceptor())
+    @UseInterceptors(new ValidationInterceptor(ValidationSchema.GetRoomsSchema), AuthInterceptor, new UuidInterceptor())
     async getRooms(
         @ConnectedSocket() socket: WebSocket
     ): Promise<any>
@@ -174,7 +174,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     }
 
     @SubscribeMessage('create_room')
-    @UseInterceptors(new ValidationInterceptor(CreateRoomSchema), AuthInterceptor, new UuidInterceptor())
+    @UseInterceptors(new ValidationInterceptor(ValidationSchema.CreateRoomSchema), AuthInterceptor, new UuidInterceptor())
     async createRoom(
         @ConnectedSocket() socket: WebSocket,
         @MessageBody('username') username: string,
@@ -195,7 +195,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     }
 
     @SubscribeMessage('join_room')
-    @UseInterceptors(new ValidationInterceptor(JoinRoomSchema), AuthInterceptor, new UuidInterceptor())
+    @UseInterceptors(new ValidationInterceptor(ValidationSchema.JoinRoomSchema), AuthInterceptor, new UuidInterceptor())
     async joinRoom(
         @ConnectedSocket() socket: WebSocket,
         @MessageBody('username') username: string,
@@ -214,7 +214,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     }
 
     @SubscribeMessage('leave_room')
-    @UseInterceptors(new ValidationInterceptor(LeaveRoomSchema), AuthInterceptor, new UuidInterceptor())
+    @UseInterceptors(new ValidationInterceptor(ValidationSchema.LeaveRoomSchema), AuthInterceptor, new UuidInterceptor())
     async leaveRoom(
         @ConnectedSocket() socket: WebSocket,
         @MessageBody('username') username: string
@@ -248,7 +248,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     }
 
     @SubscribeMessage('kick_user')
-    @UseInterceptors(new ValidationInterceptor(KickUserSchema), AuthInterceptor, new UuidInterceptor())
+    @UseInterceptors(new ValidationInterceptor(ValidationSchema.KickUserSchema), AuthInterceptor, new UuidInterceptor())
     async kickUser(
         @ConnectedSocket() socket: WebSocket,
         @MessageBody('username') username: string,
@@ -301,7 +301,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     }
 
     @SubscribeMessage('send_text')
-    @UseInterceptors(new ValidationInterceptor(SendTextSchema), AuthInterceptor, new UuidInterceptor())
+    @UseInterceptors(new ValidationInterceptor(ValidationSchema.SendTextSchema), AuthInterceptor, new UuidInterceptor())
     async sendText(
         @ConnectedSocket() socket: WebSocket,
         @MessageBody('username') username: string,
