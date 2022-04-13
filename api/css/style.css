@@ -485,10 +485,45 @@ pre
     text-shadow: 0 1px 0 hsla(0, 0%, 0%, 0.1);
 
     /* Style */
-    background-color: hsla(36, 82%, 46%, 1);
+    background-color: hsla(56, 82%, 46%, 1);
     border-radius: 3px;
     color: var(--font-color);
     content: "PUT";
+}
+
+.patch
+{
+    /* Space */
+    margin: 10px;
+    padding: 10px;
+
+    /* Text */
+    font-family: Source Code Pro, monospace;
+
+    /* Style */
+    background-color: hsla(27, 98%, 62%, 0.3);
+    border: 1px solid;
+    border-color: hsla(36, 82%, 46%, 1);
+}
+
+.patch::before
+{
+    /* Space */
+    margin-right: 10px;
+    padding: 6px 15px;
+
+    /* Text */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    text-shadow: 0 1px 0 hsla(0, 0%, 0%, 0.1);
+
+    /* Style */
+    background-color: hsla(36, 82%, 46%, 1);
+    border-radius: 3px;
+    color: var(--font-color);
+    content: "PATCH";
 }
 
 .delete
@@ -602,7 +637,51 @@ pre
     border-color: hsla(120, 82%, 46%, 1);
     border-radius: 3px;
     color: var(--font-color);
-    content: "protected";
+    content: "🔒 protected";
+}
+
+.key::after
+{
+    /* Space */
+    margin-left: 10px;
+    padding: 3px 3px;
+
+    /* Text */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    text-shadow: 0 1px 0 hsla(0, 0%, 0%, 0.1);
+
+    /* Style */
+    background-color: hsla(130, 95%, 50%, 0.6);
+    border: 1px solid;
+    border-color: hsla(120, 82%, 46%, 1);
+    border-radius: 3px;
+    color: var(--font-color);
+    content: "🔑";
+}
+
+.required::after
+{
+    /* Space */
+    margin-left: 10px;
+    padding: 3px 3px;
+
+    /* Text */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    text-shadow: 0 1px 0 hsla(0, 0%, 0%, 0.1);
+
+    /* Style */
+    background-color: hsla(0, 95%, 50%, 0.6);
+    border: 1px solid;
+    border-color: hsla(0, 82%, 46%, 1);
+    border-radius: 3px;
+    color: var(--font-color);
+    content: "❗ required";
 }
 
 .json::after
@@ -625,28 +704,6 @@ pre
     border-radius: 3px;
     color: var(--font-color);
     content: "json";
-}
-
-.required::after
-{
-    /* Space */
-    margin-left: 10px;
-    padding: 3px 3px;
-
-    /* Text */
-    font-family: 'Montserrat', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    text-align: center;
-    text-shadow: 0 1px 0 hsla(0, 0%, 0%, 0.1);
-
-    /* Style */
-    background-color: hsla(0, 95%, 50%, 0.6);
-    border: 1px solid;
-    border-color: hsla(0, 82%, 46%, 1);
-    border-radius: 3px;
-    color: var(--font-color);
-    content: "required";
 }
 
 /* 5. Responsive */
