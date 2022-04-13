@@ -28,6 +28,7 @@
         <div class="navbar">
             <ul>
                 <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#api">API</a></li>
                 <li><a href="#ping">Ping</a></li>
                 <li><a href="#getRoom">Get Room</a></li>
                 <li><a href="#getRooms">Get Rooms</a></li>
@@ -56,15 +57,17 @@
 
             <!-- Introduction -->
             <div id="introduction" class="content-section">
-                <h1>Introduction</h1>
+                <h1>🚀 Introduction</h1>
                 <p>Lobby Server is a general-purpose WebSocket-based lobby server.</p>
-                <p>The authentication method used is <a href="https://jwt.io/" target="_blank">JSON Web Token</a>. The client must send the token in the connection URL and in the messages' data object.</p>
+                <p>The authentication method used is <a href="https://jwt.io/" target="_blank">JSON Web Token</a>. The token's payload must contain the <span class="highlight">sub</span> field with a unique identifier.</p>
+                <p><code>{<br>&nbsp;&nbsp;&nbsp;sub: username<br>}</code></p>
+                <p>The client must send the token in the connection URL and in each message data object.</p>
                 <p><code>wss://localhost:9000/token</code></p>
             </div>
 
             <!-- API -->
-            <div class="content-section">
-                <h2>API</h2>
+            <div id="api" class="content-section">
+                <h2>🌐 API</h2>
             </div>
 
             <!-- Ping -->
@@ -73,7 +76,7 @@
                 <p>Ping the server.<br></p>
                 <br>
 
-                <h3 class="protected">Message</h3>
+                <h3>Message<span class="protected"></span><span class="json"></span></h3>
                 <table>
                     <thead>
                         <tr>
@@ -167,7 +170,7 @@
                 <p>Get the user's room.<br></p>
                 <br>
 
-                <h3 class="protected">Message</h3>
+                <h3>Message<span class="protected"></span><span class="json"></span></h3>
                 <table>
                     <thead>
                         <tr>
@@ -266,7 +269,7 @@
                 <p>Get the rooms.<br></p>
                 <br>
 
-                <h3 class="protected">Message</h3>
+                <h3>Message<span class="protected"></span><span class="json"></span></h3>
                 <table>
                     <thead>
                         <tr>
@@ -365,7 +368,7 @@
                 <p>Create a new room.<br></p>
                 <br>
 
-                <h3 class="protected">Message</h3>
+                <h3>Message<span class="protected"></span><span class="json"></span></h3>
                 <table>
                     <thead>
                         <tr>
@@ -489,7 +492,7 @@
                 <p>Join a room.<br></p>
                 <br>
 
-                <h3 class="protected">Message</h3>
+                <h3>Message<span class="protected"></span><span class="json"></span></h3>
                 <table>
                     <thead>
                         <tr>
@@ -598,7 +601,7 @@
                 <p>Leave a room.<br></p>
                 <br>
 
-                <h3 class="protected">Message</h3>
+                <h3>Message<span class="protected"></span><span class="json"></span></h3>
                 <table>
                     <thead>
                         <tr>
@@ -697,7 +700,7 @@
                 <p>Kick a user from the room<br></p>
                 <br>
 
-                <h3 class="protected">Message</h3>
+                <h3>Message<span class="protected"></span><span class="json"></span></h3>
                 <table>
                     <thead>
                         <tr>
@@ -806,7 +809,7 @@
                 <p>Send a chat text message.<br></p>
                 <br>
 
-                <h3 class="protected">Message</h3>
+                <h3>Message<span class="protected"></span><span class="json"></span></h3>
                 <table>
                     <thead>
                         <tr>
@@ -1411,7 +1414,7 @@
 
             <!-- Errors -->
             <div id="errors" class="content-section">
-                <h2>Errors</h2>
+                <h2>❌ Errors</h2>
                 <p>The server uses the following error schema:</p>
                 <table>
                     <thead>
