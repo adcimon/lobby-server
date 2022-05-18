@@ -24,6 +24,7 @@ import { UserNotInRoomException } from '../exception/user-not-in-room.exception'
 import { UserNotMasterException } from '../exception/user-not-master.exception';
 
 // Messages.
+import { ClientAuthorizedMessage } from '../message/client-authorized.message';
 import { PongMessage } from '../message/pong.message';
 import { GetRoomResponse } from '../message/get-room.response';
 import { GetRoomsResponse } from '../message/get-rooms.response';
@@ -54,10 +55,11 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
         const params = new URLSearchParams(args[0].url.replace('/','').replace('?', ''));
         const token = params.get('token');
 
+        // Verify the token.
+        let payload = null;
         try
         {
-            // Verify the token.
-            const payload = this.authService.verify(token);
+            payload = this.authService.verify(token);
             if( !payload || !('sub' in payload) )
             {
                 this.logger.log(`CONNECTION FAILURE token:${token}`);
@@ -68,44 +70,46 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
     
                 return;
             }
-
-            // Create the session.
-            let session = this.sessionService.create(payload.sub, socket);
-            if( !session )
-            {
-                this.logger.log(`CONNECTION FAILURE token:${token}`);
-
-                let exception = new ConnectionErrorException("User already connected");
-                socket.send(JSON.stringify(exception.getError()));
-                socket.terminate();
-
-                return;
-            }
-
-            this.logger.log(`CONNECTED ${payload.sub} payload:${JSON.stringify(payload)}`);
-
-            // User online.
-            this.notificationService.sendUserOnline(payload.sub);
-
-            // User rejoining.
-            try
-            {
-                let user = await this.userService.getByUsername(payload.sub);
-                let room = await this.roomService.getByName(user.room.name);
-                this.notificationService.sendUserRejoined(user, room);
-            }
-            catch( exception ) { }
         }
         catch( exception )
         {
             this.logger.log(`CONNECTION FAILURE token:${token}`);
 
-            exception = new ConnectionErrorException(exception.message);
             socket.send(JSON.stringify(exception.getError()));
             socket.terminate();
 
             return;
         }
+
+        // Create the session.
+        let session = this.sessionService.create(payload.sub, socket);
+        if( !session )
+        {
+            this.logger.log(`CONNECTION FAILURE token:${token}`);
+
+            let exception = new ConnectionErrorException('User already connected');
+            socket.send(JSON.stringify(exception.getError()));
+            socket.terminate();
+
+            return;
+        }
+
+        this.logger.log(`CONNECTED ${payload.sub} payload:${JSON.stringify(payload)}`);
+
+        let message = new ClientAuthorizedMessage();
+        socket.send(JSON.stringify(message));
+
+        // User online.
+        this.notificationService.sendUserOnline(payload.sub);
+
+        // User rejoining.
+        try
+        {
+            let user = await this.userService.getByUsername(payload.sub);
+            let room = await this.roomService.getByName(user.room.name);
+            this.notificationService.sendUserRejoined(user, room);
+        }
+        catch( exception ) { }
     }
 
     async handleDisconnect( socket: WebSocket )
