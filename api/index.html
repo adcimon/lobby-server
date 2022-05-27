@@ -4,7 +4,7 @@
 
 <head>
 
-    <title>API Documentation</title>
+    <title>Lobby Server</title>
 
 	<meta charset="utf-8">
 
@@ -22,12 +22,10 @@
 
     <div class="menu">
         <div class="logo">
-            <span>API Documentation</span>
+            <span>Lobby Server</span>
         </div>
         <div class="navbar">
             <ul>
-                <li><a href="#introduction">Introduction</a></li>
-                <li><a href="#api">API</a></li>
                 <li><a href="#ping">Ping</a></li>
                 <li><a href="#getRoom">Get Room</a></li>
                 <li><a href="#getRooms">Get Rooms</a></li>
@@ -55,19 +53,14 @@
     <div class="content-page">
         <div class="content">
 
-            <!-- Introduction -->
-            <div id="introduction" class="content-section">
-                <h1>🚀 Introduction</h1>
+            <!-- API -->
+            <div id="api" class="content-section">
+                <h1>🌐 API</h1>
                 <p>Lobby Server is a general-purpose WebSocket-based lobby server.</p>
                 <p>The authentication method used is <a href="https://jwt.io/" target="_blank">JSON Web Token</a>. The token's payload must contain the <span class="highlight">sub</span> field with a unique identifier.</p>
                 <p><code>{<br>&nbsp;&nbsp;&nbsp;sub: username<br>}</code></p>
                 <p>The client must send the token in the connection URL and in each message data object.</p>
                 <p><code>wss://localhost:9000/token</code></p>
-            </div>
-
-            <!-- API -->
-            <div id="api" class="content-section">
-                <h2>🌐 API</h2>
             </div>
 
             <!-- Ping -->
