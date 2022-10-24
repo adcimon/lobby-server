@@ -1,7 +1,7 @@
 "use strict";
 
 const PING_PERIOD = 5 * 1000;
-const DEBUG_STYLE = "background: hsla(0, 0%, 13%, 1); color: hsla(180, 89%, 45%, 1)";
+const DEBUG_STYLE = "background: rgb(33, 33, 33); color: rgb(51, 255, 0)";
 
 export const LobbyEvent =
 {
