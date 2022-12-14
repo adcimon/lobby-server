@@ -2,7 +2,7 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nes
 import { AuthService } from './auth.service';
 import { WebSocket } from 'ws';
 import { map } from 'rxjs';
-import { InvalidTokenException } from '../exception/invalid-token.exception';
+import { InvalidTokenException } from '../exceptions/invalid-token.exception';
 
 @Injectable()
 export class AuthInterceptor implements NestInterceptor

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
 import { JwtService } from '@nestjs/jwt';
-import { InvalidTokenException } from '../exception/invalid-token.exception';
+import { InvalidTokenException } from '../exceptions/invalid-token.exception';
 
 @Injectable()
 export class AuthService

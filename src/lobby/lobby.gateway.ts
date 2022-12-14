@@ -21,23 +21,23 @@ import { UuidInterceptor } from '../validation/uuid.interceptor';
 import { ValidationSchema } from '../validation/validation.schema';
 
 // Exceptions.
-import { WsExceptionFilter } from '../exception/ws-exception.filter';
-import { GenericErrorException } from '../exception/generic-error.exception';
-import { ConnectionErrorException } from '../exception/connection-error.exception';
-import { InvalidTokenException } from '../exception/invalid-token.exception';
-import { UserNotInRoomException } from '../exception/user-not-in-room.exception';
-import { UserNotMasterException } from '../exception/user-not-master.exception';
+import { WsExceptionFilter } from '../exceptions/ws-exception.filter';
+import { GenericErrorException } from '../exceptions/generic-error.exception';
+import { ConnectionErrorException } from '../exceptions/connection-error.exception';
+import { InvalidTokenException } from '../exceptions/invalid-token.exception';
+import { UserNotInRoomException } from '../exceptions/user-not-in-room.exception';
+import { UserNotMasterException } from '../exceptions/user-not-master.exception';
 
 // Messages.
-import { ClientAuthorizedMessage } from '../message/client-authorized.message';
-import { PongMessage } from '../message/pong.message';
-import { GetRoomResponse } from '../message/get-room.response';
-import { GetRoomsResponse } from '../message/get-rooms.response';
-import { CreateRoomResponse } from '../message/create-room.response';
-import { JoinRoomResponse } from '../message/join-room.response';
-import { LeaveRoomResponse } from '../message/leave-room.response';
-import { KickUserResponse } from '../message/kick-user.response';
-import { SendTextResponse } from '../message/send-text.response';
+import { ClientAuthorizedMessage } from '../messages/client-authorized.message';
+import { PongMessage } from '../messages/pong.message';
+import { GetRoomResponse } from '../messages/get-room.response';
+import { GetRoomsResponse } from '../messages/get-rooms.response';
+import { CreateRoomResponse } from '../messages/create-room.response';
+import { JoinRoomResponse } from '../messages/join-room.response';
+import { LeaveRoomResponse } from '../messages/leave-room.response';
+import { KickUserResponse } from '../messages/kick-user.response';
+import { SendTextResponse } from '../messages/send-text.response';
 
 @WebSocketGateway()
 @UseInterceptors(ClassSerializerInterceptor)

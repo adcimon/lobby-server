@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { UserAlreadyExistsException } from '../exception/user-already-exists.exception';
-import { UserNotFoundException } from '../exception/user-not-found.exception';
+import { UserAlreadyExistsException } from '../exceptions/user-already-exists.exception';
+import { UserNotFoundException } from '../exceptions/user-not-found.exception';
 
 @Injectable()
 export class UsersService

@@ -5,12 +5,12 @@ import { Room } from './room.entity';
 import { User } from '../users/user.entity';
 import { ConfigService } from '../config/config.service';
 import { UsersService } from '../users/users.service';
-import { UserNotInRoomException } from '../exception/user-not-in-room.exception';
-import { UserAlreadyInRoomException } from '../exception/user-already-in-room.exception';
-import { RoomNotFoundException } from '../exception/room-not-found.exception';
-import { RoomAlreadyExistsException } from '../exception/room-already-exists.exception';
-import { RoomFullException } from '../exception/room-full.exception';
-import { InvalidRoomPasswordException } from '../exception/invalid-room-password.exception';
+import { UserNotInRoomException } from '../exceptions/user-not-in-room.exception';
+import { UserAlreadyInRoomException } from '../exceptions/user-already-in-room.exception';
+import { RoomNotFoundException } from '../exceptions/room-not-found.exception';
+import { RoomAlreadyExistsException } from '../exceptions/room-already-exists.exception';
+import { RoomFullException } from '../exceptions/room-full.exception';
+import { InvalidRoomPasswordException } from '../exceptions/invalid-room-password.exception';
 
 @Injectable()
 export class RoomsService

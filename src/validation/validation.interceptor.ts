@@ -1,7 +1,7 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { WebSocket } from 'ws';
 import { Observable, map, EMPTY } from 'rxjs';
-import { ValidationErrorException } from '../exception/validation-error.exception';
+import { ValidationErrorException } from '../exceptions/validation-error.exception';
 
 @Injectable()
 export class ValidationInterceptor implements NestInterceptor

@@ -7,15 +7,15 @@ import { User } from '../users/user.entity';
 import { Room } from '../rooms/room.entity';
 
 // Messages.
-import { UserOnlineMessage } from '../message/user-online.message';
-import { UserOfflineMessage } from '../message/user-offline.message';
-import { RoomCreatedMessage } from '../message/room-created.message';
-import { RoomDeletedMessage } from '../message/room-deleted.message';
-import { GuestJoinedRoomMessage } from '../message/guest-joined-room.message';
-import { GuestLeftRoomMessage } from '../message/guest-left-room.message';
-import { UserRejoinedMessage } from '../message/user-rejoined.message';
-import { UserKickedMessage } from '../message/user-kicked.message';
-import { ChatTextMessage } from '../message/chat-text.message';
+import { UserOnlineMessage } from '../messages/user-online.message';
+import { UserOfflineMessage } from '../messages/user-offline.message';
+import { RoomCreatedMessage } from '../messages/room-created.message';
+import { RoomDeletedMessage } from '../messages/room-deleted.message';
+import { GuestJoinedRoomMessage } from '../messages/guest-joined-room.message';
+import { GuestLeftRoomMessage } from '../messages/guest-left-room.message';
+import { UserRejoinedMessage } from '../messages/user-rejoined.message';
+import { UserKickedMessage } from '../messages/user-kicked.message';
+import { ChatTextMessage } from '../messages/chat-text.message';
 
 @Injectable()
 export class NotificationService
