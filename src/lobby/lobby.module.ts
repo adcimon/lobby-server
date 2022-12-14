@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
-import { SessionModule } from '../session/session.module';
-import { UserModule } from '../user/user.module';
-import { RoomModule } from '../room/room.module';
+import { SessionsModule } from '../sessions/sessions.module';
+import { UsersModule } from '../users/users.module';
+import { RoomsModule } from '../rooms/rooms.module';
 import { LobbyGateway } from './lobby.gateway';
 import { NotificationService } from './notification.service';
 
 @Module({
-    imports: [AuthModule, SessionModule, UserModule, RoomModule],
-    controllers: [],
-    providers: [LobbyGateway, NotificationService],
-    exports: []
+	imports: [AuthModule, SessionsModule, UsersModule, RoomsModule],
+	controllers: [],
+	providers: [LobbyGateway, NotificationService],
+	exports: []
 })
 export class LobbyModule
 {

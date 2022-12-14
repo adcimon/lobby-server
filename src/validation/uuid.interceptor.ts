@@ -4,21 +4,21 @@ import { Observable, map } from 'rxjs';
 @Injectable()
 export class UuidInterceptor implements NestInterceptor
 {
-    constructor()
-    {
-    }
+	constructor()
+	{
+	}
 
-    intercept( context: ExecutionContext, next: CallHandler ): Observable<any>
-    {
-        const data = context.switchToWs().getData();
-        const uuid = data.uuid;
+	intercept( context: ExecutionContext, next: CallHandler ): Observable<any>
+	{
+		const data: any = context.switchToWs().getData();
+		const uuid: any = data.uuid;
 
-        return next.handle().pipe(map(data =>
-        {
-            // Add the uuid to the response.
-            data.data.uuid = uuid;
+		return next.handle().pipe(map(data =>
+		{
+			// Add the uuid to the response.
+			data.data.uuid = uuid;
 
-            return data;
-        }));
-    }
+			return data;
+		}));
+	}
 }

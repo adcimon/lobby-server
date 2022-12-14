@@ -2,11 +2,16 @@ import { WebSocketGateway, OnGatewayConnection, OnGatewayDisconnect, SubscribeMe
 import { WebSocket } from 'ws';
 import { Logger, UseFilters, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 
+// Entities.
+import { Session } from '../sessions/session';
+import { User } from '../users/user.entity';
+import { Room } from '../rooms/room.entity';
+
 // Providers.
 import { AuthService } from '../auth/auth.service';
-import { SessionService } from '../session/session.service';
-import { UserService } from '../user/user.service';
-import { RoomService } from '../room/room.service';
+import { SessionsService } from '../sessions/sessions.service';
+import { UsersService } from '../users/users.service';
+import { RoomsService } from '../rooms/rooms.service';
 import { NotificationService } from './notification.service';
 
 // Validation.
@@ -39,298 +44,301 @@ import { SendTextResponse } from '../message/send-text.response';
 @UseFilters(new WsExceptionFilter())
 export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 {
-    private readonly logger = new Logger('LOBBY');
+	private readonly logger: Logger = new Logger('LOBBY');
 
-    constructor(
-        private readonly authService: AuthService,
-        private readonly sessionService: SessionService,
-        private readonly userService: UserService,
-        private readonly roomService: RoomService,
-        private readonly notificationService: NotificationService
-    ) { }
+	constructor(
+		private readonly authService: AuthService,
+		private readonly sessionService: SessionsService,
+		private readonly userService: UsersService,
+		private readonly roomService: RoomsService,
+		private readonly notificationService: NotificationService
+	) { }
 
-    async handleConnection( socket: WebSocket, ...args: any[] )
-    {
-        // Authenticate the connection using the token URL parameter.
-        const params = new URLSearchParams(args[0].url.replace('/','').replace('?', ''));
-        const token = params.get('token');
+	async handleConnection( socket: WebSocket, ...args: any[] )
+	{
+		// Authenticate the connection using the token URL parameter.
+		const params: URLSearchParams = new URLSearchParams(args[0].url.replace('/','').replace('?', ''));
+		const token: string = params.get('token');
 
-        // Verify the token.
-        let payload = null;
-        try
-        {
-            payload = this.authService.verify(token);
-            if( !payload || !('sub' in payload) )
-            {
-                this.logger.log(`CONNECTION FAILURE token:${token}`);
+		// Verify the token.
+		let payload: any = null;
+		try
+		{
+			payload = this.authService.verify(token);
+			if( !payload || !('sub' in payload) )
+			{
+				this.logger.log(`CONNECTION FAILURE token:${token}`);
 
-                let exception = new InvalidTokenException();
-                socket.send(JSON.stringify(exception.getError()));
-                socket.terminate();
-    
-                return;
-            }
-        }
-        catch( exception )
-        {
-            this.logger.log(`CONNECTION FAILURE token:${token}`);
+				let exception = new InvalidTokenException();
+				socket.send(JSON.stringify(exception.getError()));
+				socket.terminate();
 
-            socket.send(JSON.stringify(exception.getError()));
-            socket.terminate();
+				return;
+			}
+		}
+		catch( exception: any )
+		{
+			this.logger.log(`CONNECTION FAILURE token:${token}`);
 
-            return;
-        }
+			socket.send(JSON.stringify(exception.getError()));
+			socket.terminate();
 
-        // Create the session.
-        let session = this.sessionService.create(payload.sub, socket);
-        if( !session )
-        {
-            this.logger.log(`CONNECTION FAILURE token:${token}`);
+			return;
+		}
 
-            let exception = new ConnectionErrorException('User already connected');
-            socket.send(JSON.stringify(exception.getError()));
-            socket.terminate();
+		// Create the session.
+		let session: Session = this.sessionService.create(payload.sub, socket);
+		if( !session )
+		{
+			this.logger.log(`CONNECTION FAILURE token:${token}`);
 
-            return;
-        }
+			const exception: ConnectionErrorException = new ConnectionErrorException('User already connected');
+			socket.send(JSON.stringify(exception.getError()));
+			socket.terminate();
 
-        this.logger.log(`CONNECTED ${payload.sub} payload:${JSON.stringify(payload)}`);
+			return;
+		}
 
-        let message = new ClientAuthorizedMessage();
-        socket.send(JSON.stringify(message));
+		this.logger.log(`CONNECTED ${payload.sub} payload:${JSON.stringify(payload)}`);
 
-        // User online.
-        this.notificationService.sendUserOnline(payload.sub);
+		const message: ClientAuthorizedMessage = new ClientAuthorizedMessage();
+		socket.send(JSON.stringify(message));
 
-        // User rejoining.
-        try
-        {
-            let user = await this.userService.getByUsername(payload.sub);
-            let room = await this.roomService.getByName(user.room.name);
-            this.notificationService.sendUserRejoined(user, room);
-        }
-        catch( exception ) { }
-    }
+		// User online.
+		this.notificationService.sendUserOnline(payload.sub);
 
-    async handleDisconnect( socket: WebSocket )
-    {
-        this.logger.log(`DISCONNECTED ${socket.username}`);
+		// User rejoining.
+		try
+		{
+			let user: User = await this.userService.getByUsername(payload.sub);
+			let room: Room = await this.roomService.getByName(user.room.name);
+			this.notificationService.sendUserRejoined(user, room);
+		}
+		catch( exception: any )
+		{
+			// Ignore rejoin exceptions.
+		}
+	}
 
-        // Delete the session.
-        this.sessionService.delete(socket.username);
+	async handleDisconnect( socket: WebSocket )
+	{
+		this.logger.log(`DISCONNECTED ${socket.username}`);
 
-        // User offline.
-        this.notificationService.sendUserOffline(socket.username);
-    }
+		// Delete the session.
+		this.sessionService.delete(socket.username);
 
-    @SubscribeMessage('ping')
-    @UseInterceptors(new ValidationInterceptor(ValidationSchema.PingSchema), AuthInterceptor, new UuidInterceptor())
-    ping(
-        @ConnectedSocket() socket: WebSocket,
-        @MessageBody('username') username: string
-    ): any
-    {
-        //this.logger.log(`PING username:${username}`);
+		// User offline.
+		this.notificationService.sendUserOffline(socket.username);
+	}
 
-        return new PongMessage();
-    }
+	@SubscribeMessage('ping')
+	@UseInterceptors(new ValidationInterceptor(ValidationSchema.PingSchema), AuthInterceptor, new UuidInterceptor())
+	ping(
+		@ConnectedSocket() socket: WebSocket,
+		@MessageBody('username') username: string
+	): any
+	{
+		//this.logger.log(`PING username:${username}`);
 
-    @SubscribeMessage('get_room')
-    @UseInterceptors(new ValidationInterceptor(ValidationSchema.GetRoomSchema), AuthInterceptor, new UuidInterceptor())
-    async getRoom(
-        @ConnectedSocket() socket: WebSocket,
-        @MessageBody('username') username: string
-    ): Promise<any>
-    {
-        this.logger.log(`GET_ROOM username:${username}`);
+		return new PongMessage();
+	}
 
-        try
-        {
-            const user = await this.userService.getByUsername(username);
-            const room = await this.roomService.getByName(user.room.name);
+	@SubscribeMessage('get_room')
+	@UseInterceptors(new ValidationInterceptor(ValidationSchema.GetRoomSchema), AuthInterceptor, new UuidInterceptor())
+	async getRoom(
+		@ConnectedSocket() socket: WebSocket,
+		@MessageBody('username') username: string
+	): Promise<any>
+	{
+		this.logger.log(`GET_ROOM username:${username}`);
 
-            return new GetRoomResponse({ room });
-        }
-        catch( exception )
-        {
-            return new GetRoomResponse();
-        }
-    }
+		try
+		{
+			const user: User = await this.userService.getByUsername(username);
+			const room: Room = await this.roomService.getByName(user.room.name);
 
-    @SubscribeMessage('get_rooms')
-    @UseInterceptors(new ValidationInterceptor(ValidationSchema.GetRoomsSchema), AuthInterceptor, new UuidInterceptor())
-    async getRooms(
-        @ConnectedSocket() socket: WebSocket
-    ): Promise<any>
-    {
-        this.logger.log(`GET_ROOMS`);
+			return new GetRoomResponse({ room });
+		}
+		catch( exception: any )
+		{
+			return new GetRoomResponse();
+		}
+	}
 
-        try
-        {
-            const rooms = await this.roomService.getAll(true);
+	@SubscribeMessage('get_rooms')
+	@UseInterceptors(new ValidationInterceptor(ValidationSchema.GetRoomsSchema), AuthInterceptor, new UuidInterceptor())
+	async getRooms(
+		@ConnectedSocket() socket: WebSocket
+	): Promise<any>
+	{
+		this.logger.log(`GET_ROOMS`);
 
-            return new GetRoomsResponse({ rooms });
-        }
-        catch( exception )
-        {
-            return new GetRoomsResponse();
-        }
-    }
+		try
+		{
+			const rooms: Room[] = await this.roomService.getAll(true);
 
-    @SubscribeMessage('create_room')
-    @UseInterceptors(new ValidationInterceptor(ValidationSchema.CreateRoomSchema), AuthInterceptor, new UuidInterceptor())
-    async createRoom(
-        @ConnectedSocket() socket: WebSocket,
-        @MessageBody('username') username: string,
-        @MessageBody('name') name: string,
-        @MessageBody('password') password: string,
-        @MessageBody('hidden') hidden: boolean,
-        @MessageBody('size') size: number,
-        @MessageBody('icon') icon: string
-    ): Promise<any>
-    {
-        this.logger.log(`CREATE_ROOM username:${username} name:${name} password:${password} hidden:${hidden} size:${size} icon:${icon}`);
+			return new GetRoomsResponse({ rooms });
+		}
+		catch( exception: any )
+		{
+			return new GetRoomsResponse();
+		}
+	}
 
-        const room = await this.roomService.create(username, name, password, hidden, Number(size), icon);
+	@SubscribeMessage('create_room')
+	@UseInterceptors(new ValidationInterceptor(ValidationSchema.CreateRoomSchema), AuthInterceptor, new UuidInterceptor())
+	async createRoom(
+		@ConnectedSocket() socket: WebSocket,
+		@MessageBody('username') username: string,
+		@MessageBody('name') name: string,
+		@MessageBody('password') password: string,
+		@MessageBody('hidden') hidden: boolean,
+		@MessageBody('size') size: number,
+		@MessageBody('icon') icon: string
+	): Promise<any>
+	{
+		this.logger.log(`CREATE_ROOM username:${username} name:${name} password:${password} hidden:${hidden} size:${size} icon:${icon}`);
 
-        this.notificationService.sendRoomCreated(room);
+		const room: Room = await this.roomService.create(username, name, password, hidden, Number(size), icon);
 
-        return new CreateRoomResponse({ room });
-    }
+		this.notificationService.sendRoomCreated(room);
 
-    @SubscribeMessage('join_room')
-    @UseInterceptors(new ValidationInterceptor(ValidationSchema.JoinRoomSchema), AuthInterceptor, new UuidInterceptor())
-    async joinRoom(
-        @ConnectedSocket() socket: WebSocket,
-        @MessageBody('username') username: string,
-        @MessageBody('name') name: string,
-        @MessageBody('password') password: string
-    ): Promise<any>
-    {
-        this.logger.log(`JOIN_ROOM username:${username} name:${name} password:${password}`);
+		return new CreateRoomResponse({ room });
+	}
 
-        const room = await this.roomService.join(username, name, password);
-        const user = await this.userService.getByUsername(username);
+	@SubscribeMessage('join_room')
+	@UseInterceptors(new ValidationInterceptor(ValidationSchema.JoinRoomSchema), AuthInterceptor, new UuidInterceptor())
+	async joinRoom(
+		@ConnectedSocket() socket: WebSocket,
+		@MessageBody('username') username: string,
+		@MessageBody('name') name: string,
+		@MessageBody('password') password: string
+	): Promise<any>
+	{
+		this.logger.log(`JOIN_ROOM username:${username} name:${name} password:${password}`);
 
-        this.notificationService.sendGuestJoinedRoom(user, room);
+		const room: Room = await this.roomService.join(username, name, password);
+		const user: User = await this.userService.getByUsername(username);
 
-        return new JoinRoomResponse({ room });
-    }
+		this.notificationService.sendGuestJoinedRoom(user, room);
 
-    @SubscribeMessage('leave_room')
-    @UseInterceptors(new ValidationInterceptor(ValidationSchema.LeaveRoomSchema), AuthInterceptor, new UuidInterceptor())
-    async leaveRoom(
-        @ConnectedSocket() socket: WebSocket,
-        @MessageBody('username') username: string
-    ): Promise<any>
-    {
-        this.logger.log(`LEAVE_ROOM username:${username}`);
+		return new JoinRoomResponse({ room });
+	}
 
-        let user;
-        let isMaster = false;
-        try
-        {
-            user = await this.userService.getByUsername(username);
-            let room = await this.roomService.getByName(user.room.name);
-            isMaster = (room.master.id == user.id);
-        }
-        catch( exception )
-        {
-        }
+	@SubscribeMessage('leave_room')
+	@UseInterceptors(new ValidationInterceptor(ValidationSchema.LeaveRoomSchema), AuthInterceptor, new UuidInterceptor())
+	async leaveRoom(
+		@ConnectedSocket() socket: WebSocket,
+		@MessageBody('username') username: string
+	): Promise<any>
+	{
+		this.logger.log(`LEAVE_ROOM username:${username}`);
 
-        const room = await this.roomService.leave(username);
-        if( isMaster )
-        {
-            this.notificationService.sendRoomDeleted(room);
-        }
-        else
-        {
-            this.notificationService.sendGuestLeftRoom(user, room);
-        }
+		let user: User;
+		let isMaster: boolean = false;
+		try
+		{
+			user = await this.userService.getByUsername(username);
+			let room: Room = await this.roomService.getByName(user.room.name);
+			isMaster = (room.master.id == user.id);
+		}
+		catch( exception: any )
+		{
+		}
 
-        return new LeaveRoomResponse({ room });
-    }
+		const room: Room = await this.roomService.leave(username);
+		if( isMaster )
+		{
+			this.notificationService.sendRoomDeleted(room);
+		}
+		else
+		{
+			this.notificationService.sendGuestLeftRoom(user, room);
+		}
 
-    @SubscribeMessage('kick_user')
-    @UseInterceptors(new ValidationInterceptor(ValidationSchema.KickUserSchema), AuthInterceptor, new UuidInterceptor())
-    async kickUser(
-        @ConnectedSocket() socket: WebSocket,
-        @MessageBody('username') username: string,
-        @MessageBody('target') target: string
-    ): Promise<any>
-    {
-        this.logger.log(`KICK_USER username:${username} target:${target}`);
+		return new LeaveRoomResponse({ room });
+	}
 
-        let user;
-        let room;
-        let isMaster = false;
-        try
-        {
-            user = await this.userService.getByUsername(username);
-            room = await this.roomService.getByName(user.room.name);
-            isMaster = (room.master.id == user.id);
-        }
-        catch( exception )
-        {
-            // User not found catched.
-            throw new UserNotInRoomException(username);
-        }
-        if( !isMaster )
-        {
-            throw new UserNotMasterException(username);
-        }
-        if( username == target )
-        {
-            throw new GenericErrorException('Master cannot kick itself');
-        }
+	@SubscribeMessage('kick_user')
+	@UseInterceptors(new ValidationInterceptor(ValidationSchema.KickUserSchema), AuthInterceptor, new UuidInterceptor())
+	async kickUser(
+		@ConnectedSocket() socket: WebSocket,
+		@MessageBody('username') username: string,
+		@MessageBody('target') target: string
+	): Promise<any>
+	{
+		this.logger.log(`KICK_USER username:${username} target:${target}`);
 
-        let userToKick;
-        try
-        {
-            userToKick = await this.userService.getByUsername(target);
-            await this.roomService.getByName(userToKick.room.name);
-        }
-        catch( exception )
-        {
-            // User not found catched.
-            throw new UserNotInRoomException(target);
-        }
+		let user: User;
+		let room: Room;
+		let isMaster: boolean = false;
+		try
+		{
+			user = await this.userService.getByUsername(username);
+			room = await this.roomService.getByName(user.room.name);
+			isMaster = (room.master.id == user.id);
+		}
+		catch( exception: any )
+		{
+			// User not found catched.
+			throw new UserNotInRoomException(username);
+		}
+		if( !isMaster )
+		{
+			throw new UserNotMasterException(username);
+		}
+		if( username == target )
+		{
+			throw new GenericErrorException('Master cannot kick itself');
+		}
 
-        userToKick = await this.userService.delete(target);
-        room = await this.roomService.getByName(user.room.name);
+		let userToKick: User;
+		try
+		{
+			userToKick = await this.userService.getByUsername(target);
+			await this.roomService.getByName(userToKick.room.name);
+		}
+		catch( exception: any )
+		{
+			// User not found catched.
+			throw new UserNotInRoomException(target);
+		}
 
-        this.notificationService.sendUserKicked(userToKick, room);
+		userToKick = await this.userService.delete(target);
+		room = await this.roomService.getByName(user.room.name);
 
-        return new KickUserResponse({ room });
-    }
+		this.notificationService.sendUserKicked(userToKick, room);
 
-    @SubscribeMessage('send_text')
-    @UseInterceptors(new ValidationInterceptor(ValidationSchema.SendTextSchema), AuthInterceptor, new UuidInterceptor())
-    async sendText(
-        @ConnectedSocket() socket: WebSocket,
-        @MessageBody('username') username: string,
-        @MessageBody('text') text: string
-    ): Promise<any>
-    {
-        this.logger.log(`SEND_TEXT username:${username}`);
+		return new KickUserResponse({ room });
+	}
 
-        let user;
-        try
-        {
-            user = await this.userService.getByUsername(username);
-        }
-        catch( exception )
-        {
-            // User not found catched.
-            throw new UserNotInRoomException(username);
-        }
+	@SubscribeMessage('send_text')
+	@UseInterceptors(new ValidationInterceptor(ValidationSchema.SendTextSchema), AuthInterceptor, new UuidInterceptor())
+	async sendText(
+		@ConnectedSocket() socket: WebSocket,
+		@MessageBody('username') username: string,
+		@MessageBody('text') text: string
+	): Promise<any>
+	{
+		this.logger.log(`SEND_TEXT username:${username}`);
 
-        let room = await this.roomService.getByName(user.room.name);
-        if( room )
-        {
-            this.notificationService.sendChatText(user, room, text);
-        }
+		let user: User;
+		try
+		{
+			user = await this.userService.getByUsername(username);
+		}
+		catch( exception: any )
+		{
+			// User not found catched.
+			throw new UserNotInRoomException(username);
+		}
 
-        return new SendTextResponse();
-    }
+		let room: Room = await this.roomService.getByName(user.room.name);
+		if( room )
+		{
+			this.notificationService.sendChatText(user, room, text);
+		}
+
+		return new SendTextResponse();
+	}
 }

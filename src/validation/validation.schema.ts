@@ -8,74 +8,74 @@ const PASSWORD_MESSAGE = "Password must start with an alpha character and contai
 
 function emptyStringToNull( value, originalValue )
 {
-    return (originalValue === "") ? null : value;
+	return (originalValue === "") ? null : value;
 }
 
 const PingSchema = yup.object().shape(
 {
-    uuid:       yup.string().required('UUID is required'),
-    token:      yup.string().required('Token is required')
+	uuid:       yup.string().required('UUID is required'),
+	token:      yup.string().required('Token is required')
 });
 
 const GetRoomSchema = yup.object().shape(
 {
-    uuid:       yup.string().required('UUID is required'),
-    token:      yup.string().required('Token is required')
+	uuid:       yup.string().required('UUID is required'),
+	token:      yup.string().required('Token is required')
 });
 
 const GetRoomsSchema = yup.object().shape(
 {
-    uuid:       yup.string().required('UUID is required'),
-    token:      yup.string().required('Token is required')
+	uuid:       yup.string().required('UUID is required'),
+	token:      yup.string().required('Token is required')
 });
 
 const CreateRoomSchema = yup.object().shape(
 {
-    uuid:       yup.string().required('UUID is required'),
-    token:      yup.string().required('Token is required'),
-    name:       yup.string().required('Name is required').matches(ROOMNAME_REGEXP, ROOMNAME_MESSAGE),
-    password:   yup.string().matches(PASSWORD_REGEXP, { message: PASSWORD_MESSAGE, excludeEmptyString: true }),
-    hidden:     yup.boolean(),
-    size:       yup.number().integer().positive().min(1).nullable(true).transform(emptyStringToNull),
-    icon:       yup.string().url().max(500)
+	uuid:       yup.string().required('UUID is required'),
+	token:      yup.string().required('Token is required'),
+	name:       yup.string().required('Name is required').matches(ROOMNAME_REGEXP, ROOMNAME_MESSAGE),
+	password:   yup.string().matches(PASSWORD_REGEXP, { message: PASSWORD_MESSAGE, excludeEmptyString: true }),
+	hidden:     yup.boolean(),
+	size:       yup.number().integer().positive().min(1).nullable(true).transform(emptyStringToNull),
+	icon:       yup.string().url().max(500)
 });
 
 const JoinRoomSchema = yup.object().shape(
 {
-    uuid:       yup.string().required('UUID is required'),
-    token:      yup.string().required('Token is required'),
-    name:       yup.string().required('Name is required').matches(ROOMNAME_REGEXP, ROOMNAME_MESSAGE),
-    password:   yup.string().matches(PASSWORD_REGEXP, { message: PASSWORD_MESSAGE, excludeEmptyString: true })
+	uuid:       yup.string().required('UUID is required'),
+	token:      yup.string().required('Token is required'),
+	name:       yup.string().required('Name is required').matches(ROOMNAME_REGEXP, ROOMNAME_MESSAGE),
+	password:   yup.string().matches(PASSWORD_REGEXP, { message: PASSWORD_MESSAGE, excludeEmptyString: true })
 });
 
 const LeaveRoomSchema = yup.object().shape(
 {
-    uuid:       yup.string().required('UUID is required'),
-    token:      yup.string().required('Token is required')
+	uuid:       yup.string().required('UUID is required'),
+	token:      yup.string().required('Token is required')
 });
 
 const KickUserSchema = yup.object().shape(
 {
-    uuid:       yup.string().required('UUID is required'),
-    token:      yup.string().required('Token is required'),
-    target:     yup.string().required('Target is required')
+	uuid:       yup.string().required('UUID is required'),
+	token:      yup.string().required('Token is required'),
+	target:     yup.string().required('Target is required')
 });
 
 const SendTextSchema = yup.object().shape(
 {
-    uuid:       yup.string().required('UUID is required'),
-    token:      yup.string().required('Token is required'),
-    text:       yup.string().required('Text is required')
+	uuid:       yup.string().required('UUID is required'),
+	token:      yup.string().required('Token is required'),
+	text:       yup.string().required('Text is required')
 });
 
 export const ValidationSchema =
 {
-    PingSchema,
-    GetRoomSchema,
-    GetRoomsSchema,
-    CreateRoomSchema,
-    JoinRoomSchema,
-    LeaveRoomSchema,
-    KickUserSchema,
-    SendTextSchema
+	PingSchema,
+	GetRoomSchema,
+	GetRoomsSchema,
+	CreateRoomSchema,
+	JoinRoomSchema,
+	LeaveRoomSchema,
+	KickUserSchema,
+	SendTextSchema
 };

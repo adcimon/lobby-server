@@ -7,28 +7,29 @@ import * as fs from 'fs';
 
 async function bootstrap()
 {
-    let httpsOptions = null;
-    if( ConfigService.get('ENABLE_HTTPS') )
-    {
-        httpsOptions = { };
-        httpsOptions['key'] = fs.readFileSync(ConfigService.get('KEY_PATH'));
-        httpsOptions['cert'] = fs.readFileSync(ConfigService.get('CERT_PATH'))
-    }
+	let httpsOptions: any = null;
+	if( ConfigService.get('ENABLE_HTTPS') )
+	{
+		httpsOptions = { };
+		httpsOptions['key'] = fs.readFileSync(ConfigService.get('KEY_PATH'));
+		httpsOptions['cert'] = fs.readFileSync(ConfigService.get('CERT_PATH'))
+	}
 
-    const app = await NestFactory.create<NestExpressApplication>(AppModule,
-    {
-        httpsOptions: httpsOptions
-    });
-    app.useWebSocketAdapter(new WsAdapter(app));
+	const app: NestExpressApplication = await NestFactory.create<NestExpressApplication>(AppModule,
+	{
+		httpsOptions: httpsOptions
+	});
+	app.useWebSocketAdapter(new WsAdapter(app));
 
-    if( ConfigService.get('ENABLE_CORS') )
-    {
-        app.enableCors();
-    }
+	if( ConfigService.get('ENABLE_CORS') )
+	{
+		app.enableCors();
+	}
 
-    await app.listen(ConfigService.get('PORT') || 9000);
+	await app.listen(ConfigService.get('PORT') || 9000);
 
-    console.log(`🚀 Server running on: ${await app.getUrl()}`);
+	const url: string = await app.getUrl();
+	console.log(`🚀 Server running on: ${url}`);
 }
 
 ConfigService.config();

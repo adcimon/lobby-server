@@ -6,21 +6,21 @@ import { InvalidTokenException } from '../exception/invalid-token.exception';
 @Injectable()
 export class AuthService
 {
-    constructor(
-        private readonly configService: ConfigService,
-        private readonly jwtService: JwtService
-    ) { }
+	constructor(
+		private readonly configService: ConfigService,
+		private readonly jwtService: JwtService
+	) { }
 
-    verify( token: string ): any
-    {
-        try
-        {
-            const payload = this.jwtService.verify(token, this.configService.get('TOKEN_SECRET_KEY'));
-            return payload;
-        }
-        catch( exception )
-        {
-            throw new InvalidTokenException();
-        }
-    }
+	verify( token: string ): any
+	{
+		try
+		{
+			const payload: any = this.jwtService.verify(token, this.configService.get('TOKEN_SECRET_KEY'));
+			return payload;
+		}
+		catch( exception: any )
+		{
+			throw new InvalidTokenException();
+		}
+	}
 }
