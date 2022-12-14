@@ -29,7 +29,7 @@ async function bootstrap()
 	await app.listen(ConfigService.get('PORT') || 9000);
 
 	const url: string = await app.getUrl();
-	console.log(`🚀 Server running on: ${url}`);
+	console.log(`🚀 Service running on: ${url}`);
 }
 
 ConfigService.config();
