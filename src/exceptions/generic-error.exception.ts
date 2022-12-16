@@ -9,7 +9,7 @@ export class GenericErrorException extends WsException
 			event: 'error',
 			data:
 			{
-				error: 100,
+				error: 'generic_error',
 				message: message || 'Generic error'
 			}
 		});

@@ -9,7 +9,7 @@ export class RoomAlreadyExistsException extends WsException
 			event: 'error',
 			data:
 			{
-				error: 110,
+				error: 'room_already_exists',
 				message: 'Room ' + name + ' already exists',
 				name: name
 			}

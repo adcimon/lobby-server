@@ -9,7 +9,7 @@ export class ConnectionErrorException extends WsException
 			event: 'error',
 			data:
 			{
-				error: 101,
+				error: 'connection_error',
 				message: message || 'Connection error'
 			}
 		});

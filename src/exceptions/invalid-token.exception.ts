@@ -9,7 +9,7 @@ export class InvalidTokenException extends WsException
 			event: 'error',
 			data:
 			{
-				error: 103,
+				error: 'invalid_token',
 				message: 'Invalid token'
 			}
 		});
