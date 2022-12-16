@@ -10,7 +10,7 @@ export class UserNotInRoomException extends WsException
 			data:
 			{
 				error: 'user_not_in_room',
-				message: 'User ' + username + ' not in room',
+				message: 'User not in room',
 				username: username
 			}
 		});
