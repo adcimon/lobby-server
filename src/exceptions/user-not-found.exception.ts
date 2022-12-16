@@ -10,7 +10,7 @@ export class UserNotFoundException extends WsException
 			data:
 			{
 				error: 'user_not_found',
-				message: 'User ' + username + ' not found',
+				message: 'User not found',
 				username: username
 			}
 		});
