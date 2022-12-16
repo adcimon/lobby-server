@@ -10,7 +10,7 @@ export class RoomFullException extends WsException
 			data:
 			{
 				error: 'room_full',
-				message: 'Room ' + name + ' is full',
+				message: 'Room is full',
 				name: name
 			}
 		});
