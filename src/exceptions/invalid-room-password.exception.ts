@@ -10,7 +10,7 @@ export class InvalidRoomPasswordException extends WsException
 			data:
 			{
 				error: 'invalid_room_password',
-				message: 'Invalid room ' + name + ' password',
+				message: 'Invalid room password',
 				name: name
 			}
 		});
