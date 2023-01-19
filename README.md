@@ -12,23 +12,6 @@ The [API documentation](https://adcimon.github.io/lobby-server/api/) can be foun
 
 The `.env` files have the environment variables used by the server.
 
-| Variables |
-| ----- |
-| NODE_ENV |
-| PORT |
-| ENABLE_HTTPS |
-| KEY_PATH |
-| CERT_PATH |
-| ENABLE_CORS |
-| TOKEN_SECRET_KEY |
-| DATABASE_TYPE |
-| DATABASE_HOST |
-| DATABASE_PORT |
-| DATABASE_USERNAME |
-| DATABASE_PASSWORD |
-| DATABASE_NAME |
-| DATABASE_ENTITIES |
-
 ## Installation
 
 1. Install `Node 16`.
