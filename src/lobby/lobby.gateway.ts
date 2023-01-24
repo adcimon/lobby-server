@@ -69,8 +69,9 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 			{
 				this.logger.log(`CONNECTION FAILURE token:${token}`);
 
-				let exception = new InvalidTokenException();
-				socket.send(JSON.stringify(exception.getError()));
+				const exception = new InvalidTokenException();
+				const errorMessage: string = JSON.stringify(exception.getError());
+				socket.send(errorMessage);
 				socket.terminate();
 
 				return;
@@ -80,7 +81,8 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		{
 			this.logger.log(`CONNECTION FAILURE token:${token}`);
 
-			socket.send(JSON.stringify(exception.getError()));
+			const errorMessage: string = JSON.stringify(exception.getError());
+			socket.send(errorMessage);
 			socket.terminate();
 
 			return;
@@ -93,7 +95,8 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 			this.logger.log(`CONNECTION FAILURE token:${token}`);
 
 			const exception: ConnectionErrorException = new ConnectionErrorException('User already connected');
-			socket.send(JSON.stringify(exception.getError()));
+			const errorMessage: string = JSON.stringify(exception.getError());
+			socket.send(errorMessage);
 			socket.terminate();
 
 			return;
@@ -128,7 +131,10 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		this.sessionService.delete(socket.username);
 
 		// User offline.
-		this.notificationService.sendUserOffline(socket.username);
+		if( socket.username )
+		{
+			this.notificationService.sendUserOffline(socket.username);
+		}
 	}
 
 	@SubscribeMessage('ping')

@@ -1,7 +1,5 @@
-"use strict";
-
+const LOG_STYLE = 'background: rgb(33, 33, 33); color: rgb(51, 255, 0)';
 const PING_PERIOD = 5 * 1000;
-const DEBUG_STYLE = "background: rgb(33, 33, 33); color: rgb(51, 255, 0)";
 
 export const LobbyEvent =
 {
@@ -22,7 +20,9 @@ export const LobbyEvent =
 
 export function LobbyClient()
 {
-	let responses = { };
+	let connectPromises = { };
+	let disconnectPromises = { };
+	let messagePromises = { };
 	let events = { };
 
 	let token = null;
@@ -32,7 +32,7 @@ export function LobbyClient()
 	/**
 	 * Add a function that will be called whenever the specified event is emitted.
 	 */
-	let on = function( event, listener )
+	const on = function( event, listener )
 	{
 		if( Object.values(LobbyEvent).indexOf(event) === -1 )
 		{
@@ -53,11 +53,11 @@ export function LobbyClient()
 
 		return true;
 	};
-
+ 
 	/**
 	 * Remove the function previously added to be called whenever the specified event is emitted.
 	 */
-	let off = function( event, listener )
+	const off = function( event, listener )
 	{
 		if( Object.values(LobbyEvent).indexOf(event) === -1 )
 		{
@@ -81,11 +81,11 @@ export function LobbyClient()
 
 		return false;
 	};
-
+ 
 	/**
 	 * Emit the specified event.
 	 */
-	let emit = function( event )
+	const emit = function( event )
 	{
 		if( Object.values(LobbyEvent).indexOf(event) === -1 )
 		{
@@ -109,108 +109,175 @@ export function LobbyClient()
 	/**
 	 * Connect to the server.
 	 */
-	let connect = function( url, accessToken )
+	const connect = async function( url, accessToken )
 	{
+		if( socket && socket.readyState !== WebSocket.CLOSED )
+		{
+			return Promise.reject();
+		}
+
+		resetPromises();
+
 		token = accessToken;
-		socket = new WebSocket(url + "?token=" + token);
+		socket = new WebSocket(url + '?token=' + token);
 
 		socket.onopen = onOpen;
-		socket.onmessage = onMessage;
 		socket.onclose = onClose;
+		socket.onmessage = onMessage;
+
+		const promise = new Promise(async(resolve, reject) =>
+		{
+			connectPromises[token] = { resolve, reject };
+		});
+
+		return promise;
 	};
 
 	/**
 	 * Disconnect from the server.
 	 */
-	let disconnect = function()
+	const disconnect = async function()
 	{
+		if( !socket || socket.readyState !== WebSocket.OPEN )
+		{
+			return Promise.reject();
+		}
+
 		socket?.close();
+
+		const promise = new Promise(async(resolve, reject) =>
+		{
+			disconnectPromises[token] = { resolve, reject };
+		});
+
+		return promise;
 	};
 
 	/**
 	 * Event handler called when the connection is opened.
 	 */
-	let onOpen = function( event )
+	const onOpen = function()
 	{
-		console.log("%c" + "connected" + "%o", DEBUG_STYLE, socket.url);
+		console.log('%cconnected%o', LOG_STYLE, socket.url);
+
 		startKeepAlive();
-		emit(LobbyEvent.ClientConnected, { url: socket.url });
+
+		const token = getTokenFromURL(socket.url);
+		const event = { event: LobbyEvent.ClientConnected, data: { url: socket.url } };
+
+		// Resolve the connect promise.
+		const promise = connectPromises[token];
+		if( promise )
+		{
+			promise.resolve(event);
+			delete connectPromises[token];
+		}
+
+		// Emit the client connected event.
+		emit(LobbyEvent.ClientConnected, event);
 	};
 
 	/**
 	 * Event handler called when the connection is closed.
 	 */
-	let onClose = function( event )
+	const onClose = function()
 	{
-		console.log("%c" + "disconnected" + "%o", DEBUG_STYLE, socket.url);
+		console.log('%cdisconnected%o', LOG_STYLE, socket.url);
+
 		stopKeepAlive();
-		emit(LobbyEvent.ClientDisconnected, { url: socket.url });
+
+		const token = getTokenFromURL(socket.url);
+		const event = { event: LobbyEvent.ClientDisconnected, data: { url: socket.url } };
+
+		// Resolve the disconnect promise.
+		const disconnectPromise = disconnectPromises[token];
+		if( disconnectPromise )
+		{
+			disconnectPromise.resolve(event);
+			delete disconnectPromises[token];
+		}
+
+		// Reject the connect promise.
+		const connectPromise = connectPromises[token];
+		if( connectPromise )
+		{
+			connectPromise.reject(event);
+			delete connectPromises[token];
+		}
+
+		// Emit the client disconnected event.
+		emit(LobbyEvent.ClientDisconnected, event);
 	};
 
 	/**
 	 * Event handler called when a message is received from the server.
 	 */
-	let onMessage = function( msg )
+	const onMessage = function( msg )
 	{
 		let message = JSON.parse(msg.data);
-		if( message.event === "pong" )
+		if( message.event !== "pong" )
 		{
-			return;
+			console.log('%c%s%o', LOG_STYLE, message.event, message.data);
 		}
 
-		console.log(" %c%s" + "%o", DEBUG_STYLE, message.event, message.data);
+		const uuid = message.data.uuid;
 
-		// Check whether the message has a response listener.
-		if( message.data.uuid in responses )
+		delete message.data.token;
+		delete message.data.uuid;
+
+		// Resolve the message promise.
+		const promise = messagePromises[uuid];
+		if( promise )
 		{
-			let response = responses[message.data.uuid];
-			delete responses[message.data.uuid];
-			delete message.data.uuid;
-			response(message);
-			return;
+			delete messagePromises[uuid];
+
+			if( message.event !== 'error' )
+			{
+				promise.resolve(message);
+			}
+			else
+			{
+				promise.reject(message);
+			}
 		}
 
-		// Check whether the message has an event.
+		// Emit the event if it is possible.
 		emit(message.event, message);
 	};
 
 	/**
 	 * Send a message to the server.
 	 */
-	let sendMessage = function( message, response )
+	const sendMessage = async function( message )
 	{
 		if( !socket || socket.readyState !== WebSocket.OPEN )
 		{
-			return false;
+			return Promise.reject();
 		}
 
-		// Set the token.
 		message.data.token = token;
-
-		// Generate a UUID.
 		message.data.uuid = uuid();
 
-		// Add the response listener.
-		if( response instanceof Function )
+		const promise = new Promise(async(resolve, reject) =>
 		{
-			responses[message.data.uuid] = response;
-		}
+			messagePromises[message.data.uuid] = { resolve, reject };
+		});
 
 		// Send the message.
 		let msg = JSON.stringify(message);
 		socket.send(msg);
 		if( message.event !== "ping" )
 		{
-			console.log(" %c%s" + "%o", DEBUG_STYLE, message.event, msg);
+			console.log('%c%s%o', LOG_STYLE, message.event, msg);
 		}
 
-		return true;
+		return promise;
 	};
 
 	/**
 	 * Start a keep alive timeout.
 	 */
-	let startKeepAlive = function()
+	const startKeepAlive = function()
 	{
 		if( !socket || socket.readyState !== WebSocket.OPEN )
 		{
@@ -221,11 +288,11 @@ export function LobbyClient()
 
 		keepAliveTimeout = window.setTimeout(startKeepAlive, PING_PERIOD);
 	};
-
+ 
 	/**
 	 * Stop the keep alive timeout.
 	 */
-	let stopKeepAlive = function()
+	const stopKeepAlive = function()
 	{
 		window.clearTimeout(keepAliveTimeout);
 	};
@@ -233,9 +300,9 @@ export function LobbyClient()
 	/**
 	 * Send a ping to the server.
 	 */
-	let ping = function()
+	const ping = async function()
 	{
-		let msg =
+		const msg =
 		{
 			event: "ping",
 			data: { }
@@ -245,39 +312,37 @@ export function LobbyClient()
 
 	/**
 	 * Get the user's room.
-	 * @param {Object} options - Optional parameters: response.
 	 */
-	let getRoom = function( options = {} )
+	const getRoom = async function()
 	{
-		let msg =
+		const msg =
 		{
 			event: "get_room",
 			data: { }
 		};
-		return sendMessage(msg, options?.response);
+		return sendMessage(msg);
 	};
 
 	/**
 	 * Get the lobby rooms.
-	 * @param {Object} options - Optional parameters: response.
 	 */
-	let getRooms = function( options = {} )
+	const getRooms = async function()
 	{
-		let msg =
+		const msg =
 		{
 			event: "get_rooms",
 			data: { }
 		};
-		return sendMessage(msg, options?.response);
+		return sendMessage(msg);
 	};
 
 	/**
 	 * Create a room.
-	 * @param {Object} options - Optional parameters: password, hidden, size, icon, response.
+	 * @param {Object} options - Optional parameters: password, hidden, size, icon.
 	 */
-	let createRoom = function( name, options = {} )
+	const createRoom = async function( name, options = {} )
 	{
-		let msg =
+		const msg =
 		{
 			event: "create_room",
 			data:
@@ -289,16 +354,16 @@ export function LobbyClient()
 				icon: options?.icon
 			}
 		};
-		return sendMessage(msg, options?.response);
+		return sendMessage(msg);
 	};
 
 	/**
 	 * Join a room.
-	 * @param {Object} options - Optional parameters: password, response.
+	 * @param {Object} options - Optional parameters: password.
 	 */
-	let joinRoom = function( name, options = {} )
+	const joinRoom = async function( name, options = {} )
 	{
-		let msg =
+		const msg =
 		{
 			event: "join_room",
 			data:
@@ -307,30 +372,28 @@ export function LobbyClient()
 				password: options?.password
 			}
 		};
-		return sendMessage(msg, options?.response);
+		return sendMessage(msg);
 	};
 
 	/**
 	 * Leave a room.
-	 * @param {Object} options - Optional parameters: response.
 	 */
-	let leaveRoom = function( options = {} )
+	const leaveRoom = async function()
 	{
-		let msg =
+		const msg =
 		{
 			event: "leave_room",
 			data: { }
 		};
-		return sendMessage(msg, options?.response);
+		return sendMessage(msg);
 	};
 
 	/**
 	 * Kick a user from the room.
-	 * @param {Object} options - Optional parameters: response.
 	 */
-	let kickUser = function( target, options = {} )
+	const kickUser = async function( target )
 	{
-		let msg =
+		const msg =
 		{
 			event: "kick_user",
 			data:
@@ -338,16 +401,15 @@ export function LobbyClient()
 				target: target
 			}
 		};
-		return sendMessage(msg, options?.response);
+		return sendMessage(msg);
 	};
 
 	/**
 	 * Send a text message to the room.
-	 * @param {Object} options - Optional parameters: response.
 	 */
-	let sendText = function( text, options = {} )
+	const sendText = async function( text )
 	{
-		let msg =
+		const msg =
 		{
 			event: "send_text",
 			data:
@@ -355,23 +417,44 @@ export function LobbyClient()
 				text: text
 			}
 		};
-		return sendMessage(msg, options?.response);
-	}
+		return sendMessage(msg);
+	};
+
+	/**
+	 * Reset the socket promises.
+	 */
+	const resetPromises = function()
+	{
+		connectPromises = { };
+		disconnectPromises = { };
+		messagePromises = { };
+	};
+
+	/**
+	 * Get the token parameter from a URL.
+	 */
+	const getTokenFromURL = function( url )
+	{
+		const searchParams = url.substring(url.indexOf('?'), url.length);
+		const params = new URLSearchParams(searchParams);
+		const token = params.get('token');
+		return token;
+	};
 
 	/**
 	 * Generate a universally unique identifier.
 	 * Reference: RFC 4122 https://www.ietf.org/rfc/rfc4122.txt
 	 */
-	let uuid = function()
+	const uuid = function()
 	{
 		return uuidv4();
 	};
-
+ 
 	/**
 	 * Generate a universally unique identifier v4.
 	 * Reference: https://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid
 	 */
-	let uuidv4 = function()
+	const uuidv4 = function()
 	{
 		return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
 			(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -383,6 +466,7 @@ export function LobbyClient()
 		off,
 		connect,
 		disconnect,
+		ping,
 		getRoom,
 		getRooms,
 		createRoom,
@@ -390,5 +474,5 @@ export function LobbyClient()
 		leaveRoom,
 		kickUser,
 		sendText
-	};
+	}
 }

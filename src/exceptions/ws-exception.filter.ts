@@ -18,9 +18,10 @@ export class WsExceptionFilter extends BaseWsExceptionFilter
 		}
 
 		// Add the uuid to the error.
-		let error: object = exception.getError() as object;
+		const error: object = exception.getError() as object;
 		error['data']['uuid'] = data.uuid;
 
-		socket.send(JSON.stringify(error));
+		const errorMessage: string = JSON.stringify(error);
+		socket.send(errorMessage);
 	}
 }
