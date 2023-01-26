@@ -252,12 +252,12 @@ export function LobbyClient()
 	 */
 	const ping = async function()
 	{
-		const msg =
+		const message =
 		{
 			event: 'ping',
 			data: { }
 		};
-		return sendMessage(msg);
+		return sendMessage(message);
 	};
 
 	/**
@@ -265,12 +265,12 @@ export function LobbyClient()
 	 */
 	const getRoom = async function()
 	{
-		const msg =
+		const message =
 		{
 			event: 'get_room',
 			data: { }
 		};
-		return sendMessage(msg);
+		return sendMessage(message);
 	};
 
 	/**
@@ -292,7 +292,7 @@ export function LobbyClient()
 	 */
 	const createRoom = async function( name, options = {} )
 	{
-		const msg =
+		const message =
 		{
 			event: 'create_room',
 			data:
@@ -304,7 +304,7 @@ export function LobbyClient()
 				icon: options?.icon
 			}
 		};
-		return sendMessage(msg);
+		return sendMessage(message);
 	};
 
 	/**
@@ -313,7 +313,7 @@ export function LobbyClient()
 	 */
 	const joinRoom = async function( name, options = {} )
 	{
-		const msg =
+		const message =
 		{
 			event: 'join_room',
 			data:
@@ -322,7 +322,7 @@ export function LobbyClient()
 				password: options?.password
 			}
 		};
-		return sendMessage(msg);
+		return sendMessage(message);
 	};
 
 	/**
@@ -330,12 +330,12 @@ export function LobbyClient()
 	 */
 	const leaveRoom = async function()
 	{
-		const msg =
+		const message =
 		{
 			event: 'leave_room',
 			data: { }
 		};
-		return sendMessage(msg);
+		return sendMessage(message);
 	};
 
 	/**
@@ -343,7 +343,7 @@ export function LobbyClient()
 	 */
 	const kickUser = async function( target )
 	{
-		const msg =
+		const message =
 		{
 			event: 'kick_user',
 			data:
@@ -351,7 +351,7 @@ export function LobbyClient()
 				target: target
 			}
 		};
-		return sendMessage(msg);
+		return sendMessage(message);
 	};
 
 	/**
@@ -359,7 +359,7 @@ export function LobbyClient()
 	 */
 	const sendText = async function( text )
 	{
-		const msg =
+		const message =
 		{
 			event: 'send_text',
 			data:
@@ -367,7 +367,7 @@ export function LobbyClient()
 				text: text
 			}
 		};
-		return sendMessage(msg);
+		return sendMessage(message);
 	};
 
 	/**
