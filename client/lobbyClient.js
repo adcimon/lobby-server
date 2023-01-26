@@ -1,110 +1,34 @@
-const LOG_STYLE = 'background: rgb(33, 33, 33); color: rgb(51, 255, 0)';
+const SUCCESS_STYLE = 'background: rgb(33, 33, 33); color: rgb(51, 255, 0)';
+const ERROR_STYLE = 'background: rgb(33, 33, 33); color: rgb(217, 57, 13)';
 const PING_PERIOD = 5 * 1000;
 
 export const LobbyEvent =
 {
-	ClientConnected:        "client_connected",
-	ClientDisconnected:     "client_disconnected",
-	ClientAuthorized:       "client_authorized",
-	Error:                  "error",
-	UserOnline:             "user_online",
-	UserOffline:            "user_offline",
-	RoomCreated:            "room_created",
-	RoomDeleted:            "room_deleted",
-	GuestJoinedRoom:        "guest_joined_room",
-	GuestLeftRoom:          "guest_left_room",
-	UserRejoined:           "user_rejoined",
-	UserKicked:             "user_kicked",
-	ChatText:               "chat_text"
+	ClientConnected:        'client_connected',
+	ClientDisconnected:     'client_disconnected',
+	ClientAuthorized:       'client_authorized',
+	Error:                  'error',
+	UserOnline:             'user_online',
+	UserOffline:            'user_offline',
+	RoomCreated:            'room_created',
+	RoomDeleted:            'room_deleted',
+	GuestJoinedRoom:        'guest_joined_room',
+	GuestLeftRoom:          'guest_left_room',
+	UserRejoined:           'user_rejoined',
+	UserKicked:             'user_kicked',
+	ChatText:               'chat_text'
 };
 
 export function LobbyClient()
 {
+	let eventTarget = new EventTarget();
 	let connectPromises = { };
 	let disconnectPromises = { };
 	let messagePromises = { };
-	let events = { };
 
 	let token = null;
 	let socket = null;
 	let keepAliveTimeout = null;
-
-	/**
-	 * Add a function that will be called whenever the specified event is emitted.
-	 */
-	const on = function( event, listener )
-	{
-		if( Object.values(LobbyEvent).indexOf(event) === -1 )
-		{
-			return false;
-		}
-
-		if( !(listener instanceof Function) )
-		{
-			return false;
-		}
-
-		if( typeof events[event] !== "object" )
-		{
-			events[event] = [];
-		}
-
-		events[event].push(listener);
-
-		return true;
-	};
- 
-	/**
-	 * Remove the function previously added to be called whenever the specified event is emitted.
-	 */
-	const off = function( event, listener )
-	{
-		if( Object.values(LobbyEvent).indexOf(event) === -1 )
-		{
-			return false;
-		}
-
-		if( !(listener instanceof Function) )
-		{
-			return false;
-		}
-
-		if( typeof events[event] === "object" )
-		{
-			let index = events[event].indexOf(listener);
-			if( index > -1 )
-			{
-				events[event].splice(index, 1);
-				return true;
-			}
-		}
-
-		return false;
-	};
- 
-	/**
-	 * Emit the specified event.
-	 */
-	const emit = function( event )
-	{
-		if( Object.values(LobbyEvent).indexOf(event) === -1 )
-		{
-			return false;
-		}
-
-		let args = [].slice.call(arguments, 1);
-
-		if( typeof events[event] === "object" )
-		{
-			let listeners = events[event].slice();
-			for( let i = 0; i < listeners.length; i++ )
-			{
-				listeners[i].apply(this, args);
-			}
-		}
-
-		return true;
-	};
 
 	/**
 	 * Connect to the server.
@@ -158,12 +82,19 @@ export function LobbyClient()
 	 */
 	const onOpen = function()
 	{
-		console.log('%cconnected%o', LOG_STYLE, socket.url);
+		console.log('%cconnected%o', SUCCESS_STYLE, socket.url);
 
 		startKeepAlive();
 
 		const token = getTokenFromURL(socket.url);
-		const event = { event: LobbyEvent.ClientConnected, data: { url: socket.url } };
+		const event = new CustomEvent(LobbyEvent.ClientConnected, { detail:
+		{
+			event: LobbyEvent.ClientConnected,
+			data:
+			{
+				url: socket.url
+			}
+		}});
 
 		// Resolve the connect promise.
 		const promise = connectPromises[token];
@@ -173,8 +104,8 @@ export function LobbyClient()
 			delete connectPromises[token];
 		}
 
-		// Emit the client connected event.
-		emit(LobbyEvent.ClientConnected, event);
+		// Dispatch the client connected event.
+		eventTarget.dispatchEvent(event);
 	};
 
 	/**
@@ -182,12 +113,19 @@ export function LobbyClient()
 	 */
 	const onClose = function()
 	{
-		console.log('%cdisconnected%o', LOG_STYLE, socket.url);
+		console.log('%cdisconnected%o', SUCCESS_STYLE, socket.url);
 
 		stopKeepAlive();
 
 		const token = getTokenFromURL(socket.url);
-		const event = { event: LobbyEvent.ClientDisconnected, data: { url: socket.url } };
+		const event = new CustomEvent(LobbyEvent.ClientDisconnected, { detail:
+		{
+			event: LobbyEvent.ClientDisconnected,
+			data:
+			{
+				url: socket.url
+			}
+		}});
 
 		// Resolve the disconnect promise.
 		const disconnectPromise = disconnectPromises[token];
@@ -205,8 +143,8 @@ export function LobbyClient()
 			delete connectPromises[token];
 		}
 
-		// Emit the client disconnected event.
-		emit(LobbyEvent.ClientDisconnected, event);
+		// Dispatch the client disconnected event.
+		eventTarget.dispatchEvent(event);
 	};
 
 	/**
@@ -215,15 +153,20 @@ export function LobbyClient()
 	const onMessage = function( msg )
 	{
 		let message = JSON.parse(msg.data);
-		if( message.event !== "pong" )
+		if( message.event !== 'pong' )
 		{
-			console.log('%c%s%o', LOG_STYLE, message.event, message.data);
+			console.log('%c%s%o', (message.event === 'error') ? ERROR_STYLE : SUCCESS_STYLE, message.event, message.data);
 		}
 
 		const uuid = message.data.uuid;
 
 		delete message.data.token;
 		delete message.data.uuid;
+
+		const event = new CustomEvent(message.event, { detail:
+		{
+			...message
+		}});
 
 		// Resolve the message promise.
 		const promise = messagePromises[uuid];
@@ -233,16 +176,16 @@ export function LobbyClient()
 
 			if( message.event !== 'error' )
 			{
-				promise.resolve(message);
+				promise.resolve(event);
 			}
 			else
 			{
-				promise.reject(message);
+				promise.reject(event);
 			}
 		}
 
-		// Emit the event if it is possible.
-		emit(message.event, message);
+		// Dispatch the event if it is possible.
+		eventTarget.dispatchEvent(event);
 	};
 
 	/**
@@ -266,9 +209,9 @@ export function LobbyClient()
 		// Send the message.
 		let msg = JSON.stringify(message);
 		socket.send(msg);
-		if( message.event !== "ping" )
+		if( message.event !== 'ping' )
 		{
-			console.log('%c%s%o', LOG_STYLE, message.event, msg);
+			console.log('%c%s%o', SUCCESS_STYLE, message.event, msg);
 		}
 
 		return promise;
@@ -304,7 +247,7 @@ export function LobbyClient()
 	{
 		const msg =
 		{
-			event: "ping",
+			event: 'ping',
 			data: { }
 		};
 		return sendMessage(msg);
@@ -317,7 +260,7 @@ export function LobbyClient()
 	{
 		const msg =
 		{
-			event: "get_room",
+			event: 'get_room',
 			data: { }
 		};
 		return sendMessage(msg);
@@ -330,7 +273,7 @@ export function LobbyClient()
 	{
 		const msg =
 		{
-			event: "get_rooms",
+			event: 'get_rooms',
 			data: { }
 		};
 		return sendMessage(msg);
@@ -344,7 +287,7 @@ export function LobbyClient()
 	{
 		const msg =
 		{
-			event: "create_room",
+			event: 'create_room',
 			data:
 			{
 				name: name,
@@ -365,7 +308,7 @@ export function LobbyClient()
 	{
 		const msg =
 		{
-			event: "join_room",
+			event: 'join_room',
 			data:
 			{
 				name: name,
@@ -382,7 +325,7 @@ export function LobbyClient()
 	{
 		const msg =
 		{
-			event: "leave_room",
+			event: 'leave_room',
 			data: { }
 		};
 		return sendMessage(msg);
@@ -395,7 +338,7 @@ export function LobbyClient()
 	{
 		const msg =
 		{
-			event: "kick_user",
+			event: 'kick_user',
 			data:
 			{
 				target: target
@@ -411,7 +354,7 @@ export function LobbyClient()
 	{
 		const msg =
 		{
-			event: "send_text",
+			event: 'send_text',
 			data:
 			{
 				text: text
@@ -461,9 +404,7 @@ export function LobbyClient()
 		);
 	};
 
-	return {
-		on,
-		off,
+	return Object.assign(eventTarget, {
 		connect,
 		disconnect,
 		ping,
@@ -474,5 +415,5 @@ export function LobbyClient()
 		leaveRoom,
 		kickUser,
 		sendText
-	}
+	});
 }

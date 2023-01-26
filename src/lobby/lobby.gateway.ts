@@ -46,6 +46,12 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 {
 	private readonly logger: Logger = new Logger('LOBBY');
 
+	private readonly NORMAL_COLOR: string = '\x1b[0m';
+	private readonly CONNECTED_COLOR: string = '\x1b[32m';
+	private readonly CONNECTING_COLOR: string = '\x1b[33m';
+	private readonly DISCONNECTED_COLOR: string = '\x1b[31m';
+	private readonly MESSAGE_COLOR: string = '\x1b[36m';
+
 	constructor(
 		private readonly authService: AuthService,
 		private readonly sessionService: SessionsService,
@@ -56,20 +62,26 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	async handleConnection( socket: WebSocket, ...args: any[] )
 	{
+		const request: any = args[0];
+
 		// Authenticate the connection using the token URL parameter.
 		const params: URLSearchParams = new URLSearchParams(args[0].url.replace('/','').replace('?', ''));
 		const token: string = params.get('token');
 
+		// Decode the token.
+		let payload: any = this.authService.decode(token);
+
+		this.logger.log(`${this.CONNECTING_COLOR}CONNECTING${this.NORMAL_COLOR} payload:${JSON.stringify(payload)} ip:${request.socket.remoteAddress}`);
+
 		// Verify the token.
-		let payload: any = null;
 		try
 		{
 			payload = this.authService.verify(token);
 			if( !payload || !('sub' in payload) )
 			{
-				this.logger.log(`CONNECTION FAILURE token:${token}`);
+				this.logger.log(`${this.DISCONNECTED_COLOR}CONNECTION_ERROR${this.NORMAL_COLOR} payload:${JSON.stringify(payload)} ip:${request.socket.remoteAddress}`);
 
-				const exception = new InvalidTokenException();
+				const exception: InvalidTokenException = new InvalidTokenException();
 				const errorMessage: string = JSON.stringify(exception.getError());
 				socket.send(errorMessage);
 				socket.terminate();
@@ -79,7 +91,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		}
 		catch( exception: any )
 		{
-			this.logger.log(`CONNECTION FAILURE token:${token}`);
+			this.logger.log(`${this.DISCONNECTED_COLOR}CONNECTION_ERROR${this.NORMAL_COLOR} payload:${JSON.stringify(payload)} ip:${request.socket.remoteAddress}`);
 
 			const errorMessage: string = JSON.stringify(exception.getError());
 			socket.send(errorMessage);
@@ -89,10 +101,11 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		}
 
 		// Create the session.
-		let session: Session = this.sessionService.create(payload.sub, socket);
+		const username: string = payload.sub;
+		const session: Session = this.sessionService.create(socket, username, payload, request.socket.remoteAddress);
 		if( !session )
 		{
-			this.logger.log(`CONNECTION FAILURE token:${token}`);
+			this.logger.log(`${this.DISCONNECTED_COLOR}CONNECTION_ERROR${this.NORMAL_COLOR} payload:${JSON.stringify(payload)} ip:${request.socket.remoteAddress}`);
 
 			const exception: ConnectionErrorException = new ConnectionErrorException('User already connected');
 			const errorMessage: string = JSON.stringify(exception.getError());
@@ -102,18 +115,19 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		this.logger.log(`CONNECTED ${payload.sub} payload:${JSON.stringify(payload)}`);
+		this.logger.log(`${this.CONNECTED_COLOR}CONNECTED${this.NORMAL_COLOR} username:${username} payload:${JSON.stringify(payload)} ip:${request.socket.remoteAddress}`);
 
 		const message: ClientAuthorizedMessage = new ClientAuthorizedMessage();
-		socket.send(JSON.stringify(message));
+		const msg: string = JSON.stringify(message);
+		socket.send(msg);
 
 		// User online.
-		this.notificationService.sendUserOnline(payload.sub);
+		this.notificationService.sendUserOnline(username);
 
 		// User rejoining.
 		try
 		{
-			let user: User = await this.userService.getByUsername(payload.sub);
+			let user: User = await this.userService.getByUsername(username);
 			let room: Room = await this.roomService.getByName(user.room.name);
 			this.notificationService.sendUserRejoined(user, room);
 		}
@@ -125,7 +139,11 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	async handleDisconnect( socket: WebSocket )
 	{
-		this.logger.log(`DISCONNECTED ${socket.username}`);
+		const username: any = socket.username;
+		const payload: any = JSON.stringify(socket.payload);
+		const ip: string = socket.ip;
+
+		this.logger.log(`${this.DISCONNECTED_COLOR}DISCONNECTED${this.NORMAL_COLOR} username:${username} payload:${payload} ip:${ip}`);
 
 		// Delete the session.
 		this.sessionService.delete(socket.username);
@@ -144,7 +162,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		@MessageBody('username') username: string
 	): any
 	{
-		//this.logger.log(`PING username:${username}`);
+		//this.logger.log(`${this.MESSAGE_COLOR}PING${this.NORMAL_COLOR} username:${username}`);
 
 		return new PongMessage();
 	}
@@ -156,7 +174,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		@MessageBody('username') username: string
 	): Promise<any>
 	{
-		this.logger.log(`GET_ROOM username:${username}`);
+		this.logger.log(`${this.MESSAGE_COLOR}GET_ROOM${this.NORMAL_COLOR} username:${username}`);
 
 		try
 		{
@@ -177,7 +195,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		@ConnectedSocket() socket: WebSocket
 	): Promise<any>
 	{
-		this.logger.log(`GET_ROOMS`);
+		this.logger.log(`${this.MESSAGE_COLOR}GET_ROOMS${this.NORMAL_COLOR}`);
 
 		try
 		{
@@ -203,7 +221,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		@MessageBody('icon') icon: string
 	): Promise<any>
 	{
-		this.logger.log(`CREATE_ROOM username:${username} name:${name} password:${password} hidden:${hidden} size:${size} icon:${icon}`);
+		this.logger.log(`${this.MESSAGE_COLOR}CREATE_ROOM${this.NORMAL_COLOR} username:${username} name:${name} password:${password} hidden:${hidden} size:${size} icon:${icon}`);
 
 		const room: Room = await this.roomService.create(username, name, password, hidden, Number(size), icon);
 
@@ -221,7 +239,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		@MessageBody('password') password: string
 	): Promise<any>
 	{
-		this.logger.log(`JOIN_ROOM username:${username} name:${name} password:${password}`);
+		this.logger.log(`${this.MESSAGE_COLOR}JOIN_ROOM${this.NORMAL_COLOR} username:${username} name:${name} password:${password}`);
 
 		const room: Room = await this.roomService.join(username, name, password);
 		const user: User = await this.userService.getByUsername(username);
@@ -238,7 +256,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		@MessageBody('username') username: string
 	): Promise<any>
 	{
-		this.logger.log(`LEAVE_ROOM username:${username}`);
+		this.logger.log(`${this.MESSAGE_COLOR}LEAVE_ROOM${this.NORMAL_COLOR} username:${username}`);
 
 		let user: User;
 		let isMaster: boolean = false;
@@ -273,7 +291,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		@MessageBody('target') target: string
 	): Promise<any>
 	{
-		this.logger.log(`KICK_USER username:${username} target:${target}`);
+		this.logger.log(`${this.MESSAGE_COLOR}KICK_USER${this.NORMAL_COLOR} target:${target}`);
 
 		let user: User;
 		let room: Room;
@@ -293,7 +311,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		{
 			throw new UserNotMasterException(username);
 		}
-		if( username == target )
+		if( username === target )
 		{
 			throw new GenericErrorException('Master cannot kick itself');
 		}
@@ -326,7 +344,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		@MessageBody('text') text: string
 	): Promise<any>
 	{
-		this.logger.log(`SEND_TEXT username:${username}`);
+		this.logger.log(`${this.MESSAGE_COLOR}SEND_TEXT${this.NORMAL_COLOR} username:${username}`);
 
 		let user: User;
 		try

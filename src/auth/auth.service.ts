@@ -11,6 +11,19 @@ export class AuthService
 		private readonly jwtService: JwtService
 	) { }
 
+	decode( token: string ): any
+	{
+		try
+		{
+			const payload: any = this.jwtService.decode(token);
+			return payload;
+		}
+		catch( exception: any )
+		{
+			throw new InvalidTokenException();
+		}
+	}
+
 	verify( token: string ): any
 	{
 		try

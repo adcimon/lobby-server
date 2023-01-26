@@ -14,7 +14,7 @@ export class SessionsService
 	/**
 	 * Create a session.
 	 */
-	create( username: string, socket: WebSocket ): Session
+	 create( socket: WebSocket, username: string, payload: any, ip: string ): Session
 	{
 		if( this.sessions.has(username) )
 		{
@@ -22,8 +22,10 @@ export class SessionsService
 		}
 
 		socket.username = username;
+		socket.payload = payload;
+		socket.ip = ip;
 
-		let session: Session = new Session();
+		const session: Session = new Session();
 		session.username = username;
 		session.socket = socket;
 

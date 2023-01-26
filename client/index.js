@@ -42,18 +42,18 @@ function main()
 function initializeClient()
 {
 	lobbyClient = new LobbyClient();
-	lobbyClient.on(LobbyEvent.ClientDisconnected, onClientDisconnected);
-	lobbyClient.on(LobbyEvent.ClientAuthorized, onEvent);
-	lobbyClient.on(LobbyEvent.Error, onEvent);
-	lobbyClient.on(LobbyEvent.UserOnline, onEvent);
-	lobbyClient.on(LobbyEvent.UserOffline, onEvent);
-	lobbyClient.on(LobbyEvent.RoomCreated, onEvent);
-	lobbyClient.on(LobbyEvent.RoomDeleted, onEvent);
-	lobbyClient.on(LobbyEvent.GuestJoinedRoom, onEvent);
-	lobbyClient.on(LobbyEvent.GuestLeftRoom, onEvent);
-	lobbyClient.on(LobbyEvent.UserRejoined, onEvent);
-	lobbyClient.on(LobbyEvent.UserKicked, onEvent);
-	lobbyClient.on(LobbyEvent.ChatText, onChatText);
+	lobbyClient.addEventListener(LobbyEvent.ClientDisconnected, onClientDisconnected);
+	lobbyClient.addEventListener(LobbyEvent.ClientAuthorized, onEvent);
+	lobbyClient.addEventListener(LobbyEvent.Error, onEvent);
+	lobbyClient.addEventListener(LobbyEvent.UserOnline, onEvent);
+	lobbyClient.addEventListener(LobbyEvent.UserOffline, onEvent);
+	lobbyClient.addEventListener(LobbyEvent.RoomCreated, onEvent);
+	lobbyClient.addEventListener(LobbyEvent.RoomDeleted, onEvent);
+	lobbyClient.addEventListener(LobbyEvent.GuestJoinedRoom, onEvent);
+	lobbyClient.addEventListener(LobbyEvent.GuestLeftRoom, onEvent);
+	lobbyClient.addEventListener(LobbyEvent.UserRejoined, onEvent);
+	lobbyClient.addEventListener(LobbyEvent.UserKicked, onEvent);
+	lobbyClient.addEventListener(LobbyEvent.ChatText, onChatText);
 }
 
 function initializeInterface()
@@ -115,12 +115,12 @@ function onClientDisconnected()
 
 function onChatText( event )
 {
-	addText(event.data.username, event.data.text);
+	addText(event.detail.data.username, event.detail.data.text);
 }
 
 function onEvent( event )
 {
-	setLog(event);
+	setLog(event.detail);
 }
 
 function handleConnect()
@@ -165,11 +165,11 @@ function handleGetRoom()
 	lobbyClient.getRoom()
 		.then((event) =>
 		{
-			setLog(event);
+			setLog(event.detail);
 		})
 		.catch((error) =>
 		{
-			setLog(error);
+			setLog(error.detail);
 		});
 }
 
@@ -178,11 +178,11 @@ function handleGetRooms()
 	lobbyClient.getRooms()
 		.then((event) =>
 		{
-			setLog(event);
+			setLog(event.detail);
 		})
 		.catch((error) =>
 		{
-			setLog(error);
+			setLog(error.detail);
 		});
 }
 
@@ -197,11 +197,11 @@ function handleCreateRoom()
 	lobbyClient.createRoom(name, { password: password, hidden: hidden, size: size, icon: icon })
 		.then((event) =>
 		{
-			setLog(event);
+			setLog(event.detail);
 		})
 		.catch((error) =>
 		{
-			setLog(error);
+			setLog(error.detail);
 		});
 }
 
@@ -213,11 +213,11 @@ function handleJoinRoom()
 	lobbyClient.joinRoom(name, { password: password })
 		.then((event) =>
 		{
-			setLog(event);
+			setLog(event.detail);
 		})
 		.catch((error) =>
 		{
-			setLog(error);
+			setLog(error.detail);
 		});
 }
 
@@ -226,11 +226,11 @@ function handleLeaveRoom()
 	lobbyClient.leaveRoom()
 		.then((event) =>
 		{
-			setLog(event);
+			setLog(event.detail);
 		})
 		.catch((error) =>
 		{
-			setLog(error);
+			setLog(error.detail);
 		});
 }
 
@@ -245,7 +245,7 @@ function handleKickButton()
 		})
 		.catch((error) =>
 		{
-			setLog(error);
+			setLog(error.detail);
 		});
 }
 
@@ -260,7 +260,7 @@ function handleSendButton()
 		})
 		.catch((error) =>
 		{
-			setLog(error);
+			setLog(error.detail);
 		});
 }
 
