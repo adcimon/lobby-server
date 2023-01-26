@@ -82,17 +82,19 @@ export function LobbyClient()
 	 */
 	const onOpen = function()
 	{
-		console.log('%cconnected%o', SUCCESS_STYLE, socket.url);
+		const url = socket.url;
+
+		console.log('%cconnected%o', SUCCESS_STYLE, url);
 
 		startKeepAlive();
 
-		const token = getTokenFromURL(socket.url);
+		const token = getTokenFromURL(url);
 		const event = new CustomEvent(LobbyEvent.ClientConnected, { detail:
 		{
 			event: LobbyEvent.ClientConnected,
 			data:
 			{
-				url: socket.url
+				url: url
 			}
 		}});
 
@@ -113,17 +115,19 @@ export function LobbyClient()
 	 */
 	const onClose = function()
 	{
-		console.log('%cdisconnected%o', SUCCESS_STYLE, socket.url);
+		const url = socket.url;
+
+		console.log('%cdisconnected%o', SUCCESS_STYLE, url);
 
 		stopKeepAlive();
 
-		const token = getTokenFromURL(socket.url);
+		const token = getTokenFromURL(url);
 		const event = new CustomEvent(LobbyEvent.ClientDisconnected, { detail:
 		{
 			event: LobbyEvent.ClientDisconnected,
 			data:
 			{
-				url: socket.url
+				url: url
 			}
 		}});
 
