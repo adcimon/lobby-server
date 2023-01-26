@@ -278,12 +278,12 @@ export function LobbyClient()
 	 */
 	const getRooms = async function()
 	{
-		const msg =
+		const message =
 		{
 			event: 'get_rooms',
 			data: { }
 		};
-		return sendMessage(msg);
+		return sendMessage(message);
 	};
 
 	/**
