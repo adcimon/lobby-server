@@ -164,8 +164,8 @@ export function LobbyClient()
 
 		const uuid = message.data.uuid;
 
-		delete message.data.token;
 		delete message.data.uuid;
+		delete message.data.token;
 
 		const event = new CustomEvent(message.event, { detail:
 		{
