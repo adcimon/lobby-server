@@ -205,8 +205,8 @@ export function LobbyClient()
 			return Promise.reject();
 		}
 
-		message.data.token = token;
 		message.data.uuid = uuid();
+		message.data.token = token;
 
 		const promise = new Promise(async(resolve, reject) =>
 		{
