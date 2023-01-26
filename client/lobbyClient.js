@@ -116,6 +116,7 @@ export function LobbyClient()
 	const onClose = function()
 	{
 		const url = socket.url;
+		socket = null;
 
 		console.log('%cdisconnected%o', SUCCESS_STYLE, url);
 
