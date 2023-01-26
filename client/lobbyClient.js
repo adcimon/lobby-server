@@ -214,7 +214,7 @@ export function LobbyClient()
 		});
 
 		// Send the message.
-		let msg = JSON.stringify(message);
+		const msg = JSON.stringify(message);
 		socket.send(msg);
 		if( message.event !== 'ping' )
 		{
