@@ -82,8 +82,9 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 				this.logger.log(`${this.DISCONNECTED_COLOR}CONNECTION_ERROR${this.NORMAL_COLOR} payload:${JSON.stringify(payload)} ip:${request.socket.remoteAddress}`);
 
 				const exception: InvalidTokenException = new InvalidTokenException();
-				const errorMessage: string = JSON.stringify(exception.getError());
-				socket.send(errorMessage);
+				const error: any = exception.getError();
+				const msg: string = JSON.stringify(error);
+				socket.send(msg);
 				socket.terminate();
 
 				return;
@@ -93,8 +94,9 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		{
 			this.logger.log(`${this.DISCONNECTED_COLOR}CONNECTION_ERROR${this.NORMAL_COLOR} payload:${JSON.stringify(payload)} ip:${request.socket.remoteAddress}`);
 
-			const errorMessage: string = JSON.stringify(exception.getError());
-			socket.send(errorMessage);
+			const error: any = exception.getError();
+			const msg: string = JSON.stringify(error);
+			socket.send(msg);
 			socket.terminate();
 
 			return;
@@ -108,8 +110,9 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 			this.logger.log(`${this.DISCONNECTED_COLOR}CONNECTION_ERROR${this.NORMAL_COLOR} payload:${JSON.stringify(payload)} ip:${request.socket.remoteAddress}`);
 
 			const exception: ConnectionErrorException = new ConnectionErrorException('User already connected');
-			const errorMessage: string = JSON.stringify(exception.getError());
-			socket.send(errorMessage);
+			const error: any = exception.getError();
+			const msg: string = JSON.stringify(error);
+			socket.send(msg);
 			socket.terminate();
 
 			return;
@@ -264,7 +267,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		{
 			user = await this.userService.getByUsername(username);
 			let room: Room = await this.roomService.getByName(user.room.name);
-			isMaster = (room.master.id == user.id);
+			isMaster = (room.master.id === user.id);
 		}
 		catch( exception: any )
 		{
@@ -300,7 +303,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		{
 			user = await this.userService.getByUsername(username);
 			room = await this.roomService.getByName(user.room.name);
-			isMaster = (room.master.id == user.id);
+			isMaster = (room.master.id === user.id);
 		}
 		catch( exception: any )
 		{
