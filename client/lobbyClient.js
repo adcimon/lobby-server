@@ -157,10 +157,12 @@ export function LobbyClient()
 	const onMessage = function( msg )
 	{
 		let message = JSON.parse(msg.data);
-		if( message.event !== 'pong' )
+		if( message.event === 'pong' )
 		{
-			console.log('%c%s%o', (message.event === 'error') ? ERROR_STYLE : SUCCESS_STYLE, message.event, message.data);
+			return;
 		}
+		
+		console.log('%c%s%o', (message.event === 'error') ? ERROR_STYLE : SUCCESS_STYLE, message.event, message.data);
 
 		const uuid = message.data.uuid;
 
