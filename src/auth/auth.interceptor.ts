@@ -1,7 +1,7 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { WebSocket } from 'ws';
-import { map } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { InvalidTokenException } from '../exceptions/invalid-token.exception';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class AuthInterceptor implements NestInterceptor
 	{
 	}
 
-	intercept( context: ExecutionContext, next: CallHandler ): any
+	async intercept( context: ExecutionContext, next: CallHandler ): Promise<Observable<any>>
 	{
 		const socket: WebSocket = context.switchToWs().getClient() as WebSocket;
 		const data: any = context.switchToWs().getData();
@@ -20,8 +20,8 @@ export class AuthInterceptor implements NestInterceptor
 		try
 		{
 			// Verify the token.
-			const payload: any = this.authService.verify(token);
-			if( !payload || !('sub' in payload) )
+			const payload: any = await this.authService.verify(token);
+			if( !this.authService.validatePayload(payload) )
 			{
 				throw new Error();
 			}

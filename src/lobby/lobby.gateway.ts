@@ -84,10 +84,10 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		// Verify the token.
 		try
 		{
-			payload = this.authService.verify(token);
-			if( !payload || !('sub' in payload) )
+			payload = await this.authService.verify(token);
+			if( !this.authService.validatePayload(payload) )
 			{
-				this.logger.log(ERROR_TAG('CONNECTION_ERROR') + loginfo);
+				this.logger.log(ERROR_TAG('INVALID_PAYLOAD') + loginfo);
 
 				const exception: InvalidTokenException = new InvalidTokenException();
 				const error: any = exception.getError();
@@ -100,7 +100,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		}
 		catch( exception: any )
 		{
-			this.logger.log(ERROR_TAG('CONNECTION_ERROR') + loginfo);
+			this.logger.log(ERROR_TAG('INVALID_TOKEN') + loginfo);
 
 			const error: any = exception.getError();
 			const msg: string = JSON.stringify(error);
@@ -115,7 +115,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const session: Session = this.sessionService.create(socket, username, payload, request.socket.remoteAddress);
 		if( !session )
 		{
-			this.logger.log(ERROR_TAG('CONNECTION_ERROR') + loginfo);
+			this.logger.log(ERROR_TAG('USER_ALREADY_CONNECTED') + loginfo);
 
 			const exception: ConnectionErrorException = new ConnectionErrorException('User already connected');
 			const error: any = exception.getError();

@@ -24,16 +24,32 @@ export class AuthService
 		}
 	}
 
-	verify( token: string ): any
+	async verify( token: string ): Promise<any>
 	{
 		try
 		{
-			const payload: any = this.jwtService.verify(token, this.configService.get('TOKEN_SECRET_KEY'));
+			const secret: string = await this.configService.get('TOKEN_SECRET_KEY');
+			const payload: any = this.jwtService.verify(token, { secret: secret });
 			return payload;
 		}
 		catch( exception: any )
 		{
 			throw new InvalidTokenException();
 		}
+	}
+
+	validatePayload( payload: any ): boolean
+	{
+		if( !payload )
+		{
+			return false;
+		}
+
+		if( !('sub' in payload) )
+		{
+			return false;
+		}
+
+		return true;
 	}
 }
