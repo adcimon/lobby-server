@@ -15,7 +15,7 @@ import { AuthInterceptor } from './auth.interceptor';
 			useFactory: ( configService: ConfigService ) =>
 			{
 				return {
-					secret: configService.get('TOKEN_SECRET_KEY')
+					secret: configService.get('TOKEN_SECRET')
 				};
 			}
 		})

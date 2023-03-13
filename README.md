@@ -1,22 +1,21 @@
 # Lobby Server
 
-General-purpose WebSocket-based lobby server. The project is built with [Node.js](https://nodejs.org/) and [Nest.js](https://nestjs.com/).
+General-purpose WebSocket-based lobby server. Built with [Node.js](https://nodejs.org/) and [Nest.js](https://nestjs.com/).
 
 **Features**
 - Authorization using [JSON Web Tokens](https://jwt.io/).
 - Create and join rooms.
 - Kick users.
 - Send text messages via room chats.
-
-The [API documentation](https://adcimon.github.io/lobby-server/api/) can be found inside the `api` folder.
-
-The `.env` files have the environment variables used by the server.
+- API [documentation](https://adcimon.github.io/lobby-server/api/) available.
 
 ## Installation
 
-1. Install `Node 16`.
+1. Configure the `.env` file.
 
-2. Install packages.
+2. Install `Node 16`.
+
+3. Install packages.
 ```
 cd lobby-server
 npm install
@@ -32,7 +31,7 @@ npm run start:debug
 npm run start:prod
 ```
 
-## Build and Deploy
+## Build
 
 Build the project, compiling it to JavaScript.
 ```

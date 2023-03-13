@@ -28,7 +28,7 @@ export class AuthService
 	{
 		try
 		{
-			const secret: string = await this.configService.get('TOKEN_SECRET_KEY');
+			const secret: string = await this.configService.get('TOKEN_SECRET');
 			const payload: any = this.jwtService.verify(token, { secret: secret });
 			return payload;
 		}
