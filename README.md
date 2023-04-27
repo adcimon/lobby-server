@@ -9,7 +9,7 @@ General-purpose WebSocket-based lobby server. Built with [Node.js](https://nodej
 - Send text messages via room chats.
 - API [documentation](https://adcimon.github.io/lobby-server/api/) available.
 
-## Installation
+## Install
 
 1. Configure the `.env` file.
 
