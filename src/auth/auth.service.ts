@@ -18,7 +18,7 @@ export class AuthService
 			const payload: any = this.jwtService.decode(token);
 			return payload;
 		}
-		catch( exception: any )
+		catch( error: any )
 		{
 			throw new InvalidTokenException();
 		}
@@ -32,7 +32,7 @@ export class AuthService
 			const payload: any = this.jwtService.verify(token, { secret: secret });
 			return payload;
 		}
-		catch( exception: any )
+		catch( error: any )
 		{
 			throw new InvalidTokenException();
 		}

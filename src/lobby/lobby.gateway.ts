@@ -1,6 +1,6 @@
 import { WebSocketGateway, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, ConnectedSocket, MessageBody } from '@nestjs/websockets';
-import { WebSocket } from 'ws';
 import { Logger, UseFilters, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { WebSocket } from 'ws';
 
 // Entities.
 import { Session } from '../sessions/session';
@@ -20,14 +20,6 @@ import { AuthInterceptor } from '../auth/auth.interceptor';
 import { UuidInterceptor } from '../validation/uuid.interceptor';
 import { ValidationSchema } from '../validation/validation.schema';
 
-// Exceptions.
-import { WsExceptionFilter } from '../exceptions/ws-exception.filter';
-import { GenericErrorException } from '../exceptions/generic-error.exception';
-import { ConnectionErrorException } from '../exceptions/connection-error.exception';
-import { InvalidTokenException } from '../exceptions/invalid-token.exception';
-import { UserNotInRoomException } from '../exceptions/user-not-in-room.exception';
-import { UserNotMasterException } from '../exceptions/user-not-master.exception';
-
 // Messages.
 import { ClientAuthorizedMessage } from '../messages/client-authorized.message';
 import { PongMessage } from '../messages/pong.message';
@@ -39,17 +31,25 @@ import { LeaveRoomResponse } from '../messages/leave-room.response';
 import { KickUserResponse } from '../messages/kick-user.response';
 import { SendTextResponse } from '../messages/send-text.response';
 
+// Exceptions.
+import { WsExceptionFilter } from '../exceptions/ws-exception.filter';
+import { GenericErrorException } from '../exceptions/generic-error.exception';
+import { ConnectionErrorException } from '../exceptions/connection-error.exception';
+import { InvalidTokenException } from '../exceptions/invalid-token.exception';
+import { UserNotInRoomException } from '../exceptions/user-not-in-room.exception';
+import { UserNotMasterException } from '../exceptions/user-not-master.exception';
+
 const WHITE_COLOR: string = '\x1b[0m';
+const RED_COLOR: string = '\x1b[31m';
 const GREEN_COLOR: string = '\x1b[32m';
 const YELLOW_COLOR: string = '\x1b[33m';
-const RED_COLOR: string = '\x1b[31m';
-const BRIGHT_CYAN_COLOR: string = '\x1b[36m';
+const CYAN_COLOR: string = '\x1b[36m';
 const BASE_COLOR: string = WHITE_COLOR;
 
 const CONNECTING_TAG: string = `${YELLOW_COLOR}CONNECTING${BASE_COLOR}`;
 const CONNECTED_TAG: string = `${GREEN_COLOR}CONNECTED${BASE_COLOR}`;
 const DISCONNECTED_TAG: string = `${RED_COLOR}DISCONNECTED${BASE_COLOR}`;
-const MESSAGE_TAG = (tag: string): string => { return `${BRIGHT_CYAN_COLOR}${tag}${BASE_COLOR}`; };
+const MESSAGE_TAG = (tag: string): string => { return `${CYAN_COLOR}${tag}${BASE_COLOR}`; };
 const ERROR_TAG = (tag: string): string => { return `${RED_COLOR}${tag}${BASE_COLOR}`; };
 
 @WebSocketGateway()

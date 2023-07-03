@@ -353,41 +353,6 @@ pre
 
 /* 4. Badges */
 
-.post
-{
-	/* Space */
-	margin: 10px;
-	padding: 10px;
-
-	/* Text */
-	font-family: var(--code-font);
-
-	/* Style */
-	background-color: hsla(115, 98%, 62%, 0.3);
-	border: 1px solid;
-	border-color: hsla(128, 82%, 46%, 1);
-}
-
-.post::before
-{
-	/* Space */
-	margin-right: 10px;
-	padding: 6px 15px;
-
-	/* Text */
-	font-family: var(--code-font);
-	font-size: 14px;
-	font-weight: 700;
-	text-align: center;
-	text-shadow: 0 1px 0 hsla(0, 0%, 0%, 0.1);
-
-	/* Style */
-	background-color: hsla(128, 82%, 46%, 1);
-	border-radius: 3px;
-	color: var(--font-color);
-	content: "POST";
-}
-
 .get
 {
 	/* Space */
@@ -423,7 +388,7 @@ pre
 	content: "GET";
 }
 
-.put
+.post
 {
 	/* Space */
 	margin: 10px;
@@ -433,12 +398,12 @@ pre
 	font-family: var(--code-font);
 
 	/* Style */
-	background-color: hsla(27, 98%, 62%, 0.3);
+	background-color: hsla(115, 98%, 62%, 0.3);
 	border: 1px solid;
-	border-color: hsla(36, 82%, 46%, 1);
+	border-color: hsla(128, 82%, 46%, 1);
 }
 
-.put::before
+.post::before
 {
 	/* Space */
 	margin-right: 10px;
@@ -452,10 +417,10 @@ pre
 	text-shadow: 0 1px 0 hsla(0, 0%, 0%, 0.1);
 
 	/* Style */
-	background-color: hsla(56, 82%, 46%, 1);
+	background-color: hsla(128, 82%, 46%, 1);
 	border-radius: 3px;
 	color: var(--font-color);
-	content: "PUT";
+	content: "POST";
 }
 
 .patch
@@ -491,6 +456,41 @@ pre
 	border-radius: 3px;
 	color: var(--font-color);
 	content: "PATCH";
+}
+
+.put
+{
+	/* Space */
+	margin: 10px;
+	padding: 10px;
+
+	/* Text */
+	font-family: var(--code-font);
+
+	/* Style */
+	background-color: hsla(27, 98%, 62%, 0.3);
+	border: 1px solid;
+	border-color: hsla(36, 82%, 46%, 1);
+}
+
+.put::before
+{
+	/* Space */
+	margin-right: 10px;
+	padding: 6px 15px;
+
+	/* Text */
+	font-family: var(--code-font);
+	font-size: 14px;
+	font-weight: 700;
+	text-align: center;
+	text-shadow: 0 1px 0 hsla(0, 0%, 0%, 0.1);
+
+	/* Style */
+	background-color: hsla(56, 82%, 46%, 1);
+	border-radius: 3px;
+	color: var(--font-color);
+	content: "PUT";
 }
 
 .delete
