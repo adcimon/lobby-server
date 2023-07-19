@@ -1,19 +1,16 @@
-import { WsResponse } from "@nestjs/websockets";
-import { User } from "../users/user.entity";
-import { Room } from "../rooms/room.entity";
+import { WsResponse } from '@nestjs/websockets';
+import { User } from '../users/user.entity';
+import { Room } from '../rooms/room.entity';
 
-export class GuestLeftRoomMessage implements WsResponse
-{
+export class GuestLeftRoomMessage implements WsResponse {
 	event: string;
 	data: any;
 
-	constructor( user: User, room: Room )
-	{
-		this.event = "guest_left_room";
-		this.data =
-		{
+	constructor(user: User, room: Room) {
+		this.event = 'guest_left_room';
+		this.data = {
 			user: user,
-			room: room
+			room: room,
 		};
 	}
 }

@@ -18,41 +18,31 @@ import { UserKickedMessage } from '../messages/user-kicked.message';
 import { ChatTextMessage } from '../messages/chat-text.message';
 
 @Injectable()
-export class NotificationService
-{
+export class NotificationService {
 	private readonly NOTIFICATION_DELAY = 100; // ms
 
-	constructor( private readonly sessionService: SessionsService )
-	{
-	}
+	constructor(private readonly sessionService: SessionsService) {}
 
 	/**
 	 * Broadcast an event to all the sessions.
 	 */
-	private broadcastAll( event: any )
-	{
+	private broadcastAll(event: any) {
 		const self = this;
 
-		function broadcast()
-		{
+		function broadcast() {
 			let usernames: string[] = self.sessionService.getUsernames();
-			for( let i = 0; i < usernames.length; i++ )
-			{
+			for (let i = 0; i < usernames.length; i++) {
 				let username: string = usernames[i];
 				let session: Session = self.sessionService.get(username);
 				session?.sendMessage(event);
 			}
 		}
 
-		if( this.NOTIFICATION_DELAY <= 0 )
-		{
+		if (this.NOTIFICATION_DELAY <= 0) {
 			broadcast();
-		}
-		else
-		{
-			setTimeout(function()
-			{
-				broadcast()
+		} else {
+			setTimeout(function () {
+				broadcast();
 			}, this.NOTIFICATION_DELAY);
 		}
 	}
@@ -60,30 +50,23 @@ export class NotificationService
 	/**
 	 * Broadcast an event to the room sessions.
 	 */
-	private broadcastRoom( event: any, room: Room )
-	{
+	private broadcastRoom(event: any, room: Room) {
 		const self = this;
 
-		function broadcast()
-		{
-			let usernames: string[] = room.users.map(user => user.username);
-			for( let i = 0; i < usernames.length; i++ )
-			{
+		function broadcast() {
+			let usernames: string[] = room.users.map((user) => user.username);
+			for (let i = 0; i < usernames.length; i++) {
 				let username: string = usernames[i];
 				let session: Session = self.sessionService.get(username);
 				session?.sendMessage(event);
 			}
 		}
 
-		if( this.NOTIFICATION_DELAY <= 0 )
-		{
+		if (this.NOTIFICATION_DELAY <= 0) {
 			broadcast();
-		}
-		else
-		{
-			setTimeout(function()
-			{
-				broadcast()
+		} else {
+			setTimeout(function () {
+				broadcast();
 			}, this.NOTIFICATION_DELAY);
 		}
 	}
@@ -91,8 +74,7 @@ export class NotificationService
 	/**
 	 * Send a user online message.
 	 */
-	sendUserOnline( username: string )
-	{
+	sendUserOnline(username: string) {
 		const event: UserOnlineMessage = new UserOnlineMessage(username);
 		this.broadcastAll(event);
 	}
@@ -100,8 +82,7 @@ export class NotificationService
 	/**
 	 * Send a user offline message.
 	 */
-	sendUserOffline( username: string )
-	{
+	sendUserOffline(username: string) {
 		const event: UserOfflineMessage = new UserOfflineMessage(username);
 		this.broadcastAll(event);
 	}
@@ -109,8 +90,7 @@ export class NotificationService
 	/**
 	 * Send a room created message.
 	 */
-	sendRoomCreated( room: Room )
-	{
+	sendRoomCreated(room: Room) {
 		delete room.password;
 		const event: RoomCreatedMessage = new RoomCreatedMessage(room);
 		this.broadcastAll(event);
@@ -119,8 +99,7 @@ export class NotificationService
 	/**
 	 * Send a room deleted message.
 	 */
-	sendRoomDeleted( room: Room )
-	{
+	sendRoomDeleted(room: Room) {
 		delete room.password;
 		const event: RoomDeletedMessage = new RoomDeletedMessage(room);
 		this.broadcastAll(event);
@@ -129,8 +108,7 @@ export class NotificationService
 	/**
 	 * Send a guest joined room message.
 	 */
-	sendGuestJoinedRoom( user: User, room: Room )
-	{
+	sendGuestJoinedRoom(user: User, room: Room) {
 		delete user.room.password;
 		delete room.password;
 		const event: GuestJoinedRoomMessage = new GuestJoinedRoomMessage(user, room);
@@ -140,8 +118,7 @@ export class NotificationService
 	/**
 	 * Send a guest left room message.
 	 */
-	sendGuestLeftRoom( user: User, room: Room )
-	{
+	sendGuestLeftRoom(user: User, room: Room) {
 		delete user.room.password;
 		delete room.password;
 		const event: GuestLeftRoomMessage = new GuestLeftRoomMessage(user, room);
@@ -151,8 +128,7 @@ export class NotificationService
 	/**
 	 * Send a user rejoined message.
 	 */
-	sendUserRejoined( user: User, room: Room )
-	{
+	sendUserRejoined(user: User, room: Room) {
 		delete user.room.password;
 		delete room.password;
 		const event: UserRejoinedMessage = new UserRejoinedMessage(user, room);
@@ -162,8 +138,7 @@ export class NotificationService
 	/**
 	 * Send a user kicked message.
 	 */
-	sendUserKicked( user: User, room: Room )
-	{
+	sendUserKicked(user: User, room: Room) {
 		delete user.room.password;
 		delete room.password;
 		const event: UserKickedMessage = new UserKickedMessage(user, room);
@@ -173,8 +148,7 @@ export class NotificationService
 	/**
 	 * Send a chat text message.
 	 */
-	sendChatText( user: User, room: Room, text: string )
-	{
+	sendChatText(user: User, room: Room, text: string) {
 		const event: ChatTextMessage = new ChatTextMessage(user.username, new Date(), text);
 		this.broadcastRoom(event, room);
 	}

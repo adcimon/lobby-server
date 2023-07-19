@@ -33,14 +33,12 @@ var log = null;
 
 window.addEventListener('load', main);
 
-function main()
-{
+function main() {
 	initializeClient();
 	initializeInterface();
 }
 
-function initializeClient()
-{
+function initializeClient() {
 	lobbyClient = new LobbyClient();
 	lobbyClient.addEventListener(LobbyEvent.ClientDisconnected, onClientDisconnected);
 	lobbyClient.addEventListener(LobbyEvent.ClientAuthorized, onEvent);
@@ -56,8 +54,7 @@ function initializeClient()
 	lobbyClient.addEventListener(LobbyEvent.ChatText, onChatText);
 }
 
-function initializeInterface()
-{
+function initializeInterface() {
 	tokenSelect = document.querySelector('#tokenSelect');
 
 	connectButton = document.querySelector('#connectButton');
@@ -105,193 +102,164 @@ function initializeInterface()
 	log.value = '';
 }
 
-function onClientDisconnected()
-{
+function onClientDisconnected() {
 	tokenSelect.disabled = false;
 	connectButton.disabled = false;
 	disconnectButton.disabled = true;
 	disable(lobby);
 }
 
-function onChatText( event )
-{
+function onChatText(event) {
 	addText(event.detail.data.username, event.detail.data.text);
 }
 
-function onEvent( event )
-{
+function onEvent(event) {
 	setLog(event.detail);
 }
 
-function handleConnect()
-{
+function handleConnect() {
 	tokenSelect.disabled = true;
 	connectButton.disabled = true;
 
 	const token = tokenSelect.options[tokenSelect.selectedIndex].value;
 
-	lobbyClient.connect(url, token)
-		.then(() =>
-		{
+	lobbyClient
+		.connect(url, token)
+		.then(() => {
 			disconnectButton.disabled = false;
 			enable(lobby);
 		})
-		.catch(() =>
-		{
+		.catch(() => {
 			tokenSelect.disabled = false;
 			connectButton.disabled = false;
 		});
 }
 
-function handleDisconnect()
-{
+function handleDisconnect() {
 	disconnectButton.disabled = true;
 
-	lobbyClient.disconnect()
-		.then(() =>
-		{
+	lobbyClient
+		.disconnect()
+		.then(() => {
 			tokenSelect.disabled = false;
 			connectButton.disabled = false;
 			disable(lobby);
 		})
-		.catch(() =>
-		{
+		.catch(() => {
 			disconnectButton.disabled = false;
 		});
 }
 
-function handleGetRoom()
-{
-	lobbyClient.getRoom()
-		.then((event) =>
-		{
+function handleGetRoom() {
+	lobbyClient
+		.getRoom()
+		.then((event) => {
 			setLog(event.detail);
 		})
-		.catch((error) =>
-		{
+		.catch((error) => {
 			setLog(error.detail);
 		});
 }
 
-function handleGetRooms()
-{
-	lobbyClient.getRooms()
-		.then((event) =>
-		{
+function handleGetRooms() {
+	lobbyClient
+		.getRooms()
+		.then((event) => {
 			setLog(event.detail);
 		})
-		.catch((error) =>
-		{
+		.catch((error) => {
 			setLog(error.detail);
 		});
 }
 
-function handleCreateRoom()
-{
+function handleCreateRoom() {
 	const name = nameInput.value;
 	const password = passwordInput.value;
 	const hidden = hiddenInput.checked;
 	const size = sizeInput.value;
 	const icon = iconInput.value;
 
-	lobbyClient.createRoom(name, { password: password, hidden: hidden, size: size, icon: icon })
-		.then((event) =>
-		{
+	lobbyClient
+		.createRoom(name, { password: password, hidden: hidden, size: size, icon: icon })
+		.then((event) => {
 			setLog(event.detail);
 		})
-		.catch((error) =>
-		{
+		.catch((error) => {
 			setLog(error.detail);
 		});
 }
 
-function handleJoinRoom()
-{
+function handleJoinRoom() {
 	const name = nameInput.value;
 	const password = passwordInput.value;
 
-	lobbyClient.joinRoom(name, { password: password })
-		.then((event) =>
-		{
+	lobbyClient
+		.joinRoom(name, { password: password })
+		.then((event) => {
 			setLog(event.detail);
 		})
-		.catch((error) =>
-		{
+		.catch((error) => {
 			setLog(error.detail);
 		});
 }
 
-function handleLeaveRoom()
-{
-	lobbyClient.leaveRoom()
-		.then((event) =>
-		{
+function handleLeaveRoom() {
+	lobbyClient
+		.leaveRoom()
+		.then((event) => {
 			setLog(event.detail);
 		})
-		.catch((error) =>
-		{
+		.catch((error) => {
 			setLog(error.detail);
 		});
 }
 
-function handleKickButton()
-{
+function handleKickButton() {
 	const user = kickInput.value;
 	kickInput.value = '';
 
-	lobbyClient.kickUser(user)
-		.then(() =>
-		{
-		})
-		.catch((error) =>
-		{
+	lobbyClient
+		.kickUser(user)
+		.then(() => {})
+		.catch((error) => {
 			setLog(error.detail);
 		});
 }
 
-function handleSendButton()
-{
+function handleSendButton() {
 	const text = chatInput.value;
 	chatInput.value = '';
 
-	lobbyClient.sendText(text)
-		.then(() =>
-		{
-		})
-		.catch((error) =>
-		{
+	lobbyClient
+		.sendText(text)
+		.then(() => {})
+		.catch((error) => {
 			setLog(error.detail);
 		});
 }
 
-function addText( user, text )
-{
+function addText(user, text) {
 	chat.value += user + ': ' + text + '\n';
 }
 
-function setLog( data )
-{
+function setLog(data) {
 	log.value = JSON.stringify(data, null, '\t');
 }
 
-function enable( element )
-{
+function enable(element) {
 	element.disabled = false;
 
-	for( let i = 0; i < element.children.length; i++ )
-	{
-		let child = element.children[i];
+	for (let i = 0; i < element.children.length; i++) {
+		const child = element.children[i];
 		enable(child);
 	}
 }
 
-function disable( element )
-{
+function disable(element) {
 	element.disabled = true;
 
-	for( let i = 0; i < element.children.length; i++ )
-	{
-		let child = element.children[i];
+	for (let i = 0; i < element.children.length; i++) {
+		const child = element.children[i];
 		disable(child);
 	}
 }

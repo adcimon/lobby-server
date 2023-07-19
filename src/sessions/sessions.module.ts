@@ -5,8 +5,6 @@ import { SessionsService } from './sessions.service';
 	imports: [],
 	controllers: [],
 	providers: [SessionsService],
-	exports: [SessionsService]
+	exports: [SessionsService],
 })
-export class SessionsModule
-{
-}
+export class SessionsModule {}

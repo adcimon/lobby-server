@@ -1,22 +1,18 @@
 import { WebSocket } from 'ws';
 
-export class Session
-{
+export class Session {
 	username: string;
 	socket: WebSocket;
 
-	sendMessage( message: any )
-	{
+	sendMessage(message: any) {
 		this.socket?.send(JSON.stringify(message));
 	}
 
-	close()
-	{
+	close() {
 		this.socket?.close();
 	}
 
-	terminate()
-	{
+	terminate() {
 		this.socket?.terminate();
 	}
 }

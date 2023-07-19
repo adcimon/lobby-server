@@ -1,17 +1,13 @@
 import { WsException } from '@nestjs/websockets';
 
-export class GenericErrorException extends WsException
-{
-	constructor( message?: string )
-	{
-		super(
-		{
+export class GenericErrorException extends WsException {
+	constructor(message?: string) {
+		super({
 			event: 'error',
-			data:
-			{
+			data: {
 				error: 'generic_error',
-				message: message || 'Generic error'
-			}
+				message: message || 'Generic error',
+			},
 		});
 	}
 }

@@ -1,17 +1,13 @@
 import { WsException } from '@nestjs/websockets';
 
-export class ValidationErrorException extends WsException
-{
-	constructor( message?: string )
-	{
-		super(
-		{
+export class ValidationErrorException extends WsException {
+	constructor(message?: string) {
+		super({
 			event: 'error',
-			data:
-			{
+			data: {
 				error: 'validation_error',
-				message: message || 'Validation error'
-			}
+				message: message || 'Validation error',
+			},
 		});
 	}
 }

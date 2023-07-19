@@ -1,13 +1,11 @@
-import { WsResponse } from "@nestjs/websockets";
+import { WsResponse } from '@nestjs/websockets';
 
-export class KickUserResponse implements WsResponse
-{
+export class KickUserResponse implements WsResponse {
 	event: string;
 	data: any;
 
-	constructor( data?: any )
-	{
-		this.event = "kick_user_response";
-		this.data = data || { };
+	constructor(data?: any) {
+		this.event = 'kick_user_response';
+		this.data = data || {};
 	}
 }

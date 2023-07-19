@@ -1,4 +1,11 @@
-import { WebSocketGateway, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, ConnectedSocket, MessageBody } from '@nestjs/websockets';
+import {
+	WebSocketGateway,
+	OnGatewayConnection,
+	OnGatewayDisconnect,
+	SubscribeMessage,
+	ConnectedSocket,
+	MessageBody,
+} from '@nestjs/websockets';
 import { Logger, UseFilters, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { WebSocket } from 'ws';
 
@@ -49,14 +56,17 @@ const BASE_COLOR: string = WHITE_COLOR;
 const CONNECTING_TAG: string = `${YELLOW_COLOR}CONNECTING${BASE_COLOR}`;
 const CONNECTED_TAG: string = `${GREEN_COLOR}CONNECTED${BASE_COLOR}`;
 const DISCONNECTED_TAG: string = `${RED_COLOR}DISCONNECTED${BASE_COLOR}`;
-const MESSAGE_TAG = (tag: string): string => { return `${CYAN_COLOR}${tag}${BASE_COLOR}`; };
-const ERROR_TAG = (tag: string): string => { return `${RED_COLOR}${tag}${BASE_COLOR}`; };
+const MESSAGE_TAG = (tag: string): string => {
+	return `${CYAN_COLOR}${tag}${BASE_COLOR}`;
+};
+const ERROR_TAG = (tag: string): string => {
+	return `${RED_COLOR}${tag}${BASE_COLOR}`;
+};
 
 @WebSocketGateway()
 @UseInterceptors(ClassSerializerInterceptor)
 @UseFilters(new WsExceptionFilter())
-export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
-{
+export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private readonly logger: Logger = new Logger('LOBBY');
 
 	constructor(
@@ -64,15 +74,14 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		private readonly sessionService: SessionsService,
 		private readonly userService: UsersService,
 		private readonly roomService: RoomsService,
-		private readonly notificationService: NotificationService
-	) { }
+		private readonly notificationService: NotificationService,
+	) {}
 
-	async handleConnection( socket: WebSocket, ...args: any[] )
-	{
+	async handleConnection(socket: WebSocket, ...args: any[]) {
 		const request: any = args[0];
 
 		// Authenticate the connection using the token URL parameter.
-		const params: URLSearchParams = new URLSearchParams(args[0].url.replace('/','').replace('?', ''));
+		const params: URLSearchParams = new URLSearchParams(args[0].url.replace('/', '').replace('?', ''));
 		const token: string = params.get('token');
 
 		// Decode the token.
@@ -82,11 +91,9 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		this.logger.log(CONNECTING_TAG + loginfo);
 
 		// Verify the token.
-		try
-		{
+		try {
 			payload = await this.authService.verify(token);
-			if( !this.authService.validatePayload(payload) )
-			{
+			if (!this.authService.validatePayload(payload)) {
 				this.logger.log(ERROR_TAG('INVALID_PAYLOAD') + loginfo);
 
 				const exception: InvalidTokenException = new InvalidTokenException();
@@ -97,9 +104,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 				return;
 			}
-		}
-		catch( exception: any )
-		{
+		} catch (exception: any) {
 			this.logger.log(ERROR_TAG('INVALID_TOKEN') + loginfo);
 
 			const error: any = exception.getError();
@@ -113,8 +118,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		// Create the session.
 		const username: string = payload.sub;
 		const session: Session = this.sessionService.create(socket, username, payload, request.socket.remoteAddress);
-		if( !session )
-		{
+		if (!session) {
 			this.logger.log(ERROR_TAG('USER_ALREADY_CONNECTED') + loginfo);
 
 			const exception: ConnectionErrorException = new ConnectionErrorException('User already connected');
@@ -136,20 +140,16 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		this.notificationService.sendUserOnline(username);
 
 		// User rejoining.
-		try
-		{
+		try {
 			let user: User = await this.userService.getByUsername(username);
 			let room: Room = await this.roomService.getByName(user.room.name);
 			this.notificationService.sendUserRejoined(user, room);
-		}
-		catch( exception: any )
-		{
+		} catch (exception: any) {
 			// Ignore rejoin exceptions.
 		}
 	}
 
-	async handleDisconnect( socket: WebSocket )
-	{
+	async handleDisconnect(socket: WebSocket) {
 		const username: any = socket.username;
 		const payload: any = JSON.stringify(socket.payload);
 		const ip: string = socket.ip;
@@ -161,19 +161,14 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		this.sessionService.delete(socket.username);
 
 		// User offline.
-		if( socket.username )
-		{
+		if (socket.username) {
 			this.notificationService.sendUserOffline(socket.username);
 		}
 	}
 
 	@SubscribeMessage('ping')
 	@UseInterceptors(new ValidationInterceptor(ValidationSchema.PingSchema), AuthInterceptor, new UuidInterceptor())
-	ping(
-		@ConnectedSocket() socket: WebSocket,
-		@MessageBody('username') username: string
-	): any
-	{
+	ping(@ConnectedSocket() socket: WebSocket, @MessageBody('username') username: string): any {
 		//this.logger.log(MESSAGE_TAG('PING') + ` username:${username}`);
 
 		return new PongMessage();
@@ -181,48 +176,39 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	@SubscribeMessage('get_room')
 	@UseInterceptors(new ValidationInterceptor(ValidationSchema.GetRoomSchema), AuthInterceptor, new UuidInterceptor())
-	async getRoom(
-		@ConnectedSocket() socket: WebSocket,
-		@MessageBody('username') username: string
-	): Promise<any>
-	{
+	async getRoom(@ConnectedSocket() socket: WebSocket, @MessageBody('username') username: string): Promise<any> {
 		this.logger.log(MESSAGE_TAG('GET_ROOM') + ` username:${username}`);
 
-		try
-		{
+		try {
 			const user: User = await this.userService.getByUsername(username);
 			const room: Room = await this.roomService.getByName(user.room.name);
 
 			return new GetRoomResponse({ room });
-		}
-		catch( exception: any )
-		{
+		} catch (exception: any) {
 			return new GetRoomResponse();
 		}
 	}
 
 	@SubscribeMessage('get_rooms')
 	@UseInterceptors(new ValidationInterceptor(ValidationSchema.GetRoomsSchema), AuthInterceptor, new UuidInterceptor())
-	async getRooms(
-		@ConnectedSocket() socket: WebSocket
-	): Promise<any>
-	{
+	async getRooms(@ConnectedSocket() socket: WebSocket): Promise<any> {
 		this.logger.log(MESSAGE_TAG('GET_ROOMS'));
 
-		try
-		{
+		try {
 			const rooms: Room[] = await this.roomService.getAll(true);
 
 			return new GetRoomsResponse({ rooms });
-		}
-		catch( exception: any )
-		{
+		} catch (exception: any) {
 			return new GetRoomsResponse();
 		}
 	}
 
 	@SubscribeMessage('create_room')
-	@UseInterceptors(new ValidationInterceptor(ValidationSchema.CreateRoomSchema), AuthInterceptor, new UuidInterceptor())
+	@UseInterceptors(
+		new ValidationInterceptor(ValidationSchema.CreateRoomSchema),
+		AuthInterceptor,
+		new UuidInterceptor(),
+	)
 	async createRoom(
 		@ConnectedSocket() socket: WebSocket,
 		@MessageBody('username') username: string,
@@ -230,10 +216,12 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		@MessageBody('password') password: string,
 		@MessageBody('hidden') hidden: boolean,
 		@MessageBody('size') size: number,
-		@MessageBody('icon') icon: string
-	): Promise<any>
-	{
-		this.logger.log(MESSAGE_TAG('CREATE_ROOM') + ` username:${username} name:${name} password:${password} hidden:${hidden} size:${size} icon:${icon}`);
+		@MessageBody('icon') icon: string,
+	): Promise<any> {
+		this.logger.log(
+			MESSAGE_TAG('CREATE_ROOM') +
+				` username:${username} name:${name} password:${password} hidden:${hidden} size:${size} icon:${icon}`,
+		);
 
 		const room: Room = await this.roomService.create(username, name, password, hidden, Number(size), icon);
 
@@ -248,9 +236,8 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 		@ConnectedSocket() socket: WebSocket,
 		@MessageBody('username') username: string,
 		@MessageBody('name') name: string,
-		@MessageBody('password') password: string
-	): Promise<any>
-	{
+		@MessageBody('password') password: string,
+	): Promise<any> {
 		this.logger.log(MESSAGE_TAG('JOIN_ROOM') + ` username:${username} name:${name} password:${password}`);
 
 		const room: Room = await this.roomService.join(username, name, password);
@@ -262,33 +249,26 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 	}
 
 	@SubscribeMessage('leave_room')
-	@UseInterceptors(new ValidationInterceptor(ValidationSchema.LeaveRoomSchema), AuthInterceptor, new UuidInterceptor())
-	async leaveRoom(
-		@ConnectedSocket() socket: WebSocket,
-		@MessageBody('username') username: string
-	): Promise<any>
-	{
+	@UseInterceptors(
+		new ValidationInterceptor(ValidationSchema.LeaveRoomSchema),
+		AuthInterceptor,
+		new UuidInterceptor(),
+	)
+	async leaveRoom(@ConnectedSocket() socket: WebSocket, @MessageBody('username') username: string): Promise<any> {
 		this.logger.log(MESSAGE_TAG('LEAVE_ROOM') + ` username:${username}`);
 
 		let user: User;
 		let isMaster: boolean = false;
-		try
-		{
+		try {
 			user = await this.userService.getByUsername(username);
 			let room: Room = await this.roomService.getByName(user.room.name);
-			isMaster = (room.master.id === user.id);
-		}
-		catch( exception: any )
-		{
-		}
+			isMaster = room.master.id === user.id;
+		} catch (exception: any) {}
 
 		const room: Room = await this.roomService.leave(username);
-		if( isMaster )
-		{
+		if (isMaster) {
 			this.notificationService.sendRoomDeleted(room);
-		}
-		else
-		{
+		} else {
 			this.notificationService.sendGuestLeftRoom(user, room);
 		}
 
@@ -300,42 +280,33 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 	async kickUser(
 		@ConnectedSocket() socket: WebSocket,
 		@MessageBody('username') username: string,
-		@MessageBody('target') target: string
-	): Promise<any>
-	{
+		@MessageBody('target') target: string,
+	): Promise<any> {
 		this.logger.log(MESSAGE_TAG('KICK_USER') + ` target:${target}`);
 
 		let user: User;
 		let room: Room;
 		let isMaster: boolean = false;
-		try
-		{
+		try {
 			user = await this.userService.getByUsername(username);
 			room = await this.roomService.getByName(user.room.name);
-			isMaster = (room.master.id === user.id);
-		}
-		catch( exception: any )
-		{
+			isMaster = room.master.id === user.id;
+		} catch (exception: any) {
 			// User not found catched.
 			throw new UserNotInRoomException(username);
 		}
-		if( !isMaster )
-		{
+		if (!isMaster) {
 			throw new UserNotMasterException(username);
 		}
-		if( username === target )
-		{
+		if (username === target) {
 			throw new GenericErrorException('Master cannot kick itself');
 		}
 
 		let userToKick: User;
-		try
-		{
+		try {
 			userToKick = await this.userService.getByUsername(target);
 			await this.roomService.getByName(userToKick.room.name);
-		}
-		catch( exception: any )
-		{
+		} catch (exception: any) {
 			// User not found catched.
 			throw new UserNotInRoomException(target);
 		}
@@ -353,25 +324,20 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect
 	async sendText(
 		@ConnectedSocket() socket: WebSocket,
 		@MessageBody('username') username: string,
-		@MessageBody('text') text: string
-	): Promise<any>
-	{
+		@MessageBody('text') text: string,
+	): Promise<any> {
 		this.logger.log(MESSAGE_TAG('SEND_TEXT') + ` username:${username}`);
 
 		let user: User;
-		try
-		{
+		try {
 			user = await this.userService.getByUsername(username);
-		}
-		catch( exception: any )
-		{
+		} catch (exception: any) {
 			// User not found catched.
 			throw new UserNotInRoomException(username);
 		}
 
 		let room: Room = await this.roomService.getByName(user.room.name);
-		if( room )
-		{
+		if (room) {
 			this.notificationService.sendChatText(user, room, text);
 		}
 

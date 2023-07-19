@@ -10,8 +10,6 @@ import { NotificationService } from './notification.service';
 	imports: [AuthModule, SessionsModule, UsersModule, RoomsModule],
 	controllers: [],
 	providers: [LobbyGateway, NotificationService],
-	exports: []
+	exports: [],
 })
-export class LobbyModule
-{
-}
+export class LobbyModule {}

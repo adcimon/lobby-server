@@ -1,102 +1,169 @@
 <!DOCTYPE html>
 
 <html lang="en">
+	<head>
+		<title>Lobby Client</title>
 
-<head>
+		<meta charset="utf-8" />
 
-	<title>Lobby Client</title>
+		<meta
+			name="author"
+			content="adcimon" />
+		<meta
+			name="description"
+			content="" />
+		<meta
+			name="keywords"
+			content="" />
+		<meta
+			name="language"
+			content="en" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1" />
 
-	<meta charset="utf-8">
+		<style>
+			* {
+				margin-top: 1px;
+				margin-bottom: 1px;
+				margin-left: 2px;
+				margin-right: 2px;
+			}
+		</style>
 
-	<meta name="author" content="adcimon">
-	<meta name="description" content="">
-	<meta name="keywords" content="">
-	<meta name="language" content="en">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script
+			type="module"
+			src="index.js"></script>
+	</head>
 
-	<style>
-		*
-		{
-			margin-top: 1px;
-			margin-bottom: 1px;
-			margin-left: 2px;
-			margin-right: 2px;
-		}
-	</style>
+	<body>
+		<h1>Lobby Client</h1>
+		<br />
 
-	<script type="module" src="index.js"></script>
-
-</head>
-
-<body>
-
-	<h1>Lobby Client</h1>
-	<br>
-
-	<div>
-		<label for="tokenSelect">User</label>
-		<select id="tokenSelect">
-			<option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJnYW5kYWxmIn0.TPUV40p4M8R-n7hDxqDbz8NF8qKTE9CulUIeLJvra-U">Gandalf</option>
-			<option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmcm9kbyJ9.HLLoDd-1f73UptWvyZx_JoMoDB2HkFELsa5iwuRKxQE">Frodo</option>
-			<option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZWdvbGFzIn0.GLxe1pOwxp56U0EMGxAZ2M05lfddVQKGvlkPPOW-ltg">Legolas</option>
-			<option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJnaW1saSJ9.PVCotZrY0Pv9GCSJ3VJUxsIOjFemkULn-PZ1l7yfRvk">Gimli</option>
-			<option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtZXJyeSJ9.PSlS1ilbeSz82eHdIq-0jHt5fF5rFFAXamtSAQzNZxM">Merry</option>
-			<option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwaXBwaW4ifQ.gTnLbPG8ySOxU0DAVULU4wp1t1hqGzUP5jpwJt6R9BQ">Pippin</option>
-			<option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJib3JvbWlyIn0.XjxvmaCxGRDk-wlSnFGyT3kQKGwmMXqijFY8Ip1hOgE">Boromir</option>
-			<option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzYW0ifQ.hd2wCRkLj3w8FozaJSlvkvainSTuczQ222NP2xzhfs8">Sam</option>
-			<option value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhcmFnb3JuIn0.nYgLDGrobc7uStsJXbDbUcld_ygr4BEW-qslYKHs7X4">Aragorn</option>
-		</select>
-	</div>
-	<br>
-
-	<div>
-		<button id="connectButton">Connect</button>
-		<button id="disconnectButton" disabled>Disconnect</button>
-	</div>
-	<br>
-
-	<div id="lobby">
 		<div>
-			<button id="getRoomButton">Get Room</button>
-			<button id="getRoomsButton">Get Rooms</button>
+			<label for="tokenSelect">User</label>
+			<select id="tokenSelect">
+				<option
+					value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJnYW5kYWxmIn0.TPUV40p4M8R-n7hDxqDbz8NF8qKTE9CulUIeLJvra-U">
+					Gandalf
+				</option>
+				<option
+					value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmcm9kbyJ9.HLLoDd-1f73UptWvyZx_JoMoDB2HkFELsa5iwuRKxQE">
+					Frodo
+				</option>
+				<option
+					value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZWdvbGFzIn0.GLxe1pOwxp56U0EMGxAZ2M05lfddVQKGvlkPPOW-ltg">
+					Legolas
+				</option>
+				<option
+					value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJnaW1saSJ9.PVCotZrY0Pv9GCSJ3VJUxsIOjFemkULn-PZ1l7yfRvk">
+					Gimli
+				</option>
+				<option
+					value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtZXJyeSJ9.PSlS1ilbeSz82eHdIq-0jHt5fF5rFFAXamtSAQzNZxM">
+					Merry
+				</option>
+				<option
+					value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwaXBwaW4ifQ.gTnLbPG8ySOxU0DAVULU4wp1t1hqGzUP5jpwJt6R9BQ">
+					Pippin
+				</option>
+				<option
+					value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJib3JvbWlyIn0.XjxvmaCxGRDk-wlSnFGyT3kQKGwmMXqijFY8Ip1hOgE">
+					Boromir
+				</option>
+				<option
+					value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzYW0ifQ.hd2wCRkLj3w8FozaJSlvkvainSTuczQ222NP2xzhfs8">
+					Sam
+				</option>
+				<option
+					value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhcmFnb3JuIn0.nYgLDGrobc7uStsJXbDbUcld_ygr4BEW-qslYKHs7X4">
+					Aragorn
+				</option>
+			</select>
 		</div>
-		<br>
+		<br />
 
 		<div>
+			<button id="connectButton">Connect</button>
+			<button
+				id="disconnectButton"
+				disabled>
+				Disconnect
+			</button>
+		</div>
+		<br />
+
+		<div id="lobby">
 			<div>
-				<input id="nameInput" type="text" placeholder="Name">
-				<input id="passwordInput" type="password" placeholder="Password">
-				<input id="hiddenInput" type="checkbox"><label for="hiddenInput">Hidden</label>
-				<label for="sizeInput">Size</label><input id="sizeInput" type="number" step="1" placeholder="Size" value="8">
-				<label for="iconInput">Icon</label><input id="iconInput" type="text" placeholder="Icon">
+				<button id="getRoomButton">Get Room</button>
+				<button id="getRoomsButton">Get Rooms</button>
 			</div>
-			<br>
+			<br />
+
 			<div>
-				<button id="createRoomButton">Create</button>
-				<button id="joinRoomButton">Join</button>
-				<button id="leaveRoomButton">Leave</button>
-			</div>
-			<br>
-			<div>
-				<input id="kickInput" type="text" placeholder="User">
-				<button id="kickButton">Kick</button>
-			</div>
-			<br>
-			<div>
-				<textarea id="chat" rows="15" cols="75" readonly></textarea>
 				<div>
-					<input id="chatInput" type="text" placeholder="Message">
-					<button id="sendButton">Send</button>
+					<input
+						id="nameInput"
+						type="text"
+						placeholder="Name" />
+					<input
+						id="passwordInput"
+						type="password"
+						placeholder="Password" />
+					<input
+						id="hiddenInput"
+						type="checkbox" /><label for="hiddenInput">Hidden</label> <label for="sizeInput">Size</label
+					><input
+						id="sizeInput"
+						type="number"
+						step="1"
+						placeholder="Size"
+						value="8" />
+					<label for="iconInput">Icon</label
+					><input
+						id="iconInput"
+						type="text"
+						placeholder="Icon" />
+				</div>
+				<br />
+				<div>
+					<button id="createRoomButton">Create</button>
+					<button id="joinRoomButton">Join</button>
+					<button id="leaveRoomButton">Leave</button>
+				</div>
+				<br />
+				<div>
+					<input
+						id="kickInput"
+						type="text"
+						placeholder="User" />
+					<button id="kickButton">Kick</button>
+				</div>
+				<br />
+				<div>
+					<textarea
+						id="chat"
+						rows="15"
+						cols="75"
+						readonly></textarea>
+					<div>
+						<input
+							id="chatInput"
+							type="text"
+							placeholder="Message" />
+						<button id="sendButton">Send</button>
+					</div>
 				</div>
 			</div>
+			<br />
+
+			<div>
+				<textarea
+					id="log"
+					rows="15"
+					cols="75"
+					readonly></textarea>
+			</div>
 		</div>
-		<br>
-
-		<div>
-			<textarea id="log" rows="15" cols="75" readonly></textarea>
-		</div>
-	</div>
-
-</body>
-
+	</body>
 </html>

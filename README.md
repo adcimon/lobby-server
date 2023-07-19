@@ -6,7 +6,7 @@ General-purpose WebSocket-based lobby server. Built with [Node.js](https://nodej
 - Authorization using [JSON Web Tokens](https://jwt.io/).
 - Create and join rooms.
 - Kick users.
-- Send text messages via room chats.
+- Send text messages to the room chat.
 - API [documentation](https://adcimon.github.io/lobby-server/api/) available.
 
 ## Install

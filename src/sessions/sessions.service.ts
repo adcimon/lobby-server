@@ -3,21 +3,16 @@ import { Session } from './session';
 import { WebSocket } from 'ws';
 
 @Injectable()
-export class SessionsService
-{
-	private sessions: Map<string, Session> = new Map;
+export class SessionsService {
+	private sessions: Map<string, Session> = new Map();
 
-	constructor()
-	{
-	}
+	constructor() {}
 
 	/**
 	 * Create a session.
 	 */
-	 create( socket: WebSocket, username: string, payload: any, ip: string ): Session
-	{
-		if( this.sessions.has(username) )
-		{
+	create(socket: WebSocket, username: string, payload: any, ip: string): Session {
+		if (this.sessions.has(username)) {
 			return null;
 		}
 
@@ -37,10 +32,8 @@ export class SessionsService
 	/**
 	 * Get the user's session.
 	 */
-	get( username: string ): Session
-	{
-		if( this.sessions.has(username) )
-		{
+	get(username: string): Session {
+		if (this.sessions.has(username)) {
 			return this.sessions.get(username);
 		}
 
@@ -50,18 +43,15 @@ export class SessionsService
 	/**
 	 * Get the sessions' usernames.
 	 */
-	getUsernames(): string[]
-	{
+	getUsernames(): string[] {
 		return Array.from(this.sessions.keys());
 	}
 
 	/**
 	 * Delete the session.
 	 */
-	delete( username: string ): boolean
-	{
-		if( !this.sessions.has(username) )
-		{
+	delete(username: string): boolean {
+		if (!this.sessions.has(username)) {
 			return false;
 		}
 

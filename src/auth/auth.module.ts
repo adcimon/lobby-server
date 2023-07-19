@@ -6,24 +6,19 @@ import { AuthService } from './auth.service';
 import { AuthInterceptor } from './auth.interceptor';
 
 @Module({
-	imports:
-	[
+	imports: [
 		ConfigModule,
-		JwtModule.registerAsync(
-		{
+		JwtModule.registerAsync({
 			inject: [ConfigService],
-			useFactory: ( configService: ConfigService ) =>
-			{
+			useFactory: (configService: ConfigService) => {
 				return {
-					secret: configService.get('TOKEN_SECRET')
+					secret: configService.get('TOKEN_SECRET'),
 				};
-			}
-		})
+			},
+		}),
 	],
 	controllers: [],
 	providers: [AuthService, AuthInterceptor],
-	exports: [JwtModule, AuthService, AuthInterceptor]
+	exports: [JwtModule, AuthService, AuthInterceptor],
 })
-export class AuthModule
-{
-}
+export class AuthModule {}

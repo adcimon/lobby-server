@@ -12,19 +12,15 @@ import { ConfigService } from './config/config.service';
 @Module({
 	imports: [
 		ConfigModule,
-		ServeStaticModule.forRootAsync(
-		{
+		ServeStaticModule.forRootAsync({
 			inject: [ConfigService],
-			useFactory: ( configService: ConfigService ) =>
-			{
+			useFactory: (configService: ConfigService) => {
 				return [{ rootPath: configService.getStaticPath() }];
-			}
+			},
 		}),
-		TypeOrmModule.forRootAsync(
-		{
+		TypeOrmModule.forRootAsync({
 			inject: [ConfigService],
-			useFactory: ( configService: ConfigService ) =>
-			{
+			useFactory: (configService: ConfigService) => {
 				return {
 					type: configService.get('DATABASE_TYPE'),
 					host: configService.get('DATABASE_HOST'),
@@ -33,7 +29,7 @@ import { ConfigService } from './config/config.service';
 					password: configService.get('DATABASE_PASSWORD'),
 					database: configService.get('DATABASE_NAME'),
 					entities: [configService.get('DATABASE_ENTITIES')],
-					synchronize: !configService.isProduction()
+					synchronize: !configService.isProduction(),
 				};
 			},
 		}),
@@ -41,12 +37,10 @@ import { ConfigService } from './config/config.service';
 		SessionsModule,
 		UsersModule,
 		RoomsModule,
-		LobbyModule
+		LobbyModule,
 	],
 	controllers: [],
 	providers: [],
-	exports: []
+	exports: [],
 })
-export class AppModule
-{
-}
+export class AppModule {}

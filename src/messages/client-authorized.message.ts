@@ -1,15 +1,11 @@
-import { WsResponse } from "@nestjs/websockets";
+import { WsResponse } from '@nestjs/websockets';
 
-export class ClientAuthorizedMessage implements WsResponse
-{
+export class ClientAuthorizedMessage implements WsResponse {
 	event: string;
 	data: any;
 
-	constructor()
-	{
-		this.event = "client_authorized";
-		this.data =
-		{
-		};
+	constructor() {
+		this.event = 'client_authorized';
+		this.data = {};
 	}
 }

@@ -4,31 +4,21 @@ import { Observable, map, EMPTY } from 'rxjs';
 import { ValidationErrorException } from '../exceptions/validation-error.exception';
 
 @Injectable()
-export class ValidationInterceptor implements NestInterceptor
-{
-	constructor( private readonly schema: any )
-	{
-	}
+export class ValidationInterceptor implements NestInterceptor {
+	constructor(private readonly schema: any) {}
 
-	async intercept( context: ExecutionContext, next: CallHandler ): Promise<Observable<any>>
-	{
+	async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
 		const socket: WebSocket = context.switchToWs().getClient() as WebSocket;
 		const data: any = context.switchToWs().getData();
 
-		try
-		{
+		try {
 			await this.schema.validate(data, { abortEarly: false });
-			return next.handle().pipe(map(data => (data)));
-		}
-		catch( exception: any )
-		{
+			return next.handle().pipe(map((data) => data));
+		} catch (exception: any) {
 			let message: string = '';
-			if( exception?.errors.length === 1 )
-			{
+			if (exception?.errors.length === 1) {
 				message = exception.errors[0];
-			}
-			else
-			{
+			} else {
 				message = exception.errors.join('. ');
 			}
 

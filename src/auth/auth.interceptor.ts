@@ -5,24 +5,18 @@ import { Observable, map } from 'rxjs';
 import { InvalidTokenException } from '../exceptions/invalid-token.exception';
 
 @Injectable()
-export class AuthInterceptor implements NestInterceptor
-{
-	constructor( private readonly authService: AuthService )
-	{
-	}
+export class AuthInterceptor implements NestInterceptor {
+	constructor(private readonly authService: AuthService) {}
 
-	async intercept( context: ExecutionContext, next: CallHandler ): Promise<Observable<any>>
-	{
+	async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
 		const socket: WebSocket = context.switchToWs().getClient() as WebSocket;
 		const data: any = context.switchToWs().getData();
 		const token: any = data.token;
 
-		try
-		{
+		try {
 			// Verify the token.
 			const payload: any = await this.authService.verify(token);
-			if( !this.authService.validatePayload(payload) )
-			{
+			if (!this.authService.validatePayload(payload)) {
 				throw new Error();
 			}
 
@@ -32,10 +26,8 @@ export class AuthInterceptor implements NestInterceptor
 			// Add the username to the message.
 			data.username = payload.sub;
 
-			return next.handle().pipe(map(data => (data)));
-		}
-		catch( exception: any )
-		{
+			return next.handle().pipe(map((data) => data));
+		} catch (exception: any) {
 			exception = new InvalidTokenException();
 
 			// Add the uuid to the error.

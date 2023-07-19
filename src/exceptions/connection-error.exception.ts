@@ -1,17 +1,13 @@
 import { WsException } from '@nestjs/websockets';
 
-export class ConnectionErrorException extends WsException
-{
-	constructor( message?: string )
-	{
-		super(
-		{
+export class ConnectionErrorException extends WsException {
+	constructor(message?: string) {
+		super({
 			event: 'error',
-			data:
-			{
+			data: {
 				error: 'connection_error',
-				message: message || 'Connection error'
-			}
+				message: message || 'Connection error',
+			},
 		});
 	}
 }

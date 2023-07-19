@@ -3,8 +3,7 @@ import { Exclude } from 'class-transformer'; // Used with ClassSerializerInterce
 import { User } from '../users/user.entity';
 
 @Entity()
-export class Room
-{
+export class Room {
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -21,7 +20,7 @@ export class Room
 	@Column({ default: false })
 	hidden: boolean;
 
-	@Column({ type: "int" })
+	@Column({ type: 'int' })
 	size: number;
 
 	@Column({ default: '' })
@@ -31,6 +30,6 @@ export class Room
 	@JoinColumn({ name: 'master' })
 	master: User;
 
-	@OneToMany(() => User, user => user.room, { cascade: true, onDelete: 'CASCADE' })
+	@OneToMany(() => User, (user) => user.room, { cascade: true, onDelete: 'CASCADE' })
 	users: User[];
 }
