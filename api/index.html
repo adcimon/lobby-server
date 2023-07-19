@@ -69,13 +69,20 @@
 						The authentication method used is
 						<a
 							href="https://jwt.io/"
-							target="_blank"
-							>JSON Web Token</a
-						>. The token's payload must contain the <span class="highlight">sub</span> field with a unique
+							target="_blank">
+							JSON Web Token
+						</a>
+						. The token's payload must contain the <span class="highlight">sub</span> field with a unique
 						identifier.
 					</p>
 					<p>
-						<code>{<br />&nbsp;&nbsp;&nbsp;sub: username<br />}</code>
+						<code>
+							{
+							<br />
+							&nbsp;&nbsp;&nbsp;sub: username
+							<br />
+							}
+						</code>
 					</p>
 					<p>The client must send the token in the connection URL and in each message data object.</p>
 					<p><code>wss://localhost:9000/token</code></p>
