@@ -5,7 +5,7 @@ export class UserNotFoundException extends WsException {
 		super({
 			event: 'error',
 			data: {
-				error: 'user_not_found',
+				code: 'user_not_found',
 				message: 'User not found',
 				username: username,
 			},

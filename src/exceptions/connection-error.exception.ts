@@ -5,7 +5,7 @@ export class ConnectionErrorException extends WsException {
 		super({
 			event: 'error',
 			data: {
-				error: 'connection_error',
+				code: 'connection_error',
 				message: message || 'Connection error',
 			},
 		});

@@ -5,7 +5,7 @@ export class UserAlreadyExistsException extends WsException {
 		super({
 			event: 'error',
 			data: {
-				error: 'user_already_exists',
+				code: 'user_already_exists',
 				message: 'User already exists',
 				username: username,
 			},

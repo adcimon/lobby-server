@@ -224,8 +224,7 @@ pre {
 
 .get {
 	background-color: hsla(204, 98%, 62%, 0.3);
-	border-color: hsla(204, 82%, 46%, 1);
-	border: 1px solid;
+	border: 1px solid hsla(204, 82%, 46%, 1);
 	font-family: var(--code-font);
 	margin: 10px;
 	padding: 10px;
@@ -247,8 +246,7 @@ pre {
 
 .post {
 	background-color: hsla(115, 98%, 62%, 0.3);
-	border-color: hsla(128, 82%, 46%, 1);
-	border: 1px solid;
+	border: 1px solid hsla(128, 82%, 46%, 1);
 	font-family: var(--code-font);
 	margin: 10px;
 	padding: 10px;
@@ -270,8 +268,7 @@ pre {
 
 .patch {
 	background-color: hsla(27, 98%, 62%, 0.3);
-	border-color: hsla(36, 82%, 46%, 1);
-	border: 1px solid;
+	border: 1px solid hsla(36, 82%, 46%, 1);
 	font-family: var(--code-font);
 	margin: 10px;
 	padding: 10px;
@@ -293,8 +290,7 @@ pre {
 
 .put {
 	background-color: hsla(27, 98%, 62%, 0.3);
-	border-color: hsla(36, 82%, 46%, 1);
-	border: 1px solid;
+	border: 1px solid hsla(36, 82%, 46%, 1);
 	font-family: var(--code-font);
 	margin: 10px;
 	padding: 10px;
@@ -316,8 +312,7 @@ pre {
 
 .delete {
 	background-color: hsla(0, 98%, 62%, 0.3);
-	border-color: hsla(2, 82%, 46%, 1);
-	border: 1px solid;
+	border: 1px solid hsla(2, 82%, 46%, 1);
 	font-family: var(--code-font);
 	margin: 10px;
 	padding: 10px;
@@ -339,8 +334,7 @@ pre {
 
 .websocket {
 	background-color: hsla(24, 100%, 50%, 0.3);
-	border-color: hsla(24, 100%, 50%, 1);
-	border: 1px solid;
+	border: 1px solid hsla(24, 100%, 50%, 1);
 	font-family: var(--code-font);
 	margin: 10px;
 	padding: 10px;
@@ -362,9 +356,8 @@ pre {
 
 .json::after {
 	background-color: hsla(27, 95%, 50%, 0.6);
-	border-color: hsla(24, 82%, 46%, 1);
 	border-radius: 3px;
-	border: 1px solid;
+	border: 1px solid hsla(24, 82%, 46%, 1);
 	color: var(--font-color);
 	content: 'json';
 	font-family: var(--code-font);
@@ -378,9 +371,8 @@ pre {
 
 .public::after {
 	background-color: hsla(60, 2%, 82%, 0.6);
-	border-color: hsla(0, 0%, 100%, 1);
 	border-radius: 3px;
-	border: 1px solid;
+	border: 1px solid hsla(0, 0%, 100%, 1);
 	color: var(--font-color);
 	content: 'public';
 	font-family: var(--code-font);
@@ -394,9 +386,8 @@ pre {
 
 .protected::after {
 	background-color: hsla(130, 95%, 50%, 0.6);
-	border-color: hsla(120, 82%, 46%, 1);
 	border-radius: 3px;
-	border: 1px solid;
+	border: 1px solid hsla(120, 82%, 46%, 1);
 	color: var(--font-color);
 	content: '🔒 protected';
 	font-family: var(--code-font);
@@ -410,9 +401,8 @@ pre {
 
 .key::after {
 	background-color: hsla(130, 95%, 50%, 0.6);
-	border-color: hsla(120, 82%, 46%, 1);
 	border-radius: 3px;
-	border: 1px solid;
+	border: 1px solid hsla(120, 82%, 46%, 1);
 	color: var(--font-color);
 	content: '🔑';
 	font-family: var(--code-font);
@@ -426,9 +416,8 @@ pre {
 
 .required::after {
 	background-color: hsla(0, 95%, 50%, 0.6);
-	border-color: hsla(0, 82%, 46%, 1);
 	border-radius: 3px;
-	border: 1px solid;
+	border: 1px solid hsla(0, 82%, 46%, 1);
 	color: var(--font-color);
 	content: '❗ required';
 	font-family: var(--code-font);
@@ -447,9 +436,8 @@ pre {
 
 .role {
 	background-color: hsla(0, 0%, 100%, 0);
-	border-color: hsla(0, 0%, 100%, 1);
 	border-radius: 3px;
-	border: 1px solid;
+	border: 1px solid hsla(0, 0%, 100%, 1);
 	color: var(--font-color);
 	font-family: var(--code-font);
 	font-size: 12px;

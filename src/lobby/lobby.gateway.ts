@@ -36,7 +36,6 @@ import { CreateRoomResponse } from '../messages/create-room.response';
 import { JoinRoomResponse } from '../messages/join-room.response';
 import { LeaveRoomResponse } from '../messages/leave-room.response';
 import { KickUserResponse } from '../messages/kick-user.response';
-import { SendTextResponse } from '../messages/send-text.response';
 
 // Exceptions.
 import { WsExceptionFilter } from '../exceptions/ws-exception.filter';
@@ -317,30 +316,5 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.notificationService.sendUserKicked(userToKick, room);
 
 		return new KickUserResponse({ room });
-	}
-
-	@SubscribeMessage('send_text')
-	@UseInterceptors(new ValidationInterceptor(ValidationSchema.SendTextSchema), AuthInterceptor, new UuidInterceptor())
-	async sendText(
-		@ConnectedSocket() socket: WebSocket,
-		@MessageBody('username') username: string,
-		@MessageBody('text') text: string,
-	): Promise<any> {
-		this.logger.log(MESSAGE_TAG('SEND_TEXT') + ` username:${username}`);
-
-		let user: User;
-		try {
-			user = await this.userService.getByUsername(username);
-		} catch (exception: any) {
-			// User not found catched.
-			throw new UserNotInRoomException(username);
-		}
-
-		let room: Room = await this.roomService.getByName(user.room.name);
-		if (room) {
-			this.notificationService.sendChatText(user, room, text);
-		}
-
-		return new SendTextResponse();
 	}
 }

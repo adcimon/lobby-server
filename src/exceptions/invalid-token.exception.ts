@@ -5,7 +5,7 @@ export class InvalidTokenException extends WsException {
 		super({
 			event: 'error',
 			data: {
-				error: 'invalid_token',
+				code: 'invalid_token',
 				message: 'Invalid token',
 			},
 		});

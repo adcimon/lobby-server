@@ -15,7 +15,6 @@ import { GuestJoinedRoomMessage } from '../messages/guest-joined-room.message';
 import { GuestLeftRoomMessage } from '../messages/guest-left-room.message';
 import { UserRejoinedMessage } from '../messages/user-rejoined.message';
 import { UserKickedMessage } from '../messages/user-kicked.message';
-import { ChatTextMessage } from '../messages/chat-text.message';
 
 @Injectable()
 export class NotificationService {
@@ -143,13 +142,5 @@ export class NotificationService {
 		delete room.password;
 		const event: UserKickedMessage = new UserKickedMessage(user, room);
 		this.broadcastAll(event);
-	}
-
-	/**
-	 * Send a chat text message.
-	 */
-	sendChatText(user: User, room: Room, text: string) {
-		const event: ChatTextMessage = new ChatTextMessage(user.username, new Date(), text);
-		this.broadcastRoom(event, room);
 	}
 }

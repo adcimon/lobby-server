@@ -5,7 +5,7 @@ export class UserAlreadyInRoomException extends WsException {
 		super({
 			event: 'error',
 			data: {
-				error: 'user_already_in_room',
+				code: 'user_already_in_room',
 				message: 'User already in room',
 				username: username,
 				name: name,

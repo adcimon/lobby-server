@@ -5,7 +5,7 @@ export class RoomAlreadyExistsException extends WsException {
 		super({
 			event: 'error',
 			data: {
-				error: 'room_already_exists',
+				code: 'room_already_exists',
 				message: 'Room already exists',
 				name: name,
 			},

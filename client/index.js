@@ -25,10 +25,6 @@ var leaveRoomButton = null;
 var kickInput = null;
 var kickButton = null;
 
-var chat = null;
-var chatInput = null;
-var sendButton = null;
-
 var log = null;
 
 window.addEventListener('load', main);
@@ -90,13 +86,6 @@ function initializeInterface() {
 	kickInput = document.querySelector('#kickInput');
 	kickButton = document.querySelector('#kickButton');
 	kickButton.addEventListener('click', handleKickButton);
-
-	chat = document.querySelector('#chat');
-	chat.value = '';
-	chatInput = document.querySelector('#chatInput');
-	chatInput.value = '';
-	sendButton = document.querySelector('#sendButton');
-	sendButton.addEventListener('click', handleSendButton);
 
 	log = document.querySelector('#log');
 	log.value = '';
@@ -224,22 +213,6 @@ function handleKickButton() {
 		.catch((error) => {
 			setLog(error.detail);
 		});
-}
-
-function handleSendButton() {
-	const text = chatInput.value;
-	chatInput.value = '';
-
-	lobbyClient
-		.sendText(text)
-		.then(() => {})
-		.catch((error) => {
-			setLog(error.detail);
-		});
-}
-
-function addText(user, text) {
-	chat.value += user + ': ' + text + '\n';
 }
 
 function setLog(data) {

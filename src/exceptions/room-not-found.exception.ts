@@ -5,7 +5,7 @@ export class RoomNotFoundException extends WsException {
 		super({
 			event: 'error',
 			data: {
-				error: 'room_not_found',
+				code: 'room_not_found',
 				message: 'Room not found',
 				name: name,
 			},

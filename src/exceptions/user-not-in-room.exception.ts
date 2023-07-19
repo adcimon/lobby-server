@@ -5,7 +5,7 @@ export class UserNotInRoomException extends WsException {
 		super({
 			event: 'error',
 			data: {
-				error: 'user_not_in_room',
+				code: 'user_not_in_room',
 				message: 'User not in room',
 				username: username,
 			},

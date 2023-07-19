@@ -5,7 +5,7 @@ export class InvalidRoomPasswordException extends WsException {
 		super({
 			event: 'error',
 			data: {
-				error: 'invalid_room_password',
+				code: 'invalid_room_password',
 				message: 'Invalid room password',
 				name: name,
 			},

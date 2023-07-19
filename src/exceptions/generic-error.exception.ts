@@ -5,7 +5,7 @@ export class GenericErrorException extends WsException {
 		super({
 			event: 'error',
 			data: {
-				error: 'generic_error',
+				code: 'generic_error',
 				message: message || 'Generic error',
 			},
 		});

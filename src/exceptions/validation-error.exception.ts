@@ -5,7 +5,7 @@ export class ValidationErrorException extends WsException {
 		super({
 			event: 'error',
 			data: {
-				error: 'validation_error',
+				code: 'validation_error',
 				message: message || 'Validation error',
 			},
 		});

@@ -5,7 +5,7 @@ export class UserNotMasterException extends WsException {
 		super({
 			event: 'error',
 			data: {
-				error: 'user_not_master',
+				code: 'user_not_master',
 				message: 'User is not master',
 				username: username,
 			},

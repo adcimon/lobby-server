@@ -5,7 +5,7 @@ export class RoomFullException extends WsException {
 		super({
 			event: 'error',
 			data: {
-				error: 'room_full',
+				code: 'room_full',
 				message: 'Room is full',
 				name: name,
 			},
