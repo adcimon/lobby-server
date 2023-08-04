@@ -25,7 +25,7 @@ import { NotificationService } from './notification.service';
 import { ValidationInterceptor } from '../validation/validation.interceptor';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { UuidInterceptor } from '../validation/uuid.interceptor';
-import { ValidationSchema } from '../validation/validation.schema';
+import { LobbySchema } from './lobby.schema';
 
 // Messages.
 import { ClientAuthorizedMessage } from '../messages/client-authorized.message';
@@ -166,7 +166,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('ping')
-	@UseInterceptors(new ValidationInterceptor(ValidationSchema.PingSchema), AuthInterceptor, new UuidInterceptor())
+	@UseInterceptors(new ValidationInterceptor(LobbySchema.PingSchema), AuthInterceptor, new UuidInterceptor())
 	ping(@ConnectedSocket() socket: WebSocket, @MessageBody('username') username: string): any {
 		//this.logger.log(MESSAGE_TAG('PING') + ` username:${username}`);
 
@@ -174,7 +174,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('get_room')
-	@UseInterceptors(new ValidationInterceptor(ValidationSchema.GetRoomSchema), AuthInterceptor, new UuidInterceptor())
+	@UseInterceptors(new ValidationInterceptor(LobbySchema.GetRoomSchema), AuthInterceptor, new UuidInterceptor())
 	async getRoom(@ConnectedSocket() socket: WebSocket, @MessageBody('username') username: string): Promise<any> {
 		this.logger.log(MESSAGE_TAG('GET_ROOM') + ` username:${username}`);
 
@@ -189,7 +189,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('get_rooms')
-	@UseInterceptors(new ValidationInterceptor(ValidationSchema.GetRoomsSchema), AuthInterceptor, new UuidInterceptor())
+	@UseInterceptors(new ValidationInterceptor(LobbySchema.GetRoomsSchema), AuthInterceptor, new UuidInterceptor())
 	async getRooms(@ConnectedSocket() socket: WebSocket): Promise<any> {
 		this.logger.log(MESSAGE_TAG('GET_ROOMS'));
 
@@ -203,11 +203,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('create_room')
-	@UseInterceptors(
-		new ValidationInterceptor(ValidationSchema.CreateRoomSchema),
-		AuthInterceptor,
-		new UuidInterceptor(),
-	)
+	@UseInterceptors(new ValidationInterceptor(LobbySchema.CreateRoomSchema), AuthInterceptor, new UuidInterceptor())
 	async createRoom(
 		@ConnectedSocket() socket: WebSocket,
 		@MessageBody('username') username: string,
@@ -230,7 +226,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('join_room')
-	@UseInterceptors(new ValidationInterceptor(ValidationSchema.JoinRoomSchema), AuthInterceptor, new UuidInterceptor())
+	@UseInterceptors(new ValidationInterceptor(LobbySchema.JoinRoomSchema), AuthInterceptor, new UuidInterceptor())
 	async joinRoom(
 		@ConnectedSocket() socket: WebSocket,
 		@MessageBody('username') username: string,
@@ -248,11 +244,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('leave_room')
-	@UseInterceptors(
-		new ValidationInterceptor(ValidationSchema.LeaveRoomSchema),
-		AuthInterceptor,
-		new UuidInterceptor(),
-	)
+	@UseInterceptors(new ValidationInterceptor(LobbySchema.LeaveRoomSchema), AuthInterceptor, new UuidInterceptor())
 	async leaveRoom(@ConnectedSocket() socket: WebSocket, @MessageBody('username') username: string): Promise<any> {
 		this.logger.log(MESSAGE_TAG('LEAVE_ROOM') + ` username:${username}`);
 
@@ -275,7 +267,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('kick_user')
-	@UseInterceptors(new ValidationInterceptor(ValidationSchema.KickUserSchema), AuthInterceptor, new UuidInterceptor())
+	@UseInterceptors(new ValidationInterceptor(LobbySchema.KickUserSchema), AuthInterceptor, new UuidInterceptor())
 	async kickUser(
 		@ConnectedSocket() socket: WebSocket,
 		@MessageBody('username') username: string,

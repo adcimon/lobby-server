@@ -19,55 +19,13 @@ const SizeSchema = yup.number().integer().positive().min(1).nullable(true).trans
 const IconSchema = yup.string().url().max(500);
 const TargetSchema = yup.string();
 
-const PingSchema = yup.object().shape({
-	uuid: UuidSchema.required('UUID is required'),
-	token: TokenSchema.required('Token is required'),
-});
-
-const GetRoomSchema = yup.object().shape({
-	uuid: UuidSchema.required('UUID is required'),
-	token: TokenSchema.required('Token is required'),
-});
-
-const GetRoomsSchema = yup.object().shape({
-	uuid: UuidSchema.required('UUID is required'),
-	token: TokenSchema.required('Token is required'),
-});
-
-const CreateRoomSchema = yup.object().shape({
-	uuid: UuidSchema.required('UUID is required'),
-	token: TokenSchema.required('Token is required'),
-	name: NameSchema.required('Name is required'),
-	password: PasswordSchema,
-	hidden: HiddenSchema,
-	size: SizeSchema,
-	icon: IconSchema,
-});
-
-const JoinRoomSchema = yup.object().shape({
-	uuid: UuidSchema.required('UUID is required'),
-	token: TokenSchema.required('Token is required'),
-	name: NameSchema.required('Name is required'),
-	password: PasswordSchema,
-});
-
-const LeaveRoomSchema = yup.object().shape({
-	uuid: UuidSchema.required('UUID is required'),
-	token: TokenSchema.required('Token is required'),
-});
-
-const KickUserSchema = yup.object().shape({
-	uuid: UuidSchema.required('UUID is required'),
-	token: TokenSchema.required('Token is required'),
-	target: TargetSchema.required('Target is required'),
-});
-
 export const ValidationSchema = {
-	PingSchema,
-	GetRoomSchema,
-	GetRoomsSchema,
-	CreateRoomSchema,
-	JoinRoomSchema,
-	LeaveRoomSchema,
-	KickUserSchema,
+	UuidSchema,
+	TokenSchema,
+	NameSchema,
+	PasswordSchema,
+	HiddenSchema,
+	SizeSchema,
+	IconSchema,
+	TargetSchema,
 };
