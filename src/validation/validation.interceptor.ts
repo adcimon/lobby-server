@@ -15,18 +15,12 @@ export class ValidationInterceptor implements NestInterceptor {
 			await this.schema.validate(data, { abortEarly: false });
 			return next.handle().pipe(map((data) => data));
 		} catch (exception: any) {
-			let message: string = '';
-			if (exception?.errors.length === 1) {
-				message = exception.errors[0];
-			} else {
-				message = exception.errors.join('. ');
-			}
-
+			const message: string = exception?.errors.length === 1 ? exception.errors[0] : exception.errors.join('. ');
 			const validationException: ValidationErrorException = new ValidationErrorException(message);
 
 			// Add the uuid to the error.
-			const error: object = validationException.getError() as object;
-			error['data']['uuid'] = data.uuid;
+			const error: any = validationException.getError();
+			error.data.uuid = data.uuid;
 
 			const errorMessage: string = JSON.stringify(error);
 			socket.send(errorMessage);

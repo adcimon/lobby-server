@@ -28,10 +28,10 @@ export class AuthInterceptor implements NestInterceptor {
 
 			return next.handle().pipe(map((data) => data));
 		} catch (exception: any) {
-			exception = new InvalidTokenException();
+			const invalidTokenException: InvalidTokenException = new InvalidTokenException();
 
 			// Add the uuid to the error.
-			let error: object = exception.getError() as object;
+			let error: object = invalidTokenException.getError() as object;
 			error['data']['uuid'] = data.uuid;
 
 			socket.send(JSON.stringify(error));

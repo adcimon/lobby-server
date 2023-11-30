@@ -92,8 +92,8 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		} catch (exception: any) {
 			this.logger.log(LogUtils.error('INVALID_TOKEN', loginfo));
 
-			const err: any = exception.getError();
-			const msg: string = JSON.stringify(err);
+			const error: any = exception.getError();
+			const msg: string = JSON.stringify(error);
 			socket.send(msg);
 			socket.terminate();
 
@@ -242,7 +242,9 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			user = await this.userService.getByUsername(username);
 			let room: Room = await this.roomService.getByName(user.room.name);
 			isMaster = room.master.id === user.id;
-		} catch (exception: any) {}
+		} catch (exception: any) {
+			// Ignore exceptions.
+		}
 
 		const room: Room = await this.roomService.leave(username);
 		if (isMaster) {

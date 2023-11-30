@@ -59,7 +59,7 @@ export class RoomsService {
 		try {
 			room = await this.getByName(name);
 		} catch (exception: any) {
-			// Room not found catched.
+			// Ignore room not found.
 		}
 		if (room) {
 			throw new RoomAlreadyExistsException(name);
@@ -70,7 +70,7 @@ export class RoomsService {
 		try {
 			user = await this.usersService.getByUsername(username);
 		} catch (exception: any) {
-			// User not found catched.
+			// Ignore user not found.
 		}
 		if (user) {
 			throw new UserAlreadyInRoomException(username, user.room.name);
@@ -111,7 +111,7 @@ export class RoomsService {
 		try {
 			user = await this.usersService.getByUsername(username);
 		} catch (exception: any) {
-			// User not found catched.
+			// Ignore user not found.
 		}
 		if (user) {
 			throw new UserAlreadyInRoomException(username, user.room.name);
