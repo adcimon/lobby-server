@@ -23,7 +23,7 @@ export class RoomsService {
 	/**
 	 * Get all the rooms.
 	 */
-	async getAll(excludeHidden: boolean = false): Promise<Room[]> {
+	public async getAll(excludeHidden: boolean = false): Promise<Room[]> {
 		if (excludeHidden) {
 			return await this.roomsRepository.find({ where: { hidden: false }, relations: ['master', 'users'] });
 		} else {
@@ -34,7 +34,7 @@ export class RoomsService {
 	/**
 	 * Get a room by name.
 	 */
-	async getByName(name: string): Promise<Room> {
+	public async getByName(name: string): Promise<Room> {
 		const room: Room = await this.roomsRepository.findOne({ where: { name }, relations: ['master', 'users'] });
 		if (!room) {
 			throw new RoomNotFoundException(name);
@@ -46,7 +46,7 @@ export class RoomsService {
 	/**
 	 * Create a room.
 	 */
-	async create(
+	public async create(
 		username: string,
 		name: string,
 		password: string,
@@ -103,7 +103,7 @@ export class RoomsService {
 	/**
 	 * Join a room.
 	 */
-	async join(username: string, name: string, password: string): Promise<Room> {
+	public async join(username: string, name: string, password: string): Promise<Room> {
 		const room: Room = await this.getByName(name);
 
 		// Check whether the user is in a room.
@@ -139,7 +139,7 @@ export class RoomsService {
 	/**
 	 * Leave a room.
 	 */
-	async leave(username: string): Promise<Room> {
+	public async leave(username: string): Promise<Room> {
 		let user: User;
 		try {
 			user = await this.usersService.getByUsername(username);
@@ -165,7 +165,7 @@ export class RoomsService {
 	/**
 	 * Delete the room.
 	 */
-	async delete(name: string): Promise<Room> {
+	public async delete(name: string): Promise<Room> {
 		const room: Room = await this.getByName(name);
 		return this.roomsRepository.remove(room);
 	}

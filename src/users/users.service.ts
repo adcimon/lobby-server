@@ -12,14 +12,14 @@ export class UsersService {
 	/**
 	 * Get all the users.
 	 */
-	async getAll(): Promise<User[]> {
+	public async getAll(): Promise<User[]> {
 		return await this.usersRepository.find({ relations: ['room'] });
 	}
 
 	/**
 	 * Get a user by username.
 	 */
-	async getByUsername(username: string): Promise<User> {
+	public async getByUsername(username: string): Promise<User> {
 		const user: User = await this.usersRepository.findOne({ where: { username }, relations: ['room'] });
 		if (!user) {
 			throw new UserNotFoundException(username);
@@ -31,7 +31,7 @@ export class UsersService {
 	/**
 	 * Create a user.
 	 */
-	async create(username: string): Promise<User> {
+	public async create(username: string): Promise<User> {
 		let user: User = await this.usersRepository.findOne({ where: { username } });
 		if (user) {
 			throw new UserAlreadyExistsException(username);
@@ -47,7 +47,7 @@ export class UsersService {
 	/**
 	 * Delete the user.
 	 */
-	async delete(username: string): Promise<User> {
+	public async delete(username: string): Promise<User> {
 		const user: User = await this.getByUsername(username);
 		return this.usersRepository.remove(user);
 	}

@@ -11,7 +11,7 @@ export class SessionsService {
 	/**
 	 * Create a session.
 	 */
-	create(socket: WebSocket, username: string, payload: any, ip: string): Session {
+	public create(socket: WebSocket, username: string, payload: any, ip: string): Session {
 		if (this.sessions.has(username)) {
 			return null;
 		}
@@ -32,7 +32,7 @@ export class SessionsService {
 	/**
 	 * Get the user's session.
 	 */
-	get(username: string): Session {
+	public get(username: string): Session {
 		if (this.sessions.has(username)) {
 			return this.sessions.get(username);
 		}
@@ -43,14 +43,14 @@ export class SessionsService {
 	/**
 	 * Get the sessions' usernames.
 	 */
-	getUsernames(): string[] {
+	public getUsernames(): string[] {
 		return Array.from(this.sessions.keys());
 	}
 
 	/**
 	 * Delete the session.
 	 */
-	delete(username: string): boolean {
+	public delete(username: string): boolean {
 		if (!this.sessions.has(username)) {
 			return false;
 		}

@@ -73,7 +73,7 @@ export class NotificationService {
 	/**
 	 * Send a user online message.
 	 */
-	sendUserOnline(username: string) {
+	public sendUserOnline(username: string) {
 		const event: UserOnlineMessage = new UserOnlineMessage(username);
 		this.broadcastAll(event);
 	}
@@ -81,7 +81,7 @@ export class NotificationService {
 	/**
 	 * Send a user offline message.
 	 */
-	sendUserOffline(username: string) {
+	public sendUserOffline(username: string) {
 		const event: UserOfflineMessage = new UserOfflineMessage(username);
 		this.broadcastAll(event);
 	}
@@ -89,7 +89,7 @@ export class NotificationService {
 	/**
 	 * Send a room created message.
 	 */
-	sendRoomCreated(room: Room) {
+	public sendRoomCreated(room: Room) {
 		delete room.password;
 		const event: RoomCreatedMessage = new RoomCreatedMessage(room);
 		this.broadcastAll(event);
@@ -98,7 +98,7 @@ export class NotificationService {
 	/**
 	 * Send a room deleted message.
 	 */
-	sendRoomDeleted(room: Room) {
+	public sendRoomDeleted(room: Room) {
 		delete room.password;
 		const event: RoomDeletedMessage = new RoomDeletedMessage(room);
 		this.broadcastAll(event);
@@ -107,7 +107,7 @@ export class NotificationService {
 	/**
 	 * Send a guest joined room message.
 	 */
-	sendGuestJoinedRoom(user: User, room: Room) {
+	public sendGuestJoinedRoom(user: User, room: Room) {
 		delete user.room.password;
 		delete room.password;
 		const event: GuestJoinedRoomMessage = new GuestJoinedRoomMessage(user, room);
@@ -117,7 +117,7 @@ export class NotificationService {
 	/**
 	 * Send a guest left room message.
 	 */
-	sendGuestLeftRoom(user: User, room: Room) {
+	public sendGuestLeftRoom(user: User, room: Room) {
 		delete user.room.password;
 		delete room.password;
 		const event: GuestLeftRoomMessage = new GuestLeftRoomMessage(user, room);
@@ -127,7 +127,7 @@ export class NotificationService {
 	/**
 	 * Send a user rejoined message.
 	 */
-	sendUserRejoined(user: User, room: Room) {
+	public sendUserRejoined(user: User, room: Room) {
 		delete user.room.password;
 		delete room.password;
 		const event: UserRejoinedMessage = new UserRejoinedMessage(user, room);
@@ -137,7 +137,7 @@ export class NotificationService {
 	/**
 	 * Send a user kicked message.
 	 */
-	sendUserKicked(user: User, room: Room) {
+	public sendUserKicked(user: User, room: Room) {
 		delete user.room.password;
 		delete room.password;
 		const event: UserKickedMessage = new UserKickedMessage(user, room);

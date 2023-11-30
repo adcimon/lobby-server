@@ -6,7 +6,7 @@ import { join } from 'path';
 export class ConfigService {
 	constructor() {}
 
-	static config(): any {
+	public static config(): any {
 		config();
 
 		console.log('Environment variables:');
@@ -18,7 +18,7 @@ export class ConfigService {
 	/**
 	 * Get a configuration value.
 	 */
-	static get(key: string, defaultValue: any = null): any {
+	public static get(key: string, defaultValue: any = null): any {
 		if (key in process.env) {
 			const value: string = process.env[key];
 			switch (value) {
@@ -41,21 +41,21 @@ export class ConfigService {
 	/**
 	 * Get a configuration value.
 	 */
-	get(key: string, defaultValue: any = null): any {
+	public get(key: string, defaultValue: any = null): any {
 		return ConfigService.get(key, defaultValue);
 	}
 
 	/**
 	 * Get the static path.
 	 */
-	getStaticPath(): string {
+	public getStaticPath(): string {
 		return join(__dirname, process.env.STATIC_PATH);
 	}
 
 	/**
 	 * Is a production environment?
 	 */
-	isProduction(): boolean {
+	public isProduction(): boolean {
 		return process.env.NODE_ENV === 'production';
 	}
 }

@@ -7,7 +7,7 @@ import { InvalidTokenException } from '../exceptions/invalid-token.exception';
 export class AuthService {
 	constructor(private readonly configService: ConfigService, private readonly jwtService: JwtService) {}
 
-	decode(token: string): any {
+	public decode(token: string): any {
 		try {
 			const payload: any = this.jwtService.decode(token);
 			return payload;
@@ -16,7 +16,7 @@ export class AuthService {
 		}
 	}
 
-	async verify(token: string): Promise<any> {
+	public async verify(token: string): Promise<any> {
 		try {
 			const secret: string = await this.configService.get('TOKEN_SECRET');
 			const payload: any = this.jwtService.verify(token, { secret: secret });
@@ -26,7 +26,7 @@ export class AuthService {
 		}
 	}
 
-	validatePayload(payload: any): boolean {
+	public validatePayload(payload: any): boolean {
 		if (!payload) {
 			return false;
 		}

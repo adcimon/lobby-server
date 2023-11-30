@@ -45,22 +45,8 @@ import { InvalidTokenException } from '../exceptions/invalid-token.exception';
 import { UserNotInRoomException } from '../exceptions/user-not-in-room.exception';
 import { UserNotMasterException } from '../exceptions/user-not-master.exception';
 
-const WHITE_COLOR: string = '\x1b[0m';
-const RED_COLOR: string = '\x1b[31m';
-const GREEN_COLOR: string = '\x1b[32m';
-const YELLOW_COLOR: string = '\x1b[33m';
-const CYAN_COLOR: string = '\x1b[36m';
-const BASE_COLOR: string = WHITE_COLOR;
-
-const CONNECTING_TAG: string = `${YELLOW_COLOR}CONNECTING${BASE_COLOR}`;
-const CONNECTED_TAG: string = `${GREEN_COLOR}CONNECTED${BASE_COLOR}`;
-const DISCONNECTED_TAG: string = `${RED_COLOR}DISCONNECTED${BASE_COLOR}`;
-const MESSAGE_TAG = (tag: string): string => {
-	return `${CYAN_COLOR}${tag}${BASE_COLOR}`;
-};
-const ERROR_TAG = (tag: string): string => {
-	return `${RED_COLOR}${tag}${BASE_COLOR}`;
-};
+// Utils.
+import { LogUtils } from '../utils/log.utils';
 
 @WebSocketGateway()
 @UseInterceptors(ClassSerializerInterceptor)
@@ -87,13 +73,13 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		let payload: any = this.authService.decode(token);
 
 		const loginfo: string = ` payload:${JSON.stringify(payload)} ip:${request.socket.remoteAddress}`;
-		this.logger.log(CONNECTING_TAG + loginfo);
+		this.logger.log(LogUtils.warning('CONNECTING', loginfo));
 
 		// Verify the token.
 		try {
 			payload = await this.authService.verify(token);
 			if (!this.authService.validatePayload(payload)) {
-				this.logger.log(ERROR_TAG('INVALID_PAYLOAD') + loginfo);
+				this.logger.log(LogUtils.error('INVALID PAYLOAD', loginfo));
 
 				const exception: InvalidTokenException = new InvalidTokenException();
 				const error: any = exception.getError();
@@ -104,10 +90,10 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				return;
 			}
 		} catch (exception: any) {
-			this.logger.log(ERROR_TAG('INVALID_TOKEN') + loginfo);
+			this.logger.log(LogUtils.error('INVALID_TOKEN', loginfo));
 
-			const error: any = exception.getError();
-			const msg: string = JSON.stringify(error);
+			const err: any = exception.getError();
+			const msg: string = JSON.stringify(err);
 			socket.send(msg);
 			socket.terminate();
 
@@ -118,7 +104,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const username: string = payload.sub;
 		const session: Session = this.sessionService.create(socket, username, payload, request.socket.remoteAddress);
 		if (!session) {
-			this.logger.log(ERROR_TAG('USER_ALREADY_CONNECTED') + loginfo);
+			this.logger.log(LogUtils.error('USER_ALREADY_CONNECTED', loginfo));
 
 			const exception: ConnectionErrorException = new ConnectionErrorException('User already connected');
 			const error: any = exception.getError();
@@ -129,7 +115,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			return;
 		}
 
-		this.logger.log(CONNECTED_TAG + ` username:${username}` + loginfo);
+		this.logger.log(LogUtils.success('CONNECTED', `username:${username}` + loginfo));
 
 		const message: ClientAuthorizedMessage = new ClientAuthorizedMessage();
 		const msg: string = JSON.stringify(message);
@@ -154,7 +140,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const ip: string = socket.ip;
 
 		const loginfo: string = ` username:${username} payload:${payload} ip:${ip}`;
-		this.logger.log(DISCONNECTED_TAG + loginfo);
+		this.logger.log(LogUtils.error('DISCONNECTED', loginfo));
 
 		// Delete the session.
 		this.sessionService.delete(socket.username);
@@ -168,7 +154,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('ping')
 	@UseInterceptors(new ValidationInterceptor(LobbySchema.PingSchema), AuthInterceptor, new UuidInterceptor())
 	ping(@ConnectedSocket() socket: WebSocket, @MessageBody('username') username: string): any {
-		//this.logger.log(MESSAGE_TAG('PING') + ` username:${username}`);
+		// this.logger.log(LogUtils.message('PING', `username:${username}`));
 
 		return new PongMessage();
 	}
@@ -176,7 +162,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('get_room')
 	@UseInterceptors(new ValidationInterceptor(LobbySchema.GetRoomSchema), AuthInterceptor, new UuidInterceptor())
 	async getRoom(@ConnectedSocket() socket: WebSocket, @MessageBody('username') username: string): Promise<any> {
-		this.logger.log(MESSAGE_TAG('GET_ROOM') + ` username:${username}`);
+		this.logger.log(LogUtils.message('GET_ROOM', `username:${username}`));
 
 		try {
 			const user: User = await this.userService.getByUsername(username);
@@ -191,7 +177,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('get_rooms')
 	@UseInterceptors(new ValidationInterceptor(LobbySchema.GetRoomsSchema), AuthInterceptor, new UuidInterceptor())
 	async getRooms(@ConnectedSocket() socket: WebSocket): Promise<any> {
-		this.logger.log(MESSAGE_TAG('GET_ROOMS'));
+		this.logger.log(LogUtils.message('GET_ROOMS'));
 
 		try {
 			const rooms: Room[] = await this.roomService.getAll(true);
@@ -214,8 +200,10 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		@MessageBody('icon') icon: string,
 	): Promise<any> {
 		this.logger.log(
-			MESSAGE_TAG('CREATE_ROOM') +
-				` username:${username} name:${name} password:${password} hidden:${hidden} size:${size} icon:${icon}`,
+			LogUtils.message(
+				'CREATE_ROOM',
+				`username:${username} name:${name} password:${password} hidden:${hidden} size:${size} icon:${icon}`,
+			),
 		);
 
 		const room: Room = await this.roomService.create(username, name, password, hidden, Number(size), icon);
@@ -233,7 +221,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		@MessageBody('name') name: string,
 		@MessageBody('password') password: string,
 	): Promise<any> {
-		this.logger.log(MESSAGE_TAG('JOIN_ROOM') + ` username:${username} name:${name} password:${password}`);
+		this.logger.log(LogUtils.message('JOIN_ROOM', `username:${username} name:${name} password:${password}`));
 
 		const room: Room = await this.roomService.join(username, name, password);
 		const user: User = await this.userService.getByUsername(username);
@@ -246,7 +234,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('leave_room')
 	@UseInterceptors(new ValidationInterceptor(LobbySchema.LeaveRoomSchema), AuthInterceptor, new UuidInterceptor())
 	async leaveRoom(@ConnectedSocket() socket: WebSocket, @MessageBody('username') username: string): Promise<any> {
-		this.logger.log(MESSAGE_TAG('LEAVE_ROOM') + ` username:${username}`);
+		this.logger.log(LogUtils.message('LEAVE_ROOM', `username:${username}`));
 
 		let user: User;
 		let isMaster: boolean = false;
@@ -273,7 +261,7 @@ export class LobbyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		@MessageBody('username') username: string,
 		@MessageBody('target') target: string,
 	): Promise<any> {
-		this.logger.log(MESSAGE_TAG('KICK_USER') + ` target:${target}`);
+		this.logger.log(LogUtils.message('KICK_USER', `target:${target}`));
 
 		let user: User;
 		let room: Room;
