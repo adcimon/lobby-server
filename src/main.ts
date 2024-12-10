@@ -27,7 +27,7 @@ async function bootstrap() {
 	await app.listen(port);
 
 	const url: string = await app.getUrl();
-	console.log(`🚀 Service running on: ${url}`);
+	console.log(`🚀 Service running on ${url}`);
 }
 
 ConfigService.config();
